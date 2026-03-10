@@ -205,10 +205,10 @@ function DictionaryContent() {
         return;
       }
       const results = await response.json();
-      
+
       // No filtering - show all synonyms
-      const validSynonyms = results.map((r) => r.word).slice(0, 15);
-      
+      const validSynonyms = results.map((r: { word: string }) => r.word).slice(0, 15);
+
       setSynonyms(validSynonyms);
     } catch (err) {
       console.error('Failed to fetch synonyms:', err);
