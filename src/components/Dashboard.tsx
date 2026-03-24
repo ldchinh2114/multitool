@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Coins, BookOpen, Ruler, ArrowRight, Zap, Search, Scale } from 'lucide-react';
 import { cn } from '@/lib/cn';
+import { useLanguage } from '@/lib/language-context';
 
 interface ToolCardProps {
   title: string;
@@ -90,6 +91,8 @@ function ToolCard({
  * Landing page với grid layout hiển thị tất cả công cụ
  */
 export function Dashboard() {
+  const { t } = useLanguage();
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Hero Section */}
@@ -97,17 +100,16 @@ export function Dashboard() {
         <div className="container mx-auto max-w-7xl px-4 text-center">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-blue-100 px-4 py-1.5 text-sm font-medium text-blue-700 dark:bg-blue-900 dark:text-blue-300">
             <Zap className="h-4 w-4" />
-            All-in-One Tool Hub
+            {t('welcomeMessage')}
           </div>
           <h1 className="mx-auto max-w-3xl text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-5xl md:text-6xl">
-            Everything you need,{' '}
+            {t('heroTitlePart1')}{' '}
             <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
-              right here
+              {t('heroTitlePart2')}
             </span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-600 dark:text-gray-400">
-            A collection of powerful tools built to make your daily tasks easier.
-            Fast, free, and always available.
+            {t('heroSubtitle')}
           </p>
         </div>
       </section>
@@ -118,8 +120,8 @@ export function Dashboard() {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3 lg:grid-cols-4">
             {/* Currency Converter - Large card */}
             <ToolCard
-              title="Currency Converter"
-              description="Convert between major currencies with real-time exchange rates. Support for USD, VND, EUR, JPY, and GBP."
+              title={t('currency')}
+              description={t('currencyDesc')}
               icon={<Coins className="h-6 w-6 text-white" />}
               href="/tools/currency"
               color="bg-gradient-to-br from-green-500 to-emerald-600"
@@ -129,8 +131,8 @@ export function Dashboard() {
 
             {/* Dictionary - Medium card */}
             <ToolCard
-              title="English Dictionary"
-              description="Look up word definitions, pronunciations, examples, and more. Powered by free dictionary API."
+              title={t('dictionary')}
+              description={t('dictionaryDesc')}
               icon={<BookOpen className="h-6 w-6 text-white" />}
               href="/tools/dictionary"
               color="bg-gradient-to-br from-purple-500 to-pink-600"
@@ -140,8 +142,8 @@ export function Dashboard() {
 
             {/* Unit Converter - Medium card */}
             <ToolCard
-              title="Unit Converter"
-              description="Convert between different units of length and weight. Quick and accurate conversions."
+              title={t('unit')}
+              description={t('unitDesc')}
               icon={<Scale className="h-6 w-6 text-white" />}
               href="/tools/unit"
               color="bg-gradient-to-br from-orange-500 to-red-600"
@@ -161,10 +163,10 @@ export function Dashboard() {
                 <Zap className="h-6 w-6 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                Lightning Fast
+                {t('lightningFast')}
               </h3>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                Instant results with no delays. Built for speed and efficiency.
+                {t('lightningFastDesc')}
               </p>
             </div>
             <div className="text-center">
@@ -172,10 +174,10 @@ export function Dashboard() {
                 <Shield className="h-6 w-6 text-green-600 dark:text-green-400" />
               </div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                Privacy First
+                {t('privacyFirst')}
               </h3>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                No data collection. Your searches stay private.
+                {t('privacyFirstDesc')}
               </p>
             </div>
             <div className="text-center">
@@ -183,10 +185,10 @@ export function Dashboard() {
                 <Smartphone className="h-6 w-6 text-purple-600 dark:text-purple-400" />
               </div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                Mobile Friendly
+                {t('mobileFriendly')}
               </h3>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                Works perfectly on all devices and screen sizes.
+                {t('mobileFriendlyDesc')}
               </p>
             </div>
           </div>

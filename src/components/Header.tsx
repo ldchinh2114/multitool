@@ -6,42 +6,9 @@ import { cn } from '@/lib/cn';
 import { ToolInfo } from '@/lib/types';
 import { LayoutGrid, Coins, BookOpen, Ruler, Menu, X } from 'lucide-react';
 import { useState } from 'react';
-
-// Định nghĩa danh sách công cụ
-const TOOLS: ToolInfo[] = [
-  {
-    id: 'dashboard',
-    name: 'Dashboard',
-    description: 'Multi-Tool Hub Home',
-    icon: 'LayoutGrid',
-    path: '/',
-    color: 'bg-blue-500',
-  },
-  {
-    id: 'currency',
-    name: 'Currency Converter',
-    description: 'Real-time exchange rates',
-    icon: 'Coins',
-    path: '/tools/currency',
-    color: 'bg-green-500',
-  },
-  {
-    id: 'dictionary',
-    name: 'Dictionary',
-    description: 'English-English Dictionary',
-    icon: 'BookOpen',
-    path: '/tools/dictionary',
-    color: 'bg-purple-500',
-  },
-  {
-    id: 'unit',
-    name: 'Unit Converter',
-    description: 'Length & Weight conversion',
-    icon: 'Ruler',
-    path: '/tools/unit',
-    color: 'bg-orange-500',
-  },
-];
+import { useLanguage } from '@/lib/language-context';
+import { ThemeToggle } from './ThemeToggle';
+import { LanguageToggle } from './LanguageToggle';
 
 // Map icon names to components
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -51,13 +18,46 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   Ruler,
 };
 
-/**
- * Header - Thanh điều hướng chính
- * Sticky header với navigation menu
- */
 export function Header() {
+  const { t, language } = useLanguage();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Định nghĩa danh sách công cụ trong component để dùng t()
+  const TOOLS: ToolInfo[] = [
+    {
+      id: 'dashboard',
+      name: t('dashboard'),
+      description: language === 'vi' ? 'Trang chủ Multi-Tool' : 'Multi-Tool Hub Home',
+      icon: 'LayoutGrid',
+      path: '/',
+      color: 'bg-blue-500',
+    },
+    {
+      id: 'currency',
+      name: t('currency'),
+      description: language === 'vi' ? 'Tỷ giá hối đoái thời gian thực' : 'Real-time exchange rates',
+      icon: 'Coins',
+      path: '/tools/currency',
+      color: 'bg-green-500',
+    },
+    {
+      id: 'dictionary',
+      name: t('dictionary'),
+      description: language === 'vi' ? 'Từ điển Anh-Anh' : 'English-English Dictionary',
+      icon: 'BookOpen',
+      path: '/tools/dictionary',
+      color: 'bg-purple-500',
+    },
+    {
+      id: 'unit',
+      name: t('unit'),
+      description: language === 'vi' ? 'Chuyển đổi chiều dài và cân nặng' : 'Length & Weight conversion',
+      icon: 'Ruler',
+      path: '/tools/unit',
+      color: 'bg-orange-500',
+    },
+  ];
 
   const getIcon = (iconName: string) => {
     const IconComponent = ICON_MAP[iconName] || LayoutGrid;
@@ -110,6 +110,8 @@ export function Header() {
 
         {/* Right side: Mobile menu */}
         <div className="flex items-center gap-2">
+          <LanguageToggle />
+          <ThemeToggle />
           {/* Mobile menu button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
