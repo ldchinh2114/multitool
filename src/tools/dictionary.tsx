@@ -13,7 +13,6 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { cn } from '@/lib/cn';
-import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { useLanguage } from '@/lib/language-context';
 import { DictionaryResponse } from '@/lib/types';
@@ -22,8 +21,6 @@ import { debounce } from '@/lib/utils';
 const API_URL = 'https://api.dictionaryapi.dev/api/v2/entries/en/';
 const SUGGESTIONS_URL = 'https://api.datamuse.com/sug';
 const SYNONYMS_URL = 'https://api.datamuse.com/words';
-const DATAMUSE_DEFINITIONS_URL = 'https://api.datamuse.com/words';
-const WORDNIK_BASE_URL = 'https://api.wordnik.com/v4';
 
 /**
  * Translation Helper - Uses Google Translate's public endpoint
@@ -35,7 +32,7 @@ async function translateToVietnamese(text: string): Promise<string> {
     );
     if (!response.ok) throw new Error('Translation failed');
     const data = await response.json();
-    return data[0].map((item: any) => item[0]).join('');
+    return data[0].map((item: unknown) => (item as string[])[0]).join('');
   } catch (error) {
     console.error('Translation error:', error);
     return '';
@@ -48,27 +45,33 @@ async function translateToVietnamese(text: string): Promise<string> {
 function AudioPlayer({ audioUrl }: { audioUrl?: string }) {
   const { t } = useLanguage();
   const [isPlaying, setIsPlaying] = useState(false);
-  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // Use ref to manage audio - no setState in effect
   useEffect(() => {
+    // Clean up previous audio
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
+    
     if (audioUrl) {
-      setAudio(new Audio(audioUrl));
+      audioRef.current = new Audio(audioUrl);
     } else {
-      setAudio(null);
+      audioRef.current = null;
     }
   }, [audioUrl]);
 
   useEffect(() => {
-    if (!audio) return;
+    if (!audioRef.current) return;
     const handleEnded = () => setIsPlaying(false);
-    audio.addEventListener('ended', handleEnded);
-    return () => audio.removeEventListener('ended', handleEnded);
-  }, [audio]);
+    audioRef.current.addEventListener('ended', handleEnded);
+    return () => audioRef.current?.removeEventListener('ended', handleEnded);
+  }, []);
 
   const handlePlay = async () => {
-    if (!audio) return;
+    if (!audioRef.current) return;
     try {
-      await audio.play();
+      await audioRef.current.play();
       setIsPlaying(true);
     } catch (err) {
       console.error('Failed to play audio:', err);
@@ -106,7 +109,7 @@ function DefinitionCard({
 }) {
   const { t, language } = useLanguage();
   const [showTranslation, setShowTranslation] = useState(false);
-  const [translatedData, setTranslatedData] = useState<any[]>([]);
+  const [translatedData, setTranslatedData] = useState<{ definition: string; example: string | undefined }[]>([]);
   const [isTranslating, setIsTranslating] = useState(false);
 
   const handleTranslate = async () => {
@@ -212,10 +215,9 @@ function DictionaryContent() {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [synonyms, setSynonyms] = useState<string[]>([]);
-  const [phrasalVerbs, setPhrasalVerbs] = useState<string[]>([]);
-  const [loadingSynonyms, setLoadingSynonyms] = useState(false);
-  const [loadingPhrasalVerbs, setLoadingPhrasalVerbs] = useState(false);
-  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
+  // Loading states - used in callbacks but not displayed in UI
+  const [, setLoadingSuggestions] = useState(false);
+  const [, setLoadingSynonyms] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -245,7 +247,7 @@ function DictionaryContent() {
       const response = await fetch(`${SYNONYMS_URL}?rel_syn=${encodeURIComponent(term)}&max=10`);
       if (response.ok) {
         const results = await response.json();
-        setSynonyms(results.map((r: any) => r.word));
+        setSynonyms(results.map((r: { word: string }) => r.word));
       }
     } catch (err) { console.error(err); } finally { setLoadingSynonyms(false); }
   }, []);

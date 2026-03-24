@@ -8,7 +8,6 @@ import { useLanguage } from '@/lib/language-context';
 import {
   CURRENCIES,
   CurrencyCode,
-  CurrencyResponse,
 } from '@/lib/types';
 import { formatCurrency, formatTimestamp } from '@/lib/utils';
 

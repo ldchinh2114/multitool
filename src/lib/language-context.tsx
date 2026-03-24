@@ -234,6 +234,12 @@ const translations = {
 };
 
 function getInitialLanguage(): Language {
+  if (typeof window !== 'undefined') {
+    const saved = localStorage.getItem('language');
+    if (saved === 'en' || saved === 'vi') {
+      return saved;
+    }
+  }
   return 'vi';
 }
 
@@ -242,12 +248,7 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>(getInitialLanguage);
 
-  useLayoutEffect(() => {
-    const saved = localStorage.getItem('language');
-    if (saved === 'en' || saved === 'vi') {
-      setLanguageState(saved);
-    }
-  }, []);
+  // getInitialLanguage() handles localStorage read on mount
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);

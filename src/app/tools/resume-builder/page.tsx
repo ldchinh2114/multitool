@@ -385,7 +385,7 @@ export default function ResumeBuilder() {
                   </div>
                 ))}
                 {resumeData.work.length === 0 && (
-                  <p className="text-slate-500 text-center py-4">No work experience added yet. Click "Add" to add one.</p>
+                  <p className="text-slate-500 text-center py-4">No work experience added yet. Click &quot;Add&quot; to add one.</p>
                 )}
               </div>
             )}
@@ -458,7 +458,7 @@ export default function ResumeBuilder() {
                   </div>
                 ))}
                 {resumeData.projects.length === 0 && (
-                  <p className="text-slate-500 text-center py-4">No projects added yet. Click "Add" to add one.</p>
+                  <p className="text-slate-500 text-center py-4">No projects added yet. Click &quot;Add&quot; to add one.</p>
                 )}
               </div>
             )}
@@ -531,7 +531,7 @@ export default function ResumeBuilder() {
                   </div>
                 ))}
                 {resumeData.education.length === 0 && (
-                  <p className="text-slate-500 text-center py-4">No education added yet. Click "Add" to add one.</p>
+                  <p className="text-slate-500 text-center py-4">No education added yet. Click &quot;Add&quot; to add one.</p>
                 )}
               </div>
             )}

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Coins, BookOpen, Ruler, ArrowRight, Zap, Search, Scale, FileText } from 'lucide-react';
+import { Coins, BookOpen, ArrowRight, Zap, Scale, FileText } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useLanguage } from '@/lib/language-context';
 
