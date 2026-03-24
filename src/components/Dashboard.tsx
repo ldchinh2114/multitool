@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Coins, BookOpen, Ruler, ArrowRight, Zap, Search, Scale } from 'lucide-react';
+import { Coins, BookOpen, Ruler, ArrowRight, Zap, Search, Scale, FileText } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useLanguage } from '@/lib/language-context';
 
@@ -148,6 +148,17 @@ export function Dashboard() {
               href="/tools/unit"
               color="bg-gradient-to-br from-orange-500 to-red-600"
               gradient="from-orange-400 to-red-500"
+              size="medium"
+            />
+
+            {/* Resume Builder - Medium card */}
+            <ToolCard
+              title={t('resumeBuilder')}
+              description={t('resumeBuilderDesc')}
+              icon={<FileText className="h-6 w-6 text-white" />}
+              href="/tools/resume-builder"
+              color="bg-gradient-to-br from-blue-500 to-indigo-600"
+              gradient="from-blue-400 to-indigo-500"
               size="medium"
             />
           </div>
