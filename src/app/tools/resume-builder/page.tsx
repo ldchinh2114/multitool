@@ -17,12 +17,13 @@ import {
   Linkedin,
   Facebook,
   Trophy,
+  Award,
 } from 'lucide-react';
-import { ResumeData, WorkExperience, Project, Education, initialResumeData } from '@/lib/resume-types';
+import { ResumeData, WorkExperience, Project, Education, Certification, initialResumeData } from '@/lib/resume-types';
 import { cn } from '@/lib/cn';
 import { useLanguage } from '@/lib/language-context';
 
-type TabType = 'profile' | 'work' | 'projects' | 'education' | 'skills' | 'strengths';
+type TabType = 'profile' | 'work' | 'projects' | 'education' | 'certifications' | 'skills' | 'strengths';
 
 export default function ResumeBuilder() {
   const { t, language, setLanguage } = useLanguage();
@@ -124,6 +125,39 @@ export default function ResumeBuilder() {
     }));
   };
 
+  const addCertification = () => {
+    const newCertification: Certification = {
+      id: Date.now().toString(),
+      name: '',
+      issuer: '',
+      issueDate: '',
+      expirationDate: '',
+      credentialId: '',
+      credentialUrl: '',
+      description: '',
+    };
+    setResumeData((prev) => ({
+      ...prev,
+      certifications: [...prev.certifications, newCertification],
+    }));
+  };
+
+  const updateCertification = (id: string, field: keyof Certification, value: string) => {
+    setResumeData((prev) => ({
+      ...prev,
+      certifications: prev.certifications.map((item) =>
+        item.id === id ? { ...item, [field]: value } : item
+      ),
+    }));
+  };
+
+  const deleteCertification = (id: string) => {
+    setResumeData((prev) => ({
+      ...prev,
+      certifications: prev.certifications.filter((item) => item.id !== id),
+    }));
+  };
+
   const handleSkillsChange = (value: string) => {
     setResumeData((prev) => ({
       ...prev,
@@ -150,6 +184,7 @@ export default function ResumeBuilder() {
     { id: 'work' as TabType, label: t('work'), icon: Briefcase },
     { id: 'projects' as TabType, label: t('projects'), icon: Code },
     { id: 'education' as TabType, label: t('education'), icon: GraduationCap },
+    { id: 'certifications' as TabType, label: t('certifications'), icon: Award },
     { id: 'skills' as TabType, label: t('skills'), icon: Sparkles },
     { id: 'strengths' as TabType, label: t('strengths'), icon: Trophy },
   ];
@@ -300,7 +335,7 @@ export default function ResumeBuilder() {
                       onChange={(e) => updateProfile('summary', e.target.value)}
                       rows={4}
                       className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
-                      placeholder="Write a brief summary of your professional background..."
+                      placeholder={t('selfSummaryPlaceholder')}
                     />
                   </div>
                 </div>
@@ -337,7 +372,7 @@ export default function ResumeBuilder() {
                         value={work.company}
                         onChange={(e) => updateWorkExperience(work.id, 'company', e.target.value)}
                         className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                        placeholder="Company Name"
+                        placeholder={t('company')}
                       />
                     </div>
                     <div>
@@ -347,12 +382,12 @@ export default function ResumeBuilder() {
                         value={work.position}
                         onChange={(e) => updateWorkExperience(work.id, 'position', e.target.value)}
                         className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                        placeholder="Job Title"
+                        placeholder={t('jobTitle')}
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">Start Date</label>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('startDate')}</label>
                         <input
                           type="text"
                           value={work.startDate}
@@ -362,13 +397,13 @@ export default function ResumeBuilder() {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">End Date</label>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('endDate')}</label>
                         <input
                           type="text"
                           value={work.endDate}
                           onChange={(e) => updateWorkExperience(work.id, 'endDate', e.target.value)}
                           className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                          placeholder="Present"
+                          placeholder={t('present')}
                         />
                       </div>
                     </div>
@@ -379,7 +414,7 @@ export default function ResumeBuilder() {
                         onChange={(e) => updateWorkExperience(work.id, 'description', e.target.value)}
                         rows={3}
                         className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
-                        placeholder="Describe your responsibilities and achievements..."
+                        placeholder={t('workDescriptionPlaceholder')}
                       />
                     </div>
                   </div>
@@ -414,18 +449,18 @@ export default function ResumeBuilder() {
                       </button>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1">Project Name</label>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">{t('projectName')}</label>
                       <input
                         type="text"
                         value={project.name}
                         onChange={(e) => updateProject(project.id, 'name', e.target.value)}
                         className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                        placeholder="Project Name"
+                        placeholder={t('projectName')}
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">Date/Period</label>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('datePeriod')}</label>
                         <input
                           type="text"
                           value={project.date}
@@ -446,13 +481,13 @@ export default function ResumeBuilder() {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">{t('description')}</label>
                       <textarea
                         value={project.description}
                         onChange={(e) => updateProject(project.id, 'description', e.target.value)}
                         rows={3}
                         className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
-                        placeholder="Describe the project and your contributions..."
+                        placeholder={t('projectDescriptionPlaceholder')}
                       />
                     </div>
                   </div>
@@ -487,28 +522,28 @@ export default function ResumeBuilder() {
                       </button>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1">School/University</label>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">{t('schoolUniversity')}</label>
                       <input
                         type="text"
                         value={edu.school}
                         onChange={(e) => updateEducation(edu.id, 'school', e.target.value)}
                         className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                        placeholder="University Name"
+                        placeholder={t('schoolPlaceholder')}
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1">Degree</label>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">{t('degree')}</label>
                       <input
                         type="text"
                         value={edu.degree}
                         onChange={(e) => updateEducation(edu.id, 'degree', e.target.value)}
                         className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                        placeholder="Bachelor of Science in..."
+                        placeholder={t('degreePlaceholder')}
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">Start Date</label>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('startDate')}</label>
                         <input
                           type="text"
                           value={edu.startDate}
@@ -518,7 +553,7 @@ export default function ResumeBuilder() {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">End Date</label>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('endDate')}</label>
                         <input
                           type="text"
                           value={edu.endDate}
@@ -531,7 +566,112 @@ export default function ResumeBuilder() {
                   </div>
                 ))}
                 {resumeData.education.length === 0 && (
-                  <p className="text-slate-500 text-center py-4">No education added yet. Click &quot;Add&quot; to add one.</p>
+                  <p className="text-slate-500 text-center py-4">{t('noEducationYet')}</p>
+                )}
+              </div>
+            )}
+
+            {/* Certifications Tab */}
+            {activeTab === 'certifications' && (
+              <div className="space-y-4 animate-in fade-in slide-in-from-right-2 duration-200">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-slate-800">{t('certifications')}</h3>
+                  <button
+                    onClick={addCertification}
+                    className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 font-medium"
+                  >
+                    <Plus size={16} /> {t('add')}
+                  </button>
+                </div>
+                {resumeData.certifications.map((cert, index) => (
+                  <div key={cert.id} className="border border-slate-200 rounded-lg p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-slate-500">{t('certificationName')} {index + 1}</span>
+                      <button
+                        onClick={() => deleteCertification(cert.id)}
+                        className="text-red-500 hover:text-red-600 p-1"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">{t('certificationName')}</label>
+                      <input
+                        type="text"
+                        value={cert.name}
+                        onChange={(e) => updateCertification(cert.id, 'name', e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                        placeholder={t('certificationName')}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">{t('issuer')}</label>
+                      <input
+                        type="text"
+                        value={cert.issuer}
+                        onChange={(e) => updateCertification(cert.id, 'issuer', e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                        placeholder={t('issuer')}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('issueDate')}</label>
+                        <input
+                          type="text"
+                          value={cert.issueDate}
+                          onChange={(e) => updateCertification(cert.id, 'issueDate', e.target.value)}
+                          className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                          placeholder="2023-03"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('expirationDate')}</label>
+                        <input
+                          type="text"
+                          value={cert.expirationDate}
+                          onChange={(e) => updateCertification(cert.id, 'expirationDate', e.target.value)}
+                          className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                          placeholder="2025-03"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('credentialId')}</label>
+                        <input
+                          type="text"
+                          value={cert.credentialId}
+                          onChange={(e) => updateCertification(cert.id, 'credentialId', e.target.value)}
+                          className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                          placeholder={t('credentialId')}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('credentialUrl')}</label>
+                        <input
+                          type="text"
+                          value={cert.credentialUrl}
+                          onChange={(e) => updateCertification(cert.id, 'credentialUrl', e.target.value)}
+                          className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                          placeholder="https://..."
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">{t('certificationDescription')}</label>
+                      <textarea
+                        value={cert.description}
+                        onChange={(e) => updateCertification(cert.id, 'description', e.target.value)}
+                        rows={3}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
+                        placeholder={t('certificationDescription')}
+                      />
+                    </div>
+                  </div>
+                ))}
+                {resumeData.certifications.length === 0 && (
+                  <p className="text-slate-500 text-center py-4">{t('noCertificationsYet')}</p>
                 )}
               </div>
             )}
@@ -623,7 +763,7 @@ export default function ResumeBuilder() {
                     {resumeData.profile.name || 'Your Name'}
                   </h1>
                   <p className="text-xl text-blue-600 font-medium">
-                    {resumeData.profile.title || 'Job Title'}
+                    {resumeData.profile.title || t('jobTitle')}
                   </p>
                 </div>
                 {/* Contact Info - Horizontal row with dividers */}
@@ -779,11 +919,51 @@ export default function ResumeBuilder() {
                       <div className="space-y-3">
                         {resumeData.education.filter(e => e.school || e.degree).map((edu) => (
                           <div key={edu.id}>
-                            <h3 className="font-semibold text-slate-900 text-sm">{edu.degree || 'Degree'}</h3>
-                            <p className="text-blue-600 text-sm">{edu.school || 'School'}</p>
+                            <h3 className="font-semibold text-slate-900 text-sm">{edu.degree || t('degree')}</h3>
+                            <p className="text-blue-600 text-sm">{edu.school || t('school')}</p>
                             <p className="text-xs text-slate-500 mt-1">
                               {edu.startDate && edu.endDate ? `${edu.startDate} - ${edu.endDate}` : ''}
                             </p>
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+                  )}
+
+                  {/* Certifications */}
+                  {resumeData.certifications.length > 0 && resumeData.certifications.some(c => c.name || c.issuer) && (
+                    <section>
+                      <h2 className="text-lg font-bold text-slate-800 mb-3 uppercase tracking-wide border-b border-slate-300 pb-1">
+                        {t('certifications')}
+                      </h2>
+                      <div className="space-y-3">
+                        {resumeData.certifications.filter(c => c.name || c.issuer).map((cert) => (
+                          <div key={cert.id}>
+                            <h3 className="font-semibold text-slate-900 text-sm">{cert.name || 'Certification'}</h3>
+                            <p className="text-blue-600 text-sm">{cert.issuer || 'Issuer'}</p>
+                            <p className="text-xs text-slate-500 mt-1">
+                              {cert.issueDate && `${cert.issueDate}${cert.expirationDate ? ' - ' + cert.expirationDate : ''}`}
+                            </p>
+                            {cert.credentialId && (
+                              <p className="text-xs text-slate-600 mt-1">
+                                ID: {cert.credentialId}
+                              </p>
+                            )}
+                            {cert.credentialUrl && (
+                              <a
+                                href={cert.credentialUrl.startsWith('http') ? cert.credentialUrl : `https://${cert.credentialUrl}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 text-xs hover:underline"
+                              >
+                                {t('credentialUrl')}
+                              </a>
+                            )}
+                            {cert.description && (
+                              <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                                {cert.description}
+                              </p>
+                            )}
                           </div>
                         ))}
                       </div>

@@ -13,6 +13,7 @@ export interface ResumeData {
   work: WorkExperience[];
   projects: Project[];
   education: Education[];
+  certifications: Certification[];
   skills: string;
 }
 
@@ -39,6 +40,17 @@ export interface Education {
   degree: string;
   startDate: string;
   endDate: string;
+}
+
+export interface Certification {
+  id: string;
+  name: string;
+  issuer: string;
+  issueDate: string;
+  expirationDate: string;
+  credentialId: string;
+  credentialUrl: string;
+  description: string;
 }
 
 export const initialResumeData: ResumeData = {
@@ -81,5 +93,6 @@ export const initialResumeData: ResumeData = {
       endDate: 'End date',
     },
   ],
+  certifications: [],
   skills: 'Type your skill 1, Type your skill 2, Type your skill 3',
 };
