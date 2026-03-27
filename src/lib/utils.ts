@@ -31,6 +31,10 @@ export function formatCurrency(amount: number, currency: CurrencyCode): string {
     EUR: 'de-DE',
     JPY: 'ja-JP',
     GBP: 'en-GB',
+    CNY: 'zh-CN',
+    KRW: 'ko-KR',
+    HKD: 'zh-HK',
+    TWD: 'zh-TW',
   };
   
   return new Intl.NumberFormat(localeMap[currency], {

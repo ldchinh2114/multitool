@@ -24,7 +24,7 @@ export interface CurrencyResponse {
   rates: CurrencyRate;
 }
 
-export type CurrencyCode = 'USD' | 'VND' | 'EUR' | 'JPY' | 'GBP';
+export type CurrencyCode = 'USD' | 'VND' | 'EUR' | 'JPY' | 'GBP' | 'CNY' | 'KRW' | 'HKD' | 'TWD';
 
 export const CURRENCIES: { code: CurrencyCode; name: string; symbol: string }[] = [
   { code: 'USD', name: 'US Dollar', symbol: '$' },
@@ -32,6 +32,10 @@ export const CURRENCIES: { code: CurrencyCode; name: string; symbol: string }[] 
   { code: 'EUR', name: 'Euro', symbol: '€' },
   { code: 'JPY', name: 'Japanese Yen', symbol: '¥' },
   { code: 'GBP', name: 'British Pound', symbol: '£' },
+  { code: 'CNY', name: 'Chinese Yuan', symbol: '¥' },
+  { code: 'KRW', name: 'South Korean Won', symbol: '₩' },
+  { code: 'HKD', name: 'Hong Kong Dollar', symbol: 'HK$' },
+  { code: 'TWD', name: 'Taiwan New Dollar', symbol: 'NT$' },
 ];
 
 // Dictionary types
