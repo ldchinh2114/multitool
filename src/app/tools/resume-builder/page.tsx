@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   User,
   Briefcase,
@@ -25,6 +25,11 @@ import { useLanguage } from '@/lib/language-context';
 
 type TabType = 'profile' | 'work' | 'projects' | 'education' | 'certifications' | 'skills' | 'strengths';
 
+const STORAGE_KEY = 'resume-builder-data';
+const STRENGTHS_STORAGE_KEY = 'resume-builder-strengths';
+const TIMESTAMP_KEY = 'resume-builder-timestamp';
+const ONE_HOUR_MS = 60 * 60 * 1000; // 1 hour in milliseconds
+
 export default function ResumeBuilder() {
   const { t, language, setLanguage } = useLanguage();
   const [resumeData, setResumeData] = useState<ResumeData>(initialResumeData);
@@ -32,6 +37,57 @@ export default function ResumeBuilder() {
   const [strengths, setStrengths] = useState<string>(
     'Type your strength 1, Type your strength 2, Type your strength 3, Type your strength 4'
   );
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // Load data from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedTimestamp = localStorage.getItem(TIMESTAMP_KEY);
+      const currentTime = Date.now();
+      
+      // Check if data has expired (older than 1 hour)
+      if (savedTimestamp) {
+        const timestamp = parseInt(savedTimestamp, 10);
+        if (currentTime - timestamp > ONE_HOUR_MS) {
+          // Data has expired, clear it
+          localStorage.removeItem(STORAGE_KEY);
+          localStorage.removeItem(STRENGTHS_STORAGE_KEY);
+          localStorage.removeItem(TIMESTAMP_KEY);
+          setIsLoaded(true);
+          return;
+        }
+      }
+      
+      const savedData = localStorage.getItem(STORAGE_KEY);
+      const savedStrengths = localStorage.getItem(STRENGTHS_STORAGE_KEY);
+      
+      if (savedData) {
+        const parsedData = JSON.parse(savedData);
+        setResumeData(parsedData);
+      }
+      
+      if (savedStrengths) {
+        setStrengths(savedStrengths);
+      }
+    } catch (error) {
+      console.error('Error loading resume data from localStorage:', error);
+    } finally {
+      setIsLoaded(true);
+    }
+  }, []);
+
+  // Save data to localStorage whenever it changes
+  useEffect(() => {
+    if (!isLoaded) return;
+    
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(resumeData));
+      localStorage.setItem(STRENGTHS_STORAGE_KEY, strengths);
+      localStorage.setItem(TIMESTAMP_KEY, Date.now().toString());
+    } catch (error) {
+      console.error('Error saving resume data to localStorage:', error);
+    }
+  }, [resumeData, strengths, isLoaded]);
 
   const updateProfile = (field: keyof ResumeData['profile'], value: string) => {
     setResumeData((prev) => ({
