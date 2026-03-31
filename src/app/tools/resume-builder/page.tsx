@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { pdf } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
 import {
   User,
   Briefcase,
@@ -22,6 +24,21 @@ import {
 import { ResumeData, WorkExperience, Project, Education, Certification, initialResumeData } from '@/lib/resume-types';
 import { cn } from '@/lib/cn';
 import { useLanguage } from '@/lib/language-context';
+
+// Register Be Vietnam Pro font for Vietnamese support
+Font.register({
+  family: 'Be Vietnam Pro',
+  fonts: [
+    {
+      src: '/font/BeVietnamPro-Regular.ttf',
+      fontWeight: 400,
+    },
+    {
+      src: '/font/BeVietnamPro-Bold.ttf',
+      fontWeight: 700,
+    },
+  ],
+});
 
 type TabType = 'profile' | 'work' | 'projects' | 'education' | 'certifications' | 'skills' | 'strengths';
 
@@ -221,8 +238,258 @@ export default function ResumeBuilder() {
     }));
   };
 
-  const handleDownload = () => {
-    window.print();
+  const styles = StyleSheet.create({
+    page: {
+      padding: 40,
+      fontFamily: 'Be Vietnam Pro',
+    },
+    header: {
+      marginBottom: 20,
+      borderBottomWidth: 2,
+      borderBottomColor: '#1e293b',
+      paddingBottom: 15,
+    },
+    name: {
+      fontSize: 28,
+      fontWeight: 'bold',
+      color: '#0f172a',
+      textAlign: 'center',
+      marginBottom: 5,
+    },
+    title: {
+      fontSize: 16,
+      color: '#2563eb',
+      textAlign: 'center',
+      marginBottom: 10,
+    },
+    contactInfo: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      flexWrap: 'wrap',
+      gap: 15,
+    },
+    contactItem: {
+      fontSize: 9,
+      color: '#475569',
+    },
+    columns: {
+      flexDirection: 'row',
+      gap: 20,
+    },
+    leftColumn: {
+      flex: 2,
+    },
+    rightColumn: {
+      flex: 1,
+    },
+    section: {
+      marginBottom: 15,
+    },
+    sectionHeader: {
+      fontSize: 11,
+      fontWeight: 'bold',
+      color: '#1e293b',
+      marginBottom: 8,
+      borderBottomWidth: 0.5,
+      borderBottomColor: '#94a3b8',
+      paddingBottom: 3,
+    },
+    bodyText: {
+      fontSize: 10,
+      color: '#334155',
+      lineHeight: 1.5,
+    },
+    entry: {
+      marginBottom: 10,
+    },
+    entryTitle: {
+      fontSize: 11,
+      fontWeight: 'bold',
+      color: '#0f172a',
+      marginBottom: 2,
+    },
+    entrySubtitle: {
+      fontSize: 10,
+      color: '#2563eb',
+      marginBottom: 2,
+    },
+    entryDate: {
+      fontSize: 9,
+      color: '#64748b',
+      marginBottom: 2,
+    },
+    entryLink: {
+      fontSize: 9,
+      color: '#2563eb',
+      marginBottom: 2,
+    },
+    entryDescription: {
+      fontSize: 9,
+      color: '#334155',
+      lineHeight: 1.4,
+      marginTop: 3,
+    },
+    entrySmall: {
+      fontSize: 8,
+      color: '#475569',
+      marginBottom: 2,
+    },
+    skillsContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 5,
+    },
+    skill: {
+      fontSize: 9,
+      color: '#334155',
+      backgroundColor: '#f1f5f9',
+      padding: '3 6',
+      borderRadius: 3,
+    },
+    strength: {
+      fontSize: 9,
+      color: '#334155',
+      marginBottom: 4,
+      lineHeight: 1.4,
+    },
+  });
+
+  const handleDownload = async () => {
+    const ResumeDocument = (
+      <Document>
+        <Page size="A4" style={styles.page}>
+          {/* Header */}
+          <View style={styles.header}>
+            <Text style={styles.name}>{resumeData.profile.name || 'Your Name'}</Text>
+            <Text style={styles.title}>{resumeData.profile.title || 'Job Title'}</Text>
+            <View style={styles.contactInfo}>
+              {resumeData.profile.email && <Text style={styles.contactItem}>{resumeData.profile.email}</Text>}
+              {resumeData.profile.phone && <Text style={styles.contactItem}>{resumeData.profile.phone}</Text>}
+              {resumeData.profile.location && <Text style={styles.contactItem}>{resumeData.profile.location}</Text>}
+              {resumeData.profile.website && <Text style={styles.contactItem}>{resumeData.profile.website}</Text>}
+              {resumeData.profile.linkedin && <Text style={styles.contactItem}>{resumeData.profile.linkedin}</Text>}
+              {resumeData.profile.facebook && <Text style={styles.contactItem}>{resumeData.profile.facebook}</Text>}
+            </View>
+          </View>
+
+          {/* Two Column Layout */}
+          <View style={styles.columns}>
+            {/* Left Column */}
+            <View style={styles.leftColumn}>
+              {/* Summary */}
+              {resumeData.profile.summary && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionHeader}>{t('selfSummary').toUpperCase()}</Text>
+                  <Text style={styles.bodyText}>{resumeData.profile.summary}</Text>
+                </View>
+              )}
+
+              {/* Work Experience */}
+              {resumeData.work.length > 0 && resumeData.work.some(w => w.company || w.position) && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionHeader}>{t('workExperience').toUpperCase()}</Text>
+                  {resumeData.work.filter(w => w.company || w.position).map((work) => (
+                    <View key={work.id} style={styles.entry}>
+                      <Text style={styles.entryTitle}>{work.position || 'Position'}</Text>
+                      <Text style={styles.entrySubtitle}>{work.company || 'Company'}</Text>
+                      {work.startDate && work.endDate && (
+                        <Text style={styles.entryDate}>{work.startDate} - {work.endDate}</Text>
+                      )}
+                      {work.description && <Text style={styles.entryDescription}>{work.description}</Text>}
+                    </View>
+                  ))}
+                </View>
+              )}
+
+              {/* Projects */}
+              {resumeData.projects.length > 0 && resumeData.projects.some(p => p.name) && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionHeader}>{t('projects').toUpperCase()}</Text>
+                  {resumeData.projects.filter(p => p.name).map((project) => (
+                    <View key={project.id} style={styles.entry}>
+                      <Text style={styles.entryTitle}>{project.name}</Text>
+                      {project.date && <Text style={styles.entryDate}>{project.date}</Text>}
+                      {project.link && <Text style={styles.entryLink}>{project.link}</Text>}
+                      {project.description && <Text style={styles.entryDescription}>{project.description}</Text>}
+                    </View>
+                  ))}
+                </View>
+              )}
+            </View>
+
+            {/* Right Column */}
+            <View style={styles.rightColumn}>
+              {/* Skills */}
+              {skillsArray.length > 0 && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionHeader}>{t('skills').toUpperCase()}</Text>
+                  <View style={styles.skillsContainer}>
+                    {skillsArray.map((skill, index) => (
+                      <Text key={index} style={styles.skill}>{skill}</Text>
+                    ))}
+                  </View>
+                </View>
+              )}
+
+              {/* Education */}
+              {resumeData.education.length > 0 && resumeData.education.some(e => e.school || e.degree) && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionHeader}>{t('education').toUpperCase()}</Text>
+                  {resumeData.education.filter(e => e.school || e.degree).map((edu) => (
+                    <View key={edu.id} style={styles.entry}>
+                      <Text style={styles.entryTitle}>{edu.degree || 'Degree'}</Text>
+                      <Text style={styles.entrySubtitle}>{edu.school || 'School'}</Text>
+                      {edu.startDate && edu.endDate && (
+                        <Text style={styles.entryDate}>{edu.startDate} - {edu.endDate}</Text>
+                      )}
+                    </View>
+                  ))}
+                </View>
+              )}
+
+              {/* Certifications */}
+              {resumeData.certifications.length > 0 && resumeData.certifications.some(c => c.name || c.issuer) && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionHeader}>{t('certifications').toUpperCase()}</Text>
+                  {resumeData.certifications.filter(c => c.name || c.issuer).map((cert) => (
+                    <View key={cert.id} style={styles.entry}>
+                      <Text style={styles.entryTitle}>{cert.name || 'Certification'}</Text>
+                      <Text style={styles.entrySubtitle}>{cert.issuer || 'Issuer'}</Text>
+                      {cert.issueDate && (
+                        <Text style={styles.entryDate}>
+                          {cert.issueDate}{cert.expirationDate ? ` - ${cert.expirationDate}` : ''}
+                        </Text>
+                      )}
+                      {cert.credentialId && <Text style={styles.entrySmall}>ID: {cert.credentialId}</Text>}
+                      {cert.credentialUrl && <Text style={styles.entryLink}>{cert.credentialUrl}</Text>}
+                      {cert.description && <Text style={styles.entryDescription}>{cert.description}</Text>}
+                    </View>
+                  ))}
+                </View>
+              )}
+
+              {/* Strengths */}
+              {strengthsArray.length > 0 && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionHeader}>{t('strengths').toUpperCase()}</Text>
+                  {strengthsArray.map((strength, index) => (
+                    <Text key={index} style={styles.strength}>• {strength}</Text>
+                  ))}
+                </View>
+              )}
+            </View>
+          </View>
+        </Page>
+      </Document>
+    );
+
+    const blob = await pdf(ResumeDocument).toBlob();
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'resume.pdf';
+    link.click();
+    URL.revokeObjectURL(url);
   };
 
   const skillsArray = resumeData.skills
