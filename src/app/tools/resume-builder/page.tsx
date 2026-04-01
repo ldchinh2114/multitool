@@ -12,12 +12,6 @@ import {
   Plus,
   Trash2,
   Download,
-  Mail,
-  Phone,
-  MapPin,
-  Globe,
-  Linkedin,
-  Facebook,
   Trophy,
   Award,
 } from 'lucide-react';
@@ -363,12 +357,12 @@ export default function ResumeBuilder() {
             <Text style={styles.name}>{resumeData.profile.name || 'Your Name'}</Text>
             <Text style={styles.title}>{resumeData.profile.title || 'Job Title'}</Text>
             <View style={styles.contactInfo}>
-              {resumeData.profile.email && <Text style={styles.contactItem}>{resumeData.profile.email}</Text>}
-              {resumeData.profile.phone && <Text style={styles.contactItem}>{resumeData.profile.phone}</Text>}
-              {resumeData.profile.location && <Text style={styles.contactItem}>{resumeData.profile.location}</Text>}
-              {resumeData.profile.website && <Text style={styles.contactItem}>{resumeData.profile.website}</Text>}
-              {resumeData.profile.linkedin && <Text style={styles.contactItem}>{resumeData.profile.linkedin}</Text>}
-              {resumeData.profile.facebook && <Text style={styles.contactItem}>{resumeData.profile.facebook}</Text>}
+              {resumeData.profile.email && <Text style={styles.contactItem}>Email: {resumeData.profile.email}</Text>}
+              {resumeData.profile.phone && <Text style={styles.contactItem}>Phone: {resumeData.profile.phone}</Text>}
+              {resumeData.profile.location && <Text style={styles.contactItem}>Location: {resumeData.profile.location}</Text>}
+              {resumeData.profile.website && <Text style={styles.contactItem}>Website: {resumeData.profile.website}</Text>}
+              {resumeData.profile.linkedin && <Text style={styles.contactItem}>LinkedIn: {resumeData.profile.linkedin}</Text>}
+              {resumeData.profile.facebook && <Text style={styles.contactItem}>Facebook: {resumeData.profile.facebook}</Text>}
             </View>
           </View>
 
@@ -1093,37 +1087,37 @@ export default function ResumeBuilder() {
                 <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-slate-600">
                   {resumeData.profile.email && (
                     <span className="flex items-center gap-1">
-                      <Mail size={14} className="text-blue-600" />
+                      <span className="text-blue-600 font-medium">Email:</span>
                       {resumeData.profile.email}
                     </span>
                   )}
                   {resumeData.profile.phone && (
                     <span className="flex items-center gap-1">
-                      <Phone size={14} className="text-blue-600" />
+                      <span className="text-blue-600 font-medium">Phone:</span>
                       {resumeData.profile.phone}
                     </span>
                   )}
                   {resumeData.profile.location && (
                     <span className="flex items-center gap-1">
-                      <MapPin size={14} className="text-blue-600" />
+                      <span className="text-blue-600 font-medium">Location:</span>
                       {resumeData.profile.location}
                     </span>
                   )}
                   {resumeData.profile.website && (
                     <span className="flex items-center gap-1">
-                      <Globe size={14} className="text-blue-600" />
+                      <span className="text-blue-600 font-medium">Website:</span>
                       {resumeData.profile.website}
                     </span>
                   )}
                   {resumeData.profile.linkedin && (
                     <span className="flex items-center gap-1">
-                      <Linkedin size={14} className="text-blue-600" />
+                      <span className="text-blue-600 font-medium">LinkedIn:</span>
                       {resumeData.profile.linkedin}
                     </span>
                   )}
                   {resumeData.profile.facebook && (
                     <span className="flex items-center gap-1">
-                      <Facebook size={14} className="text-blue-600" />
+                      <span className="text-blue-600 font-medium">Facebook:</span>
                       {resumeData.profile.facebook}
                     </span>
                   )}
