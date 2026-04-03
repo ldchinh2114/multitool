@@ -266,6 +266,11 @@ export default function ResumeBuilder() {
       fontSize: 9,
       color: '#475569',
     },
+    contactLabel: {
+      fontSize: 9,
+      fontWeight: 'bold',
+      color: '#2563eb',
+    },
     columns: {
       flexDirection: 'row',
       gap: 20,
@@ -354,15 +359,15 @@ export default function ResumeBuilder() {
         <Page size="A4" style={styles.page}>
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.name}>{resumeData.profile.name || 'Your Name'}</Text>
-            <Text style={styles.title}>{resumeData.profile.title || 'Job Title'}</Text>
+            <Text style={styles.name}>{resumeData.profile.name || t('yourName')}</Text>
+            <Text style={styles.title}>{resumeData.profile.title || t('jobTitleFallback')}</Text>
             <View style={styles.contactInfo}>
-              {resumeData.profile.email && <Text style={styles.contactItem}>Email: {resumeData.profile.email}</Text>}
-              {resumeData.profile.phone && <Text style={styles.contactItem}>Phone: {resumeData.profile.phone}</Text>}
-              {resumeData.profile.location && <Text style={styles.contactItem}>Location: {resumeData.profile.location}</Text>}
-              {resumeData.profile.website && <Text style={styles.contactItem}>Website: {resumeData.profile.website}</Text>}
-              {resumeData.profile.linkedin && <Text style={styles.contactItem}>LinkedIn: {resumeData.profile.linkedin}</Text>}
-              {resumeData.profile.facebook && <Text style={styles.contactItem}>Facebook: {resumeData.profile.facebook}</Text>}
+              {resumeData.profile.email && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('emailLabel')}</Text> {resumeData.profile.email}</Text>}
+              {resumeData.profile.phone && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('phoneLabel')}</Text> {resumeData.profile.phone}</Text>}
+              {resumeData.profile.location && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('locationLabel')}</Text> {resumeData.profile.location}</Text>}
+              {resumeData.profile.website && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('websiteLabel')}</Text> {resumeData.profile.website}</Text>}
+              {resumeData.profile.linkedin && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('linkedinLabel')}</Text> {resumeData.profile.linkedin}</Text>}
+              {resumeData.profile.facebook && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('facebookLabel')}</Text> {resumeData.profile.facebook}</Text>}
             </View>
           </View>
 
@@ -384,8 +389,8 @@ export default function ResumeBuilder() {
                   <Text style={styles.sectionHeader}>{t('workExperience').toUpperCase()}</Text>
                   {resumeData.work.filter(w => w.company || w.position).map((work) => (
                     <View key={work.id} style={styles.entry}>
-                      <Text style={styles.entryTitle}>{work.position || 'Position'}</Text>
-                      <Text style={styles.entrySubtitle}>{work.company || 'Company'}</Text>
+                      <Text style={styles.entryTitle}>{work.position || t('positionFallback')}</Text>
+                      <Text style={styles.entrySubtitle}>{work.company || t('companyFallback')}</Text>
                       {work.startDate && work.endDate && (
                         <Text style={styles.entryDate}>{work.startDate} - {work.endDate}</Text>
                       )}
@@ -431,8 +436,8 @@ export default function ResumeBuilder() {
                   <Text style={styles.sectionHeader}>{t('education').toUpperCase()}</Text>
                   {resumeData.education.filter(e => e.school || e.degree).map((edu) => (
                     <View key={edu.id} style={styles.entry}>
-                      <Text style={styles.entryTitle}>{edu.degree || 'Degree'}</Text>
-                      <Text style={styles.entrySubtitle}>{edu.school || 'School'}</Text>
+                      <Text style={styles.entryTitle}>{edu.degree || t('degreeFallback')}</Text>
+                      <Text style={styles.entrySubtitle}>{edu.school || t('schoolFallback')}</Text>
                       {edu.startDate && edu.endDate && (
                         <Text style={styles.entryDate}>{edu.startDate} - {edu.endDate}</Text>
                       )}
@@ -447,8 +452,8 @@ export default function ResumeBuilder() {
                   <Text style={styles.sectionHeader}>{t('certifications').toUpperCase()}</Text>
                   {resumeData.certifications.filter(c => c.name || c.issuer).map((cert) => (
                     <View key={cert.id} style={styles.entry}>
-                      <Text style={styles.entryTitle}>{cert.name || 'Certification'}</Text>
-                      <Text style={styles.entrySubtitle}>{cert.issuer || 'Issuer'}</Text>
+                      <Text style={styles.entryTitle}>{cert.name || t('certificationFallback')}</Text>
+                      <Text style={styles.entrySubtitle}>{cert.issuer || t('issuerFallback')}</Text>
                       {cert.issueDate && (
                         <Text style={styles.entryDate}>
                           {cert.issueDate}{cert.expirationDate ? ` - ${cert.expirationDate}` : ''}
@@ -486,6 +491,140 @@ export default function ResumeBuilder() {
     URL.revokeObjectURL(url);
   };
 
+  const handlePreview = async () => {
+    const ResumeDocument = (
+      <Document>
+        <Page size="A4" style={styles.page}>
+          {/* Header */}
+          <View style={styles.header}>
+            <Text style={styles.name}>{resumeData.profile.name || t('yourName')}</Text>
+            <Text style={styles.title}>{resumeData.profile.title || t('jobTitleFallback')}</Text>
+            <View style={styles.contactInfo}>
+              {resumeData.profile.email && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('emailLabel')}</Text> {resumeData.profile.email}</Text>}
+              {resumeData.profile.phone && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('phoneLabel')}</Text> {resumeData.profile.phone}</Text>}
+              {resumeData.profile.location && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('locationLabel')}</Text> {resumeData.profile.location}</Text>}
+              {resumeData.profile.website && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('websiteLabel')}</Text> {resumeData.profile.website}</Text>}
+              {resumeData.profile.linkedin && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('linkedinLabel')}</Text> {resumeData.profile.linkedin}</Text>}
+              {resumeData.profile.facebook && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('facebookLabel')}</Text> {resumeData.profile.facebook}</Text>}
+            </View>
+          </View>
+
+          {/* Two Column Layout */}
+          <View style={styles.columns}>
+            {/* Left Column */}
+            <View style={styles.leftColumn}>
+              {/* Summary */}
+              {resumeData.profile.summary && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionHeader}>{t('selfSummary').toUpperCase()}</Text>
+                  <Text style={styles.bodyText}>{resumeData.profile.summary}</Text>
+                </View>
+              )}
+
+              {/* Work Experience */}
+              {resumeData.work.length > 0 && resumeData.work.some(w => w.company || w.position) && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionHeader}>{t('workExperience').toUpperCase()}</Text>
+                  {resumeData.work.filter(w => w.company || w.position).map((work) => (
+                    <View key={work.id} style={styles.entry}>
+                      <Text style={styles.entryTitle}>{work.position || t('positionFallback')}</Text>
+                      <Text style={styles.entrySubtitle}>{work.company || t('companyFallback')}</Text>
+                      {work.startDate && work.endDate && (
+                        <Text style={styles.entryDate}>{work.startDate} - {work.endDate}</Text>
+                      )}
+                      {work.description && <Text style={styles.entryDescription}>{work.description}</Text>}
+                    </View>
+                  ))}
+                </View>
+              )}
+
+              {/* Projects */}
+              {resumeData.projects.length > 0 && resumeData.projects.some(p => p.name) && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionHeader}>{t('projects').toUpperCase()}</Text>
+                  {resumeData.projects.filter(p => p.name).map((project) => (
+                    <View key={project.id} style={styles.entry}>
+                      <Text style={styles.entryTitle}>{project.name}</Text>
+                      {project.date && <Text style={styles.entryDate}>{project.date}</Text>}
+                      {project.link && <Text style={styles.entryLink}>{project.link}</Text>}
+                      {project.description && <Text style={styles.entryDescription}>{project.description}</Text>}
+                    </View>
+                  ))}
+                </View>
+              )}
+            </View>
+
+            {/* Right Column */}
+            <View style={styles.rightColumn}>
+              {/* Skills */}
+              {skillsArray.length > 0 && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionHeader}>{t('skills').toUpperCase()}</Text>
+                  <View style={styles.skillsContainer}>
+                    {skillsArray.map((skill, index) => (
+                      <Text key={index} style={styles.skill}>{skill}</Text>
+                    ))}
+                  </View>
+                </View>
+              )}
+
+              {/* Education */}
+              {resumeData.education.length > 0 && resumeData.education.some(e => e.school || e.degree) && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionHeader}>{t('education').toUpperCase()}</Text>
+                  {resumeData.education.filter(e => e.school || e.degree).map((edu) => (
+                    <View key={edu.id} style={styles.entry}>
+                      <Text style={styles.entryTitle}>{edu.degree || t('degreeFallback')}</Text>
+                      <Text style={styles.entrySubtitle}>{edu.school || t('schoolFallback')}</Text>
+                      {edu.startDate && edu.endDate && (
+                        <Text style={styles.entryDate}>{edu.startDate} - {edu.endDate}</Text>
+                      )}
+                    </View>
+                  ))}
+                </View>
+              )}
+
+              {/* Certifications */}
+              {resumeData.certifications.length > 0 && resumeData.certifications.some(c => c.name || c.issuer) && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionHeader}>{t('certifications').toUpperCase()}</Text>
+                  {resumeData.certifications.filter(c => c.name || c.issuer).map((cert) => (
+                    <View key={cert.id} style={styles.entry}>
+                      <Text style={styles.entryTitle}>{cert.name || t('certificationFallback')}</Text>
+                      <Text style={styles.entrySubtitle}>{cert.issuer || t('issuerFallback')}</Text>
+                      {cert.issueDate && (
+                        <Text style={styles.entryDate}>
+                          {cert.issueDate}{cert.expirationDate ? ` - ${cert.expirationDate}` : ''}
+                        </Text>
+                      )}
+                      {cert.credentialId && <Text style={styles.entrySmall}>ID: {cert.credentialId}</Text>}
+                      {cert.credentialUrl && <Text style={styles.entryLink}>{cert.credentialUrl}</Text>}
+                      {cert.description && <Text style={styles.entryDescription}>{cert.description}</Text>}
+                    </View>
+                  ))}
+                </View>
+              )}
+
+              {/* Strengths */}
+              {strengthsArray.length > 0 && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionHeader}>{t('strengths').toUpperCase()}</Text>
+                  {strengthsArray.map((strength, index) => (
+                    <Text key={index} style={styles.strength}>• {strength}</Text>
+                  ))}
+                </View>
+              )}
+            </View>
+          </View>
+        </Page>
+      </Document>
+    );
+
+    const blob = await pdf(ResumeDocument).toBlob();
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+  };
+
   const skillsArray = resumeData.skills
     .split(',')
     .map((s) => s.trim())
@@ -513,13 +652,21 @@ export default function ResumeBuilder() {
         <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
           <span className="text-3xl">📄</span> {t('resumeMe')}
         </h1>
-        <button
-          onClick={handleDownload}
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
-        >
-          <Download size={18} />
-          {t('downloadPdf')}
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={handlePreview}
+            className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium"
+          >
+            👁️ Preview PDF
+          </button>
+          <button
+            onClick={handleDownload}
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+          >
+            <Download size={18} />
+            {t('downloadPdf')}
+          </button>
+        </div>
         <button
           onClick={() => setLanguage(language === 'en' ? 'vi' : 'en')}
           className="flex items-center gap-2 bg-slate-200 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-300 transition-colors font-medium"
@@ -568,7 +715,7 @@ export default function ResumeBuilder() {
                       value={resumeData.profile.name}
                       onChange={(e) => updateProfile('name', e.target.value)}
                       className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                      placeholder="John Doe"
+                      placeholder="Nguyễn Văn A"
                     />
                   </div>
                   <div>
@@ -578,7 +725,7 @@ export default function ResumeBuilder() {
                       value={resumeData.profile.title}
                       onChange={(e) => updateProfile('title', e.target.value)}
                       className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                      placeholder="Senior Software Engineer"
+                      placeholder="Kỹ sư phần mềm cấp cao"
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
@@ -589,7 +736,7 @@ export default function ResumeBuilder() {
                         value={resumeData.profile.email}
                         onChange={(e) => updateProfile('email', e.target.value)}
                         className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                        placeholder="john@email.com"
+                        placeholder="nguyenvana@email.com"
                       />
                     </div>
                     <div>
@@ -599,7 +746,7 @@ export default function ResumeBuilder() {
                         value={resumeData.profile.phone}
                         onChange={(e) => updateProfile('phone', e.target.value)}
                         className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                        placeholder="+1 (555) 123-4567"
+                        placeholder="+84 123 456 789"
                       />
                     </div>
                   </div>
@@ -610,7 +757,7 @@ export default function ResumeBuilder() {
                       value={resumeData.profile.location}
                       onChange={(e) => updateProfile('location', e.target.value)}
                       className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                      placeholder="San Francisco, CA"
+                      placeholder="Hà Nội, Việt Nam"
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
@@ -621,7 +768,7 @@ export default function ResumeBuilder() {
                         value={resumeData.profile.website}
                         onChange={(e) => updateProfile('website', e.target.value)}
                         className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                        placeholder="https://johndoe.dev"
+                        placeholder="https://nguyenvana.dev"
                       />
                     </div>
                     <div>
@@ -631,7 +778,7 @@ export default function ResumeBuilder() {
                         value={resumeData.profile.linkedin}
                         onChange={(e) => updateProfile('linkedin', e.target.value)}
                         className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                        placeholder="linkedin.com/in/johndoe"
+                        placeholder="linkedin.com/in/nguyenvana"
                       />
                     </div>
                   </div>
@@ -642,7 +789,7 @@ export default function ResumeBuilder() {
                       value={resumeData.profile.facebook}
                       onChange={(e) => updateProfile('facebook', e.target.value)}
                       className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                      placeholder="facebook.com/johndoe"
+                      placeholder="facebook.com/nguyenvana"
                     />
                   </div>
                   <div>
@@ -1077,47 +1224,47 @@ export default function ResumeBuilder() {
                 {/* Name and Title - Centered */}
                 <div className="text-center mb-4">
                   <h1 className="text-4xl font-bold text-slate-900 mb-1">
-                    {resumeData.profile.name || 'Your Name'}
+                    {resumeData.profile.name || t('yourName')}
                   </h1>
                   <p className="text-xl text-blue-600 font-medium">
-                    {resumeData.profile.title || t('jobTitle')}
+                    {resumeData.profile.title || t('jobTitleFallback')}
                   </p>
                 </div>
                 {/* Contact Info - Horizontal row with dividers */}
                 <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-slate-600">
                   {resumeData.profile.email && (
                     <span className="flex items-center gap-1">
-                      <span className="text-blue-600 font-medium">Email:</span>
+                      <span className="text-blue-600 font-medium">{t('emailLabel')}</span>
                       {resumeData.profile.email}
                     </span>
                   )}
                   {resumeData.profile.phone && (
                     <span className="flex items-center gap-1">
-                      <span className="text-blue-600 font-medium">Phone:</span>
+                      <span className="text-blue-600 font-medium">{t('phoneLabel')}</span>
                       {resumeData.profile.phone}
                     </span>
                   )}
                   {resumeData.profile.location && (
                     <span className="flex items-center gap-1">
-                      <span className="text-blue-600 font-medium">Location:</span>
+                      <span className="text-blue-600 font-medium">{t('locationLabel')}</span>
                       {resumeData.profile.location}
                     </span>
                   )}
                   {resumeData.profile.website && (
                     <span className="flex items-center gap-1">
-                      <span className="text-blue-600 font-medium">Website:</span>
+                      <span className="text-blue-600 font-medium">{t('websiteLabel')}</span>
                       {resumeData.profile.website}
                     </span>
                   )}
                   {resumeData.profile.linkedin && (
                     <span className="flex items-center gap-1">
-                      <span className="text-blue-600 font-medium">LinkedIn:</span>
+                      <span className="text-blue-600 font-medium">{t('linkedinLabel')}</span>
                       {resumeData.profile.linkedin}
                     </span>
                   )}
                   {resumeData.profile.facebook && (
                     <span className="flex items-center gap-1">
-                      <span className="text-blue-600 font-medium">Facebook:</span>
+                      <span className="text-blue-600 font-medium">{t('facebookLabel')}</span>
                       {resumeData.profile.facebook}
                     </span>
                   )}
@@ -1151,8 +1298,8 @@ export default function ResumeBuilder() {
                           <div key={work.id}>
                             <div className="flex justify-between items-start mb-1">
                               <div>
-                                <h3 className="font-semibold text-slate-900">{work.position || 'Position'}</h3>
-                                <p className="text-blue-600 text-sm">{work.company || 'Company'}</p>
+                                <h3 className="font-semibold text-slate-900">{work.position || t('positionFallback')}</h3>
+                                <p className="text-blue-600 text-sm">{work.company || t('companyFallback')}</p>
                               </div>
                               <span className="text-sm text-slate-500">
                                 {work.startDate && work.endDate ? `${work.startDate} - ${work.endDate}` : ''}
@@ -1236,8 +1383,8 @@ export default function ResumeBuilder() {
                       <div className="space-y-3">
                         {resumeData.education.filter(e => e.school || e.degree).map((edu) => (
                           <div key={edu.id}>
-                            <h3 className="font-semibold text-slate-900 text-sm">{edu.degree || t('degree')}</h3>
-                            <p className="text-blue-600 text-sm">{edu.school || t('school')}</p>
+                            <h3 className="font-semibold text-slate-900 text-sm">{edu.degree || t('degreeFallback')}</h3>
+                            <p className="text-blue-600 text-sm">{edu.school || t('schoolFallback')}</p>
                             <p className="text-xs text-slate-500 mt-1">
                               {edu.startDate && edu.endDate ? `${edu.startDate} - ${edu.endDate}` : ''}
                             </p>
@@ -1256,8 +1403,8 @@ export default function ResumeBuilder() {
                       <div className="space-y-3">
                         {resumeData.certifications.filter(c => c.name || c.issuer).map((cert) => (
                           <div key={cert.id}>
-                            <h3 className="font-semibold text-slate-900 text-sm">{cert.name || 'Certification'}</h3>
-                            <p className="text-blue-600 text-sm">{cert.issuer || 'Issuer'}</p>
+                            <h3 className="font-semibold text-slate-900 text-sm">{cert.name || t('certificationFallback')}</h3>
+                            <p className="text-blue-600 text-sm">{cert.issuer || t('issuerFallback')}</p>
                             <p className="text-xs text-slate-500 mt-1">
                               {cert.issueDate && `${cert.issueDate}${cert.expirationDate ? ' - ' + cert.expirationDate : ''}`}
                             </p>

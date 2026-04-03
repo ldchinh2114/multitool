@@ -145,6 +145,21 @@ const translations = {
     credentialUrl: 'Credential URL',
     certificationDescription: 'Description',
     noCertificationsYet: 'No certifications added yet. Click "Add" to add one.',
+    // PDF Labels
+    phoneLabel: 'Phone:',
+    locationLabel: 'Location:',
+    websiteLabel: 'Website:',
+    linkedinLabel: 'LinkedIn:',
+    facebookLabel: 'Facebook:',
+    emailLabel: 'Email:',
+    yourName: 'Your Name',
+    jobTitleFallback: 'Job Title',
+    positionFallback: 'Position',
+    companyFallback: 'Company',
+    degreeFallback: 'Degree',
+    schoolFallback: 'School',
+    certificationFallback: 'Certification',
+    issuerFallback: 'Issuer',
     // Common
     loading: 'Loading...',
     error: 'Error',
@@ -290,6 +305,21 @@ const translations = {
     credentialUrl: 'URL xác minh',
     certificationDescription: 'Mô tả',
     noCertificationsYet: 'Chưa có chứng chỉ. Nhấn "Thêm" để thêm mới.',
+    // PDF Labels
+    phoneLabel: 'Điện thoại:',
+    locationLabel: 'Địa chỉ:',
+    websiteLabel: 'Trang web:',
+    linkedinLabel: 'LinkedIn:',
+    facebookLabel: 'Facebook:',
+    emailLabel: 'Email:',
+    yourName: 'Tên của bạn',
+    jobTitleFallback: 'Chức danh',
+    positionFallback: 'Vị trí',
+    companyFallback: 'Công ty',
+    degreeFallback: 'Bằng cấp',
+    schoolFallback: 'Trường',
+    certificationFallback: 'Chứng chỉ',
+    issuerFallback: 'Tổ chức cấp',
   },
 };
 
@@ -300,7 +330,7 @@ function getInitialLanguage(): Language {
       return saved;
     }
   }
-  return 'vi';
+  return 'en';
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
