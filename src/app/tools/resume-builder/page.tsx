@@ -64,6 +64,11 @@ export default function ResumeBuilder() {
   const [showDraftList, setShowDraftList] = useState(false);
   const [draftTitle, setDraftTitle] = useState('');
   const [countdown, setCountdown] = useState<{ [key: string]: string }>({});
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [showSaveToast, setShowSaveToast] = useState(false);
+  const [toastDraftTitle, setToastDraftTitle] = useState('');
+  const [saveToastTimeout, setSaveToastTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [currentEditingTitle, setCurrentEditingTitle] = useState('');
 
   // Load data from localStorage on mount
   useEffect(() => {
@@ -185,6 +190,7 @@ export default function ResumeBuilder() {
       ...prev,
       profile: { ...prev.profile, [field]: value },
     }));
+    if (currentDraftId) setHasUnsavedChanges(true);
   };
 
   const addWorkExperience = () => {
@@ -200,6 +206,7 @@ export default function ResumeBuilder() {
       ...prev,
       work: [...prev.work, newWork],
     }));
+    if (currentDraftId) setHasUnsavedChanges(true);
   };
 
   const updateWorkExperience = (id: string, field: keyof WorkExperience, value: string) => {
@@ -207,6 +214,7 @@ export default function ResumeBuilder() {
       ...prev,
       work: prev.work.map((item) => (item.id === id ? { ...item, [field]: value } : item)),
     }));
+    if (currentDraftId) setHasUnsavedChanges(true);
   };
 
   const deleteWorkExperience = (id: string) => {
@@ -214,6 +222,7 @@ export default function ResumeBuilder() {
       ...prev,
       work: prev.work.filter((item) => item.id !== id),
     }));
+    if (currentDraftId) setHasUnsavedChanges(true);
   };
 
   const addProject = () => {
@@ -228,6 +237,7 @@ export default function ResumeBuilder() {
       ...prev,
       projects: [...prev.projects, newProject],
     }));
+    if (currentDraftId) setHasUnsavedChanges(true);
   };
 
   const updateProject = (id: string, field: keyof Project, value: string) => {
@@ -235,6 +245,7 @@ export default function ResumeBuilder() {
       ...prev,
       projects: prev.projects.map((item) => (item.id === id ? { ...item, [field]: value } : item)),
     }));
+    if (currentDraftId) setHasUnsavedChanges(true);
   };
 
   const deleteProject = (id: string) => {
@@ -242,6 +253,7 @@ export default function ResumeBuilder() {
       ...prev,
       projects: prev.projects.filter((item) => item.id !== id),
     }));
+    if (currentDraftId) setHasUnsavedChanges(true);
   };
 
   const addEducation = () => {
@@ -256,6 +268,7 @@ export default function ResumeBuilder() {
       ...prev,
       education: [...prev.education, newEducation],
     }));
+    if (currentDraftId) setHasUnsavedChanges(true);
   };
 
   const updateEducation = (id: string, field: keyof Education, value: string) => {
@@ -263,6 +276,7 @@ export default function ResumeBuilder() {
       ...prev,
       education: prev.education.map((item) => (item.id === id ? { ...item, [field]: value } : item)),
     }));
+    if (currentDraftId) setHasUnsavedChanges(true);
   };
 
   const deleteEducation = (id: string) => {
@@ -270,6 +284,7 @@ export default function ResumeBuilder() {
       ...prev,
       education: prev.education.filter((item) => item.id !== id),
     }));
+    if (currentDraftId) setHasUnsavedChanges(true);
   };
 
   const addCertification = () => {
@@ -287,6 +302,7 @@ export default function ResumeBuilder() {
       ...prev,
       certifications: [...prev.certifications, newCertification],
     }));
+    if (currentDraftId) setHasUnsavedChanges(true);
   };
 
   const updateCertification = (id: string, field: keyof Certification, value: string) => {
@@ -296,6 +312,7 @@ export default function ResumeBuilder() {
         item.id === id ? { ...item, [field]: value } : item
       ),
     }));
+    if (currentDraftId) setHasUnsavedChanges(true);
   };
 
   const deleteCertification = (id: string) => {
@@ -303,6 +320,12 @@ export default function ResumeBuilder() {
       ...prev,
       certifications: prev.certifications.filter((item) => item.id !== id),
     }));
+    if (currentDraftId) setHasUnsavedChanges(true);
+  };
+
+  const handleStrengthsChange = (value: string) => {
+    setStrengths(value);
+    if (currentDraftId) setHasUnsavedChanges(true);
   };
 
   const handleSkillsChange = (value: string) => {
@@ -310,6 +333,11 @@ export default function ResumeBuilder() {
       ...prev,
       skills: value,
     }));
+    if (currentDraftId) setHasUnsavedChanges(true);
+  };
+
+  const markAsChanged = () => {
+    if (currentDraftId) setHasUnsavedChanges(true);
   };
 
   const createDraft = () => {
@@ -340,6 +368,27 @@ export default function ResumeBuilder() {
     );
   };
 
+  const handleSaveDraft = () => {
+    if (!currentDraftId) return;
+    
+    const draft = drafts.find(d => d.id === currentDraftId);
+    const title = draft?.title || currentEditingTitle || `Draft ${drafts.length + 1}`;
+    
+    if (saveToastTimeout) {
+      clearTimeout(saveToastTimeout);
+    }
+    
+    updateDraft(currentDraftId);
+    setHasUnsavedChanges(false);
+    setToastDraftTitle(title);
+    setShowSaveToast(true);
+    
+    const timeout = setTimeout(() => {
+      setShowSaveToast(false);
+    }, 3000);
+    setSaveToastTimeout(timeout);
+  };
+
   const deleteDraft = (draftId: string) => {
     setDrafts((prev) => prev.filter((draft) => draft.id !== draftId));
     if (currentDraftId === draftId) {
@@ -351,6 +400,8 @@ export default function ResumeBuilder() {
     setResumeData(draft.resumeData);
     setStrengths(draft.strengths);
     setCurrentDraftId(draft.id);
+    setCurrentEditingTitle(draft.title);
+    setHasUnsavedChanges(false);
     setShowDraftList(false);
   };
 
@@ -800,8 +851,14 @@ export default function ResumeBuilder() {
             </button>
             {currentDraftId && (
               <button
-                onClick={() => updateDraft(currentDraftId)}
-                className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium"
+                onClick={handleSaveDraft}
+                className={cn(
+                  "flex items-center gap-2 px-4 py-2 rounded-lg hover:opacity-90 transition-opacity font-medium",
+                  hasUnsavedChanges
+                    ? "bg-green-600 text-white hover:bg-green-700"
+                    : "bg-slate-400 text-white cursor-not-allowed"
+                )}
+                disabled={!hasUnsavedChanges}
               >
                 <Save size={18} />
                 Save
@@ -828,6 +885,28 @@ export default function ResumeBuilder() {
           {language === 'en' ? '🇻🇳 VI' : '🇺🇸 EN'}
         </button>
       </header>
+
+      {/* Draft Title Display - Shown when editing a draft */}
+      {currentDraftId && (
+        <div className="bg-amber-50 border-b border-amber-200 px-6 py-3">
+          <div className="flex items-center gap-2">
+            <span className="text-amber-700 font-medium">Editing:</span>
+            <span className="text-amber-900 font-semibold text-lg">
+              {drafts.find(d => d.id === currentDraftId)?.title || currentEditingTitle || `Draft ${drafts.length + 1}`}
+            </span>
+            {!hasUnsavedChanges && (
+              <span className="ml-2 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                Saved
+              </span>
+            )}
+            {hasUnsavedChanges && (
+              <span className="ml-2 text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">
+                Unsaved changes
+              </span>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Main Container */}
       <div className="flex gap-4 h-[calc(100vh-80px)] print:h-auto print:block">
@@ -1341,7 +1420,7 @@ export default function ResumeBuilder() {
                   </label>
                   <textarea
                     value={strengths}
-                    onChange={(e) => setStrengths(e.target.value)}
+                    onChange={(e) => handleStrengthsChange(e.target.value)}
                     rows={6}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
                     placeholder="Strong problem-solving abilities, Excellent communication skills..."
@@ -1727,6 +1806,14 @@ export default function ResumeBuilder() {
           }
         }
       `}</style>
+
+      {/* Toast Notification */}
+      {showSaveToast && (
+        <div className="fixed bottom-6 right-6 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4 z-50">
+          <Save size={20} />
+          <span>Changes saved - "{toastDraftTitle}"</span>
+        </div>
+      )}
     </div>
   );
 }
