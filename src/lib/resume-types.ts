@@ -53,6 +53,16 @@ export interface Certification {
   description: string;
 }
 
+export interface Draft {
+  id: string;
+  title: string;
+  createdAt: number;
+  updatedAt: number;
+  expiresAt: number;
+  resumeData: ResumeData;
+  strengths: string;
+}
+
 export const initialResumeData: ResumeData = {
   profile: {
     name: 'Type your full name',

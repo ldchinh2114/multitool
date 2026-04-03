@@ -14,8 +14,15 @@ import {
   Download,
   Trophy,
   Award,
+  File,
+  Save,
+  Clock,
+  FolderOpen,
+  Edit3,
+  ChevronLeft,
+  X,
 } from 'lucide-react';
-import { ResumeData, WorkExperience, Project, Education, Certification, initialResumeData } from '@/lib/resume-types';
+import { ResumeData, WorkExperience, Project, Education, Certification, Draft, initialResumeData } from '@/lib/resume-types';
 import { cn } from '@/lib/cn';
 import { useLanguage } from '@/lib/language-context';
 
@@ -39,7 +46,10 @@ type TabType = 'profile' | 'work' | 'projects' | 'education' | 'certifications' 
 const STORAGE_KEY = 'resume-builder-data';
 const STRENGTHS_STORAGE_KEY = 'resume-builder-strengths';
 const TIMESTAMP_KEY = 'resume-builder-timestamp';
+const DRAFTS_STORAGE_KEY = 'resume-builder-drafts';
 const ONE_HOUR_MS = 60 * 60 * 1000; // 1 hour in milliseconds
+const DRAFT_EXPIRY_DAYS = 7;
+const DRAFT_EXPIRY_MS = DRAFT_EXPIRY_DAYS * 24 * 60 * 60 * 1000; // 7 days in milliseconds
 
 export default function ResumeBuilder() {
   const { t, language, setLanguage } = useLanguage();
@@ -49,6 +59,11 @@ export default function ResumeBuilder() {
     'Type your strength 1, Type your strength 2, Type your strength 3, Type your strength 4'
   );
   const [isLoaded, setIsLoaded] = useState(false);
+  const [drafts, setDrafts] = useState<Draft[]>([]);
+  const [currentDraftId, setCurrentDraftId] = useState<string | null>(null);
+  const [showDraftList, setShowDraftList] = useState(false);
+  const [draftTitle, setDraftTitle] = useState('');
+  const [countdown, setCountdown] = useState<{ [key: string]: string }>({});
 
   // Load data from localStorage on mount
   useEffect(() => {
@@ -86,6 +101,71 @@ export default function ResumeBuilder() {
       setIsLoaded(true);
     }
   }, []);
+
+  // Load drafts from localStorage
+  useEffect(() => {
+    if (!isLoaded) return;
+    try {
+      const savedDrafts = localStorage.getItem(DRAFTS_STORAGE_KEY);
+      if (savedDrafts) {
+        const parsedDrafts: Draft[] = JSON.parse(savedDrafts);
+        const now = Date.now();
+        const validDrafts = parsedDrafts.filter(draft => draft.expiresAt > now);
+        if (validDrafts.length !== parsedDrafts.length) {
+          localStorage.setItem(DRAFTS_STORAGE_KEY, JSON.stringify(validDrafts));
+        }
+        setDrafts(validDrafts);
+      }
+    } catch (error) {
+      console.error('Error loading drafts from localStorage:', error);
+    }
+  }, [isLoaded]);
+
+  // Save drafts to localStorage
+  useEffect(() => {
+    if (!isLoaded) return;
+    try {
+      localStorage.setItem(DRAFTS_STORAGE_KEY, JSON.stringify(drafts));
+    } catch (error) {
+      console.error('Error saving drafts to localStorage:', error);
+    }
+  }, [drafts, isLoaded]);
+
+  // Countdown timer for draft expiry
+  useEffect(() => {
+    const updateCountdown = () => {
+      const now = Date.now();
+      const newCountdown: { [key: string]: string } = {};
+      const validDrafts: Draft[] = [];
+      
+      drafts.forEach(draft => {
+        if (draft.expiresAt > now) {
+          const diff = draft.expiresAt - now;
+          const days = Math.floor(diff / (24 * 60 * 60 * 1000));
+          const hours = Math.floor((diff % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+          const minutes = Math.floor((diff % (60 * 60 * 1000)) / (60 * 1000));
+          
+          if (days > 0) {
+            newCountdown[draft.id] = `${days}d ${hours}h`;
+          } else if (hours > 0) {
+            newCountdown[draft.id] = `${hours}h ${minutes}m`;
+          } else {
+            newCountdown[draft.id] = `${minutes}m`;
+          }
+          validDrafts.push(draft);
+        }
+      });
+      
+      setCountdown(newCountdown);
+      if (validDrafts.length !== drafts.length) {
+        setDrafts(validDrafts);
+      }
+    };
+
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 60000);
+    return () => clearInterval(interval);
+  }, [drafts]);
 
   // Save data to localStorage whenever it changes
   useEffect(() => {
@@ -230,6 +310,59 @@ export default function ResumeBuilder() {
       ...prev,
       skills: value,
     }));
+  };
+
+  const createDraft = () => {
+    const title = draftTitle.trim() || `Draft ${drafts.length + 1}`;
+    const now = Date.now();
+    const newDraft: Draft = {
+      id: now.toString(),
+      title,
+      createdAt: now,
+      updatedAt: now,
+      expiresAt: now + DRAFT_EXPIRY_MS,
+      resumeData,
+      strengths,
+    };
+    setDrafts((prev) => [...prev, newDraft]);
+    setCurrentDraftId(newDraft.id);
+    setDraftTitle('');
+    setShowDraftList(false);
+  };
+
+  const updateDraft = (draftId: string) => {
+    setDrafts((prev) =>
+      prev.map((draft) =>
+        draft.id === draftId
+          ? { ...draft, updatedAt: Date.now(), expiresAt: Date.now() + DRAFT_EXPIRY_MS, resumeData, strengths }
+          : draft
+      )
+    );
+  };
+
+  const deleteDraft = (draftId: string) => {
+    setDrafts((prev) => prev.filter((draft) => draft.id !== draftId));
+    if (currentDraftId === draftId) {
+      setCurrentDraftId(null);
+    }
+  };
+
+  const loadDraft = (draft: Draft) => {
+    setResumeData(draft.resumeData);
+    setStrengths(draft.strengths);
+    setCurrentDraftId(draft.id);
+    setShowDraftList(false);
+  };
+
+  const formatDate = (timestamp: number) => {
+    const date = new Date(timestamp);
+    return date.toLocaleDateString(language === 'vi' ? 'vi-VN' : 'en-US', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
   };
 
   const styles = StyleSheet.create({
@@ -648,12 +781,33 @@ export default function ResumeBuilder() {
   return (
     <div className="min-h-screen bg-slate-100 p-4 print:p-0 print:bg-white">
       {/* Header - Hidden on print */}
-      <header className="mb-4 flex items-center justify-between print:hidden">
-        <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-          <span className="text-3xl">📄</span> {t('resumeMe')}
-        </h1>
-        <div className="flex gap-2">
-          <button
+<header className="mb-4 flex items-center justify-between print:hidden">
+          <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
+            <span className="text-3xl">📄</span> {t('resumeMe')}
+          </h1>
+          <div className="flex gap-2">
+<button
+              onClick={() => setShowDraftList(!showDraftList)}
+              className="flex items-center gap-2 bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-700 transition-colors font-medium"
+            >
+              <FolderOpen size={18} />
+              {t('drafts')}
+              {drafts.length > 0 && (
+                <span className="ml-1 bg-amber-800 text-xs px-1.5 py-0.5 rounded-full">
+                  {drafts.length}
+                </span>
+              )}
+            </button>
+            {currentDraftId && (
+              <button
+                onClick={() => updateDraft(currentDraftId)}
+                className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium"
+              >
+                <Save size={18} />
+                Save
+              </button>
+            )}
+            <button
             onClick={handlePreview}
             className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium"
           >
@@ -1458,6 +1612,107 @@ export default function ResumeBuilder() {
           </div>
         </div>
       </div>
+
+      {/* Draft List Panel */}
+      {showDraftList && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md max-h-[80vh] overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-amber-50">
+              <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                <FolderOpen size={20} className="text-amber-600" />
+                {t('drafts')}
+              </h2>
+              <button
+                onClick={() => setShowDraftList(false)}
+                className="text-slate-500 hover:text-slate-700 p-1"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="p-4 border-b border-slate-200">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={draftTitle}
+                  onChange={(e) => setDraftTitle(e.target.value)}
+                  className="flex-1 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-all"
+                  placeholder={t('draftTitle')}
+                  onKeyDown={(e) => e.key === 'Enter' && createDraft()}
+                />
+                <button
+                  onClick={createDraft}
+                  className="flex items-center gap-1 bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-700 transition-colors font-medium"
+                >
+                  <Plus size={18} />
+                  {t('addDraft')}
+                </button>
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-4">
+              {drafts.length === 0 ? (
+                <div className="text-center py-8">
+                  <File size={48} className="mx-auto text-slate-300 mb-3" />
+                  <p className="text-slate-500 font-medium">{t('noDrafts')}</p>
+                  <p className="text-slate-400 text-sm">{t('noDraftsDesc')}</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {drafts.map((draft) => (
+                    <div
+                      key={draft.id}
+                      onClick={() => loadDraft(draft)}
+                      className={`border rounded-lg p-3 transition-all cursor-pointer ${
+                        currentDraftId === draft.id
+                          ? 'border-amber-500 bg-amber-50'
+                          : 'border-slate-200 hover:border-amber-300 hover:bg-slate-50'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-medium text-slate-800 flex items-center gap-2">
+                            {currentDraftId === draft.id && (
+                              <span className="w-2 h-2 bg-amber-500 rounded-full" />
+                            )}
+                            {draft.title}
+                          </h3>
+                          <p className="text-xs text-slate-500 mt-1">
+                            {t('createdAt')}: {formatDate(draft.createdAt)}
+                          </p>
+                          <p className="text-xs text-slate-500">
+                            {t('lastModified')}: {formatDate(draft.updatedAt)}
+                          </p>
+                          <div className="flex items-center gap-1 mt-1 text-xs text-amber-600">
+                            <Clock size={12} />
+                            {t('expiresIn')}: {countdown[draft.id] || 'Calculating...'}
+                          </div>
+                        </div>
+                        <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
+                          <button
+                            onClick={() => loadDraft(draft)}
+                            className="text-blue-600 hover:text-blue-700 p-1"
+                            title={t('editDraft')}
+                          >
+                            <Edit3 size={16} />
+                          </button>
+                          <button
+                            onClick={() => deleteDraft(draft.id)}
+                            className="text-red-500 hover:text-red-600 p-1"
+                            title={t('deleteDraft')}
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Print Styles */}
       <style jsx global>{`
