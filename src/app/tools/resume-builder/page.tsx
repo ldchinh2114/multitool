@@ -263,6 +263,8 @@ export default function ResumeBuilder() {
       degree: '',
       startDate: '',
       endDate: '',
+      gpa: '',
+      academicRank: '',
     };
     setResumeData((prev) => ({
       ...prev,
@@ -625,6 +627,8 @@ export default function ResumeBuilder() {
                       {edu.startDate && edu.endDate && (
                         <Text style={styles.entryDate}>{edu.startDate} - {edu.endDate}</Text>
                       )}
+                      {edu.gpa && <Text style={styles.entrySmall}>GPA: {edu.gpa}</Text>}
+                      {edu.academicRank && <Text style={styles.entrySmall}>{t('academicRank')}: {edu.academicRank}</Text>}
                     </View>
                   ))}
                 </View>
@@ -763,6 +767,8 @@ export default function ResumeBuilder() {
                       {edu.startDate && edu.endDate && (
                         <Text style={styles.entryDate}>{edu.startDate} - {edu.endDate}</Text>
                       )}
+                      {edu.gpa && <Text style={styles.entrySmall}>GPA: {edu.gpa}</Text>}
+                      {edu.academicRank && <Text style={styles.entrySmall}>{t('academicRank')}: {edu.academicRank}</Text>}
                     </View>
                   ))}
                 </View>
@@ -1260,6 +1266,28 @@ export default function ResumeBuilder() {
                         />
                       </div>
                     </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('gpa')}</label>
+                        <input
+                          type="text"
+                          value={edu.gpa}
+                          onChange={(e) => updateEducation(edu.id, 'gpa', e.target.value)}
+                          className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                          placeholder="3.8/4.0"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('academicRank')}</label>
+                        <input
+                          type="text"
+                          value={edu.academicRank}
+                          onChange={(e) => updateEducation(edu.id, 'academicRank', e.target.value)}
+                          className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                          placeholder="Excellent"
+                        />
+                      </div>
+                    </div>
                   </div>
                 ))}
                 {resumeData.education.length === 0 && (
@@ -1621,6 +1649,8 @@ export default function ResumeBuilder() {
                             <p className="text-xs text-slate-500 mt-1">
                               {edu.startDate && edu.endDate ? `${edu.startDate} - ${edu.endDate}` : ''}
                             </p>
+                            {edu.gpa && <p className="text-xs text-slate-600 mt-1">GPA: {edu.gpa}</p>}
+                            {edu.academicRank && <p className="text-xs text-slate-600">{t('academicRank')}: {edu.academicRank}</p>}
                           </div>
                         ))}
                       </div>

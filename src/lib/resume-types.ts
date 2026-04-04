@@ -40,6 +40,8 @@ export interface Education {
   degree: string;
   startDate: string;
   endDate: string;
+  gpa: string;
+  academicRank: string;
 }
 
 export interface Certification {
@@ -101,6 +103,8 @@ export const initialResumeData: ResumeData = {
       degree: 'Type your degree',
       startDate: 'Start date',
       endDate: 'End date',
+      gpa: '',
+      academicRank: '',
     },
   ],
   certifications: [],

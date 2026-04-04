@@ -135,6 +135,8 @@ const translations = {
     strengthsExample: 'Example: Strong problem-solving abilities, Excellent communication skills, Team player',
     strengthsPreview: 'Preview:',
     noEducationYet: 'No education added yet. Click "Add" to add one.',
+    gpa: 'GPA',
+    academicRank: 'Academic Rank',
     // Certifications
     certifications: 'Certifications',
     certificationName: 'Certification Name',
@@ -311,6 +313,8 @@ const translations = {
     strengthsExample: 'Ví dụ: Khả năng giải quyết vấn đề tốt, Kỹ năng giao tiếp xuất sắc, Làm việc nhóm tốt',
     strengthsPreview: 'Xem trước:',
     noEducationYet: 'Chưa có học vấn nào. Nhấn "Thêm" để thêm.',
+    gpa: 'Điểm trung bình',
+    academicRank: 'Học lực',
     // Certifications
     certifications: 'Chứng chỉ',
     certificationName: 'Tên chứng chỉ',
