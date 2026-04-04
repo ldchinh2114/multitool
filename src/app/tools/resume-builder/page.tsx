@@ -624,8 +624,8 @@ export default function ResumeBuilder() {
                     <View key={edu.id} style={styles.entry}>
                       <Text style={styles.entryTitle}>{edu.degree || t('degreeFallback')}</Text>
                       <Text style={styles.entrySubtitle}>{edu.school || t('schoolFallback')}</Text>
-                      {edu.startDate && edu.endDate && (
-                        <Text style={styles.entryDate}>{edu.startDate} - {edu.endDate}</Text>
+                      {(edu.startDate || edu.endDate) && (
+                        <Text style={styles.entryDate}>{edu.startDate && edu.endDate ? `${edu.startDate} - ${edu.endDate}` : edu.startDate || edu.endDate}</Text>
                       )}
                       {edu.gpa && <Text style={styles.entrySmall}>GPA: {edu.gpa}</Text>}
                       {edu.academicRank && <Text style={styles.entrySmall}>{t('academicRank')}: {edu.academicRank}</Text>}
@@ -764,8 +764,8 @@ export default function ResumeBuilder() {
                     <View key={edu.id} style={styles.entry}>
                       <Text style={styles.entryTitle}>{edu.degree || t('degreeFallback')}</Text>
                       <Text style={styles.entrySubtitle}>{edu.school || t('schoolFallback')}</Text>
-                      {edu.startDate && edu.endDate && (
-                        <Text style={styles.entryDate}>{edu.startDate} - {edu.endDate}</Text>
+                      {(edu.startDate || edu.endDate) && (
+                        <Text style={styles.entryDate}>{edu.startDate && edu.endDate ? `${edu.startDate} - ${edu.endDate}` : edu.startDate || edu.endDate}</Text>
                       )}
                       {edu.gpa && <Text style={styles.entrySmall}>GPA: {edu.gpa}</Text>}
                       {edu.academicRank && <Text style={styles.entrySmall}>{t('academicRank')}: {edu.academicRank}</Text>}
@@ -1647,7 +1647,7 @@ export default function ResumeBuilder() {
                             <h3 className="font-semibold text-slate-900 text-sm">{edu.degree || t('degreeFallback')}</h3>
                             <p className="text-blue-600 text-sm">{edu.school || t('schoolFallback')}</p>
                             <p className="text-xs text-slate-500 mt-1">
-                              {edu.startDate && edu.endDate ? `${edu.startDate} - ${edu.endDate}` : ''}
+                              {(edu.startDate || edu.endDate) ? (edu.startDate && edu.endDate ? `${edu.startDate} - ${edu.endDate}` : edu.startDate || edu.endDate) : ''}
                             </p>
                             {edu.gpa && <p className="text-xs text-slate-600 mt-1">GPA: {edu.gpa}</p>}
                             {edu.academicRank && <p className="text-xs text-slate-600">{t('academicRank')}: {edu.academicRank}</p>}
