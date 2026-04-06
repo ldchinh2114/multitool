@@ -47,20 +47,68 @@ async function translate(text: string, sl: string = 'en', tl: string = 'vi'): Pr
 }
 
 /**
- * Audio Player Component - using Web Speech API for better voice control
+ * Audio Player Component - Uses API audio files with enhanced volume
+ * Falls back to Web Speech API when audio files unavailable
  */
-function AudioPlayer({ word }: { word?: string }) {
+function AudioPlayer({ word, phonetics }: { word?: string; phonetics?: DictionaryResponse['phonetics'] }) {
   const { t } = useLanguage();
   const [isPlaying, setIsPlaying] = useState(false);
+  const [audioSources, setAudioSources] = useState<{ url: string; accent: string; title: string }[]>([]);
+  const [selectedSource, setSelectedSource] = useState<string>('');
+  const [volumeBoost, setVolumeBoost] = useState(2.0); // Boost volume to 200%
+  const [showSettings, setShowSettings] = useState(false);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const [useTTS, setUseTTS] = useState(false);
+  
+  // TTS fallback state
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoice, setSelectedVoice] = useState<string>('');
   const [rate, setRate] = useState(0.9);
-  const [showSettings, setShowSettings] = useState(false);
   const synthRef = useRef<SpeechSynthesis | null>(null);
 
+  // Extract audio sources from phonetics data
+  useEffect(() => {
+    if (!phonetics || phonetics.length === 0) {
+      setAudioSources([]);
+      setUseTTS(true);
+      return;
+    }
+
+    const sources: { url: string; accent: string; title: string }[] = [];
+    phonetics.forEach((phonetic) => {
+      if (phonetic.audio) {
+        // Determine accent from URL
+        let accent = 'US';
+        let title = '🇺🇸 US';
+        if (phonetic.audio.includes('gb') || phonetic.audio.includes('uk')) {
+          accent = 'UK';
+          title = '🇬🇧 UK';
+        } else if (phonetic.audio.includes('us')) {
+          accent = 'US';
+          title = '🇺🇸 US';
+        }
+        
+        // Avoid duplicates
+        if (!sources.find(s => s.url === phonetic.audio)) {
+          sources.push({ url: phonetic.audio, accent, title });
+        }
+      }
+    });
+
+    if (sources.length > 0) {
+      setAudioSources(sources);
+      setSelectedSource(sources[0].url);
+      setUseTTS(false);
+    } else {
+      setAudioSources([]);
+      setUseTTS(true);
+    }
+  }, [phonetics]);
+
+  // Load voices for TTS fallback
   useEffect(() => {
     synthRef.current = window.speechSynthesis;
-    
+
     const loadVoices = () => {
       const availableVoices = synthRef.current?.getVoices() || [];
       setVoices(availableVoices);
@@ -76,27 +124,91 @@ function AudioPlayer({ word }: { word?: string }) {
     return () => { window.speechSynthesis.onvoiceschanged = null; };
   }, []);
 
-  const handlePlay = () => {
+  // Play audio with boosted volume
+  const playAudioWithBoost = async (url: string) => {
+    try {
+      setIsPlaying(true);
+      
+      // Create or reuse AudioContext
+      if (!audioContextRef.current) {
+        audioContextRef.current = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+      }
+      
+      const audioContext = audioContextRef.current;
+      
+      // Fetch audio file
+      const response = await fetch(url);
+      const arrayBuffer = await response.arrayBuffer();
+      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+      
+      // Create source and gain nodes
+      const source = audioContext.createBufferSource();
+      source.buffer = audioBuffer;
+      
+      // Create gain node for volume boost
+      const gainNode = audioContext.createGain();
+      gainNode.gain.value = volumeBoost;
+      
+      // Connect nodes
+      source.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      // Handle playback events
+      source.onended = () => {
+        setIsPlaying(false);
+      };
+      
+      // Play audio
+      source.start(0);
+    } catch (error) {
+      console.error('Error playing audio:', error);
+      setIsPlaying(false);
+      // Fallback to TTS if audio playback fails
+      playWithTTS();
+    }
+  };
+
+  // TTS fallback
+  const playWithTTS = () => {
     if (!word || !synthRef.current) return;
-    
+
     synthRef.current.cancel();
     const utterance = new SpeechSynthesisUtterance(word);
-    
+
     const voice = voices.find(v => v.name === selectedVoice);
     if (voice) utterance.voice = voice;
-    
+
     utterance.rate = rate;
     utterance.pitch = 1;
     utterance.volume = 1;
-    
+
     utterance.onstart = () => setIsPlaying(true);
     utterance.onend = () => setIsPlaying(false);
     utterance.onerror = () => setIsPlaying(false);
-    
+
     synthRef.current.speak(utterance);
   };
 
+  const handlePlay = () => {
+    if (!word) return;
+
+    if (isPlaying) {
+      stopPlay();
+      return;
+    }
+
+    if (!useTTS && selectedSource) {
+      playAudioWithBoost(selectedSource);
+    } else {
+      playWithTTS();
+    }
+  };
+
   const stopPlay = () => {
+    if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+      audioContextRef.current.close();
+      audioContextRef.current = null;
+    }
     synthRef.current?.cancel();
     setIsPlaying(false);
   };
@@ -104,55 +216,113 @@ function AudioPlayer({ word }: { word?: string }) {
   if (!word) return null;
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className="flex flex-wrap items-center justify-center gap-2">
       <button
-        onClick={isPlaying ? stopPlay : handlePlay}
+        onClick={handlePlay}
         className={cn(
-          'inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors',
+          'inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all',
           isPlaying
-            ? 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300'
-            : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+            ? 'bg-purple-600 text-white shadow-lg scale-105'
+            : 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 shadow-md hover:shadow-lg'
         )}
       >
         <Volume2 className={cn('h-4 w-4', isPlaying && 'animate-pulse')} />
         {isPlaying ? t('loading') : t('phonetics')}
       </button>
-      
+
+      {/* Audio source selector */}
+      {audioSources.length > 1 && (
+        <select
+          value={selectedSource}
+          onChange={(e) => {
+            setSelectedSource(e.target.value);
+            setUseTTS(false);
+          }}
+          className="rounded-full border border-purple-200 bg-white px-3 py-2 text-xs font-medium text-purple-700 shadow-sm transition-colors hover:bg-purple-50 dark:border-purple-800 dark:bg-gray-800 dark:text-purple-300"
+        >
+          {audioSources.map((source, idx) => (
+            <option key={idx} value={source.url}>{source.title}</option>
+          ))}
+        </select>
+      )}
+
+      {/* TTS toggle when audio files exist */}
+      {audioSources.length > 0 && (
+        <button
+          onClick={() => setUseTTS(!useTTS)}
+          className={cn(
+            'rounded-full px-3 py-2 text-xs font-medium transition-colors',
+            useTTS
+              ? 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400'
+          )}
+          title="Toggle Text-to-Speech"
+        >
+          🎙️ TTS
+        </button>
+      )}
+
       <button
         onClick={() => setShowSettings(!showSettings)}
-        className="p-2 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400"
-        title="Voice settings"
+        className="p-2 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 transition-colors"
+        title="Audio settings"
       >
         <Settings className="h-4 w-4" />
       </button>
 
       {showSettings && (
-        <div className="w-full mt-2 p-4 rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
-          <div className="space-y-3">
+        <div className="w-full mt-2 p-4 rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800 shadow-lg">
+          <div className="space-y-4">
+            {/* Volume Boost */}
             <div>
-              <label className="text-xs text-gray-500 block mb-1">Voice</label>
-              <select
-                value={selectedVoice}
-                onChange={(e) => setSelectedVoice(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-sm"
-              >
-                {voices.filter(v => v.lang.startsWith('en')).map(v => (
-                  <option key={v.name} value={v.name}>{v.name} ({v.lang})</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="text-xs text-gray-500 block mb-1">Speed: {rate.toFixed(1)}x</label>
+              <label className="text-xs font-medium text-gray-700 dark:text-gray-300 block mb-2">
+                🔊 Volume Boost: {Math.round(volumeBoost * 100)}%
+              </label>
               <input
                 type="range"
-                min="0.5"
-                max="1.5"
+                min="1"
+                max="3"
                 step="0.1"
-                value={rate}
-                onChange={(e) => setRate(parseFloat(e.target.value))}
-                className="w-full"
+                value={volumeBoost}
+                onChange={(e) => setVolumeBoost(parseFloat(e.target.value))}
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-purple-500"
               />
+              <div className="flex justify-between text-xs text-gray-500 mt-1">
+                <span>100%</span>
+                <span>200%</span>
+                <span>300%</span>
+              </div>
             </div>
+
+            {/* TTS Settings (only if using TTS) */}
+            {useTTS && (
+              <>
+                <div>
+                  <label className="text-xs font-medium text-gray-700 dark:text-gray-300 block mb-2">Voice</label>
+                  <select
+                    value={selectedVoice}
+                    onChange={(e) => setSelectedVoice(e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-sm"
+                  >
+                    {voices.filter(v => v.lang.startsWith('en')).map(v => (
+                      <option key={v.name} value={v.name}>{v.name} ({v.lang})</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-gray-700 dark:text-gray-300 block mb-2">Speed: {rate.toFixed(1)}x</label>
+                  <input
+                    type="range"
+                    min="0.5"
+                    max="1.5"
+                    step="0.1"
+                    value={rate}
+                    onChange={(e) => setRate(parseFloat(e.target.value))}
+                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-purple-500"
+                  />
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
@@ -425,7 +595,7 @@ function DictionaryMode() {
               )}
               
               <div className="mt-6">
-                <AudioPlayer word={data.word} />
+                <AudioPlayer word={data.word} phonetics={data.phonetics} />
               </div>
             </div>
 
