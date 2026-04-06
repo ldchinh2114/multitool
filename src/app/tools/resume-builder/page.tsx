@@ -48,6 +48,7 @@ const STORAGE_KEY = 'resume-builder-data';
 const STRENGTHS_STORAGE_KEY = 'resume-builder-strengths';
 const TIMESTAMP_KEY = 'resume-builder-timestamp';
 const DRAFTS_STORAGE_KEY = 'resume-builder-drafts';
+const CURRENT_DRAFT_ID_KEY = 'resume-builder-current-draft-id';
 const ONE_HOUR_MS = 60 * 60 * 1000; // 1 hour in milliseconds
 const DRAFT_EXPIRY_DAYS = 7;
 const DRAFT_EXPIRY_MS = DRAFT_EXPIRY_DAYS * 24 * 60 * 60 * 1000; // 7 days in milliseconds
@@ -76,7 +77,7 @@ export default function ResumeBuilder() {
     try {
       const savedTimestamp = localStorage.getItem(TIMESTAMP_KEY);
       const currentTime = Date.now();
-      
+
       // Check if data has expired (older than 1 hour)
       if (savedTimestamp) {
         const timestamp = parseInt(savedTimestamp, 10);
@@ -89,17 +90,23 @@ export default function ResumeBuilder() {
           return;
         }
       }
-      
+
       const savedData = localStorage.getItem(STORAGE_KEY);
       const savedStrengths = localStorage.getItem(STRENGTHS_STORAGE_KEY);
-      
+      const savedCurrentDraftId = localStorage.getItem(CURRENT_DRAFT_ID_KEY);
+
       if (savedData) {
         const parsedData = JSON.parse(savedData);
         setResumeData(parsedData);
       }
-      
+
       if (savedStrengths) {
         setStrengths(savedStrengths);
+      }
+
+      // Restore current draft ID if it exists
+      if (savedCurrentDraftId) {
+        setCurrentDraftId(savedCurrentDraftId);
       }
     } catch (error) {
       console.error('Error loading resume data from localStorage:', error);
@@ -136,6 +143,20 @@ export default function ResumeBuilder() {
       console.error('Error saving drafts to localStorage:', error);
     }
   }, [drafts, isLoaded]);
+
+  // Save current draft ID to localStorage
+  useEffect(() => {
+    if (!isLoaded) return;
+    try {
+      if (currentDraftId) {
+        localStorage.setItem(CURRENT_DRAFT_ID_KEY, currentDraftId);
+      } else {
+        localStorage.removeItem(CURRENT_DRAFT_ID_KEY);
+      }
+    } catch (error) {
+      console.error('Error saving current draft ID:', error);
+    }
+  }, [currentDraftId, isLoaded]);
 
   // Countdown timer for draft expiry
   useEffect(() => {
