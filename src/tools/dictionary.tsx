@@ -16,6 +16,7 @@ import {
   Check,
   X,
   Type,
+  Settings,
 } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
@@ -46,58 +47,116 @@ async function translate(text: string, sl: string = 'en', tl: string = 'vi'): Pr
 }
 
 /**
- * Audio Player Component
+ * Audio Player Component - using Web Speech API for better voice control
  */
-function AudioPlayer({ audioUrl }: { audioUrl?: string }) {
+function AudioPlayer({ word }: { word?: string }) {
   const { t } = useLanguage();
   const [isPlaying, setIsPlaying] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [selectedVoice, setSelectedVoice] = useState<string>('');
+  const [rate, setRate] = useState(0.9);
+  const [showSettings, setShowSettings] = useState(false);
+  const synthRef = useRef<SpeechSynthesis | null>(null);
 
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-    }
+    synthRef.current = window.speechSynthesis;
     
-    if (audioUrl) {
-      audioRef.current = new Audio(audioUrl);
-    } else {
-      audioRef.current = null;
-    }
-  }, [audioUrl]);
+    const loadVoices = () => {
+      const availableVoices = synthRef.current?.getVoices() || [];
+      setVoices(availableVoices);
+      const englishVoices = availableVoices.filter(v => v.lang.startsWith('en'));
+      if (englishVoices.length > 0 && !selectedVoice) {
+        const preferred = englishVoices.find(v => v.name.includes('Google') || v.name.includes('Samantha')) || englishVoices[0];
+        setSelectedVoice(preferred.name);
+      }
+    };
 
-  useEffect(() => {
-    if (!audioRef.current) return;
-    const handleEnded = () => setIsPlaying(false);
-    audioRef.current.addEventListener('ended', handleEnded);
-    return () => audioRef.current?.removeEventListener('ended', handleEnded);
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+    return () => { window.speechSynthesis.onvoiceschanged = null; };
   }, []);
 
-  const handlePlay = async () => {
-    if (!audioRef.current) return;
-    try {
-      await audioRef.current.play();
-      setIsPlaying(true);
-    } catch (err) {
-      console.error('Failed to play audio:', err);
-    }
+  const handlePlay = () => {
+    if (!word || !synthRef.current) return;
+    
+    synthRef.current.cancel();
+    const utterance = new SpeechSynthesisUtterance(word);
+    
+    const voice = voices.find(v => v.name === selectedVoice);
+    if (voice) utterance.voice = voice;
+    
+    utterance.rate = rate;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+    
+    utterance.onstart = () => setIsPlaying(true);
+    utterance.onend = () => setIsPlaying(false);
+    utterance.onerror = () => setIsPlaying(false);
+    
+    synthRef.current.speak(utterance);
   };
 
-  if (!audioUrl) return null;
+  const stopPlay = () => {
+    synthRef.current?.cancel();
+    setIsPlaying(false);
+  };
+
+  if (!word) return null;
 
   return (
-    <button
-      onClick={handlePlay}
-      disabled={isPlaying}
-      className={cn(
-        'inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors',
-        isPlaying
-          ? 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300'
-          : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+    <div className="flex flex-wrap items-center gap-2">
+      <button
+        onClick={isPlaying ? stopPlay : handlePlay}
+        className={cn(
+          'inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors',
+          isPlaying
+            ? 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300'
+            : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+        )}
+      >
+        <Volume2 className={cn('h-4 w-4', isPlaying && 'animate-pulse')} />
+        {isPlaying ? t('loading') : t('phonetics')}
+      </button>
+      
+      <button
+        onClick={() => setShowSettings(!showSettings)}
+        className="p-2 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400"
+        title="Voice settings"
+      >
+        <Settings className="h-4 w-4" />
+      </button>
+
+      {showSettings && (
+        <div className="w-full mt-2 p-4 rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
+          <div className="space-y-3">
+            <div>
+              <label className="text-xs text-gray-500 block mb-1">Voice</label>
+              <select
+                value={selectedVoice}
+                onChange={(e) => setSelectedVoice(e.target.value)}
+                className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-sm"
+              >
+                {voices.filter(v => v.lang.startsWith('en')).map(v => (
+                  <option key={v.name} value={v.name}>{v.name} ({v.lang})</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="text-xs text-gray-500 block mb-1">Speed: {rate.toFixed(1)}x</label>
+              <input
+                type="range"
+                min="0.5"
+                max="1.5"
+                step="0.1"
+                value={rate}
+                onChange={(e) => setRate(parseFloat(e.target.value))}
+                className="w-full"
+              />
+            </div>
+          </div>
+        </div>
       )}
-    >
-      <Volume2 className={cn('h-4 w-4', isPlaying && 'animate-pulse')} />
-      {isPlaying ? t('loading') : t('phonetics')}
-    </button>
+    </div>
   );
 }
 
@@ -301,8 +360,6 @@ function DictionaryMode() {
     performSearch(suggestion);
   };
 
-  const audioUrl = data?.phonetics?.find((p) => p.audio)?.audio;
-
   return (
     <>
       {/* Search Bar */}
@@ -368,7 +425,7 @@ function DictionaryMode() {
               )}
               
               <div className="mt-6">
-                <AudioPlayer audioUrl={audioUrl} />
+                <AudioPlayer word={data.word} />
               </div>
             </div>
 
