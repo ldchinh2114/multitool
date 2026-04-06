@@ -14,6 +14,7 @@ export interface ResumeData {
   projects: Project[];
   education: Education[];
   certifications: Certification[];
+  languages: Language[];
   skills: string;
 }
 
@@ -53,6 +54,14 @@ export interface Certification {
   credentialId: string;
   credentialUrl: string;
   description: string;
+}
+
+export type ProficiencyLevel = 'Beginner' | 'Elementary' | 'Intermediate' | 'Upper Intermediate' | 'Advanced' | 'Fluent';
+
+export interface Language {
+  id: string;
+  name: string;
+  proficiency: ProficiencyLevel;
 }
 
 export interface Draft {
@@ -108,5 +117,6 @@ export const initialResumeData: ResumeData = {
     },
   ],
   certifications: [],
+  languages: [],
   skills: 'Type your skill 1, Type your skill 2, Type your skill 3',
 };

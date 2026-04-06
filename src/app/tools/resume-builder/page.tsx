@@ -21,8 +21,9 @@ import {
   Edit3,
   ChevronLeft,
   X,
+  Globe,
 } from 'lucide-react';
-import { ResumeData, WorkExperience, Project, Education, Certification, Draft, initialResumeData } from '@/lib/resume-types';
+import { ResumeData, WorkExperience, Project, Education, Certification, Language, Draft, initialResumeData, ProficiencyLevel } from '@/lib/resume-types';
 import { cn } from '@/lib/cn';
 import { useLanguage } from '@/lib/language-context';
 
@@ -41,7 +42,7 @@ Font.register({
   ],
 });
 
-type TabType = 'profile' | 'work' | 'projects' | 'education' | 'certifications' | 'skills' | 'strengths';
+type TabType = 'profile' | 'work' | 'projects' | 'education' | 'certifications' | 'languages' | 'skills' | 'strengths';
 
 const STORAGE_KEY = 'resume-builder-data';
 const STRENGTHS_STORAGE_KEY = 'resume-builder-strengths';
@@ -325,6 +326,37 @@ export default function ResumeBuilder() {
     if (currentDraftId) setHasUnsavedChanges(true);
   };
 
+  const addLanguage = () => {
+    const newLanguage: Language = {
+      id: Date.now().toString(),
+      name: '',
+      proficiency: 'Intermediate',
+    };
+    setResumeData((prev) => ({
+      ...prev,
+      languages: [...prev.languages, newLanguage],
+    }));
+    if (currentDraftId) setHasUnsavedChanges(true);
+  };
+
+  const updateLanguage = (id: string, field: keyof Language, value: string) => {
+    setResumeData((prev) => ({
+      ...prev,
+      languages: prev.languages.map((item) =>
+        item.id === id ? { ...item, [field]: value } : item
+      ),
+    }));
+    if (currentDraftId) setHasUnsavedChanges(true);
+  };
+
+  const deleteLanguage = (id: string) => {
+    setResumeData((prev) => ({
+      ...prev,
+      languages: prev.languages.filter((item) => item.id !== id),
+    }));
+    if (currentDraftId) setHasUnsavedChanges(true);
+  };
+
   const handleStrengthsChange = (value: string) => {
     setStrengths(value);
     if (currentDraftId) setHasUnsavedChanges(true);
@@ -441,6 +473,7 @@ export default function ResumeBuilder() {
       color: '#2563eb',
       textAlign: 'center',
       marginBottom: 10,
+      wordBreak: 'keepAll',
     },
     contactInfo: {
       flexDirection: 'row',
@@ -451,11 +484,13 @@ export default function ResumeBuilder() {
     contactItem: {
       fontSize: 9,
       color: '#475569',
+      wordBreak: 'keepAll',
     },
     contactLabel: {
       fontSize: 9,
       fontWeight: 'bold',
       color: '#2563eb',
+      wordBreak: 'keepAll',
     },
     columns: {
       flexDirection: 'row',
@@ -483,6 +518,7 @@ export default function ResumeBuilder() {
       fontSize: 10,
       color: '#334155',
       lineHeight: 1.5,
+      wordBreak: 'keepAll',
     },
     entry: {
       marginBottom: 10,
@@ -492,32 +528,38 @@ export default function ResumeBuilder() {
       fontWeight: 'bold',
       color: '#0f172a',
       marginBottom: 2,
+      wordBreak: 'keepAll',
     },
     entrySubtitle: {
       fontSize: 10,
       color: '#2563eb',
       marginBottom: 2,
+      wordBreak: 'keepAll',
     },
     entryDate: {
       fontSize: 9,
       color: '#64748b',
       marginBottom: 2,
+      wordBreak: 'keepAll',
     },
     entryLink: {
       fontSize: 9,
       color: '#2563eb',
       marginBottom: 2,
+      wordBreak: 'keepAll',
     },
     entryDescription: {
       fontSize: 9,
       color: '#334155',
       lineHeight: 1.4,
       marginTop: 3,
+      wordBreak: 'keepAll',
     },
     entrySmall: {
       fontSize: 8,
       color: '#475569',
       marginBottom: 2,
+      wordBreak: 'keepAll',
     },
     skillsContainer: {
       flexDirection: 'row',
@@ -526,16 +568,32 @@ export default function ResumeBuilder() {
     },
     skill: {
       fontSize: 9,
-      color: '#334155',
-      backgroundColor: '#f1f5f9',
+      color: '#ffffff',
+      backgroundColor: '#00bfff',
       padding: '3 6',
       borderRadius: 3,
+      wordBreak: 'keepAll',
+    },
+    languageItem: {
+      fontSize: 9,
+      color: '#334155',
+      marginBottom: 3,
+      wordBreak: 'keepAll',
+    },
+    languageLevel: {
+      fontSize: 8,
+      color: '#2563eb',
+      backgroundColor: '#dbeafe',
+      padding: '1 4',
+      borderRadius: 2,
+      wordBreak: 'keepAll',
     },
     strength: {
       fontSize: 9,
       color: '#334155',
-      marginBottom: 4,
+      marginBottom: 8,
       lineHeight: 1.4,
+      wordBreak: 'keepAll',
     },
   });
 
@@ -795,6 +853,19 @@ export default function ResumeBuilder() {
                 </View>
               )}
 
+              {/* Languages */}
+              {resumeData.languages.length > 0 && resumeData.languages.some(l => l.name) && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionHeader}>{t('langs').toUpperCase()}</Text>
+                  {resumeData.languages.filter(l => l.name).map((lang) => (
+                    <View key={lang.id} style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 2 }}>
+                      <Text style={styles.languageItem}>{lang.name}</Text>
+                      <Text style={styles.languageLevel}>{lang.proficiency}</Text>
+                    </View>
+                  ))}
+                </View>
+              )}
+
               {/* Strengths */}
               {strengthsArray.length > 0 && (
                 <View style={styles.section}>
@@ -831,6 +902,7 @@ export default function ResumeBuilder() {
     { id: 'projects' as TabType, label: t('projects'), icon: Code },
     { id: 'education' as TabType, label: t('education'), icon: GraduationCap },
     { id: 'certifications' as TabType, label: t('certifications'), icon: Award },
+    { id: 'languages' as TabType, label: t('langs'), icon: Globe },
     { id: 'skills' as TabType, label: t('skills'), icon: Sparkles },
     { id: 'strengths' as TabType, label: t('strengths'), icon: Trophy },
   ];
@@ -1401,6 +1473,62 @@ export default function ResumeBuilder() {
               </div>
             )}
 
+            {/* Languages Tab */}
+            {activeTab === 'languages' && (
+              <div className="space-y-4 animate-in fade-in slide-in-from-right-2 duration-200">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-slate-800">{t('langs')}</h3>
+                  <button
+                    onClick={addLanguage}
+                    className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 font-medium"
+                  >
+                    <Plus size={16} /> {t('add')}
+                  </button>
+                </div>
+                {resumeData.languages.map((lang, index) => (
+                  <div key={lang.id} className="border border-slate-200 rounded-lg p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-slate-500">{t('langs')} {index + 1}</span>
+                      <button
+                        onClick={() => deleteLanguage(lang.id)}
+                        className="text-red-500 hover:text-red-600 p-1"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">{t('languageName')}</label>
+                      <input
+                        type="text"
+                        value={lang.name}
+                        onChange={(e) => updateLanguage(lang.id, 'name', e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                        placeholder="English, Japanese, Korean..."
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">{t('proficiencyLevel')}</label>
+                      <select
+                        value={lang.proficiency}
+                        onChange={(e) => updateLanguage(lang.id, 'proficiency', e.target.value as ProficiencyLevel)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                      >
+                        <option value="Beginner">{t('beginner')}</option>
+                        <option value="Elementary">{t('elementary')}</option>
+                        <option value="Intermediate">{t('intermediate')}</option>
+                        <option value="Upper Intermediate">{t('upperIntermediate')}</option>
+                        <option value="Advanced">{t('advanced')}</option>
+                        <option value="Fluent">{t('fluent')}</option>
+                      </select>
+                    </div>
+                  </div>
+                ))}
+                {resumeData.languages.length === 0 && (
+                  <p className="text-slate-500 text-center py-4">{t('noLanguagesYet')}</p>
+                )}
+              </div>
+            )}
+
             {/* Skills Tab */}
             {activeTab === 'skills' && (
               <div className="space-y-4 animate-in fade-in slide-in-from-right-2 duration-200">
@@ -1427,7 +1555,7 @@ export default function ResumeBuilder() {
                       {skillsArray.map((skill, index) => (
                         <span
                           key={index}
-                          className="px-3 py-1 bg-blue-100 text-blue-700 text-sm rounded-full"
+                          className="px-3 py-1 bg-[#00bfff] text-white text-sm rounded-full"
                         >
                           {skill}
                         </span>
@@ -1691,6 +1819,30 @@ export default function ResumeBuilder() {
                                 {cert.description}
                               </p>
                             )}
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+                  )}
+
+                  {/* Languages */}
+                  {resumeData.languages.length > 0 && resumeData.languages.some(l => l.name) && (
+                    <section>
+                      <h2 className="text-lg font-bold text-slate-800 mb-3 uppercase tracking-wide border-b border-slate-300 pb-1">
+                        {t('langs')}
+                      </h2>
+                      <div className="space-y-2">
+                        {resumeData.languages.filter(l => l.name).map((lang) => (
+                          <div key={lang.id} className="flex justify-between items-center">
+                            <span className="text-sm text-slate-700">{lang.name}</span>
+                            <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full">
+                              {lang.proficiency === 'Beginner' ? t('beginner') :
+                               lang.proficiency === 'Elementary' ? t('elementary') :
+                               lang.proficiency === 'Intermediate' ? t('intermediate') :
+                               lang.proficiency === 'Upper Intermediate' ? t('upperIntermediate') :
+                               lang.proficiency === 'Advanced' ? t('advanced') :
+                               t('fluent')}
+                            </span>
                           </div>
                         ))}
                       </div>
