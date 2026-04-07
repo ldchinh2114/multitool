@@ -737,6 +737,19 @@ export default function ResumeBuilder() {
                 </View>
               )}
 
+              {/* Languages */}
+              {resumeData.languages.length > 0 && resumeData.languages.some(l => l.name) && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionHeader}>{t('langs').toUpperCase()}</Text>
+                  {resumeData.languages.filter(l => l.name).map((lang) => (
+                    <View key={lang.id} style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 2 }}>
+                      <Text style={styles.languageItem}>{lang.name}</Text>
+                      <Text style={styles.languageLevel}>{lang.proficiency}</Text>
+                    </View>
+                  ))}
+                </View>
+              )}
+
               {/* Strengths */}
               {strengthsArray.length > 0 && (
                 <View style={styles.section}>
