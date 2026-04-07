@@ -42,6 +42,9 @@ Font.register({
   ],
 });
 
+// Disable hyphenation to prevent words like "proficient" from being split with "-"
+Font.registerHyphenationCallback((word: string) => [word]);
+
 type TabType = 'profile' | 'work' | 'projects' | 'education' | 'certifications' | 'languages' | 'skills' | 'strengths';
 
 const STORAGE_KEY = 'resume-builder-data';
@@ -494,7 +497,7 @@ export default function ResumeBuilder() {
       color: '#2563eb',
       textAlign: 'center',
       marginBottom: 10,
-      wordBreak: 'keepAll',
+      wordBreak: 'break-word',
     },
     contactInfo: {
       flexDirection: 'row',
@@ -505,13 +508,13 @@ export default function ResumeBuilder() {
     contactItem: {
       fontSize: 9,
       color: '#475569',
-      wordBreak: 'keepAll',
+      wordBreak: 'break-word',
     },
     contactLabel: {
       fontSize: 9,
       fontWeight: 'bold',
       color: '#2563eb',
-      wordBreak: 'keepAll',
+      wordBreak: 'break-word',
     },
     columns: {
       flexDirection: 'row',
@@ -539,7 +542,7 @@ export default function ResumeBuilder() {
       fontSize: 10,
       color: '#334155',
       lineHeight: 1.5,
-      wordBreak: 'keepAll',
+      wordBreak: 'break-word',
     },
     entry: {
       marginBottom: 10,
@@ -549,38 +552,38 @@ export default function ResumeBuilder() {
       fontWeight: 'bold',
       color: '#0f172a',
       marginBottom: 2,
-      wordBreak: 'keepAll',
+      wordBreak: 'break-word',
     },
     entrySubtitle: {
       fontSize: 10,
       color: '#2563eb',
       marginBottom: 2,
-      wordBreak: 'keepAll',
+      wordBreak: 'break-word',
     },
     entryDate: {
       fontSize: 9,
       color: '#64748b',
       marginBottom: 2,
-      wordBreak: 'keepAll',
+      wordBreak: 'break-word',
     },
     entryLink: {
       fontSize: 9,
       color: '#2563eb',
       marginBottom: 2,
-      wordBreak: 'keepAll',
+      wordBreak: 'break-word',
     },
     entryDescription: {
       fontSize: 9,
       color: '#334155',
       lineHeight: 1.4,
       marginTop: 3,
-      wordBreak: 'keepAll',
+      wordBreak: 'break-word',
     },
     entrySmall: {
       fontSize: 8,
       color: '#475569',
       marginBottom: 2,
-      wordBreak: 'keepAll',
+      wordBreak: 'break-word',
     },
     skillsContainer: {
       flexDirection: 'row',
@@ -593,13 +596,13 @@ export default function ResumeBuilder() {
       backgroundColor: '#00bfff',
       padding: '3 6',
       borderRadius: 3,
-      wordBreak: 'keepAll',
+      wordBreak: 'break-word',
     },
     languageItem: {
       fontSize: 9,
       color: '#334155',
       marginBottom: 3,
-      wordBreak: 'keepAll',
+      wordBreak: 'break-word',
     },
     languageLevel: {
       fontSize: 8,
@@ -607,14 +610,14 @@ export default function ResumeBuilder() {
       backgroundColor: '#dbeafe',
       padding: '1 4',
       borderRadius: 2,
-      wordBreak: 'keepAll',
+      wordBreak: 'break-word',
     },
     strength: {
       fontSize: 9,
       color: '#334155',
       marginBottom: 8,
       lineHeight: 1.4,
-      wordBreak: 'keepAll',
+      wordBreak: 'break-word',
     },
   });
 
