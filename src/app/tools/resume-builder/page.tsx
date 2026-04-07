@@ -1775,7 +1775,7 @@ export default function ResumeBuilder() {
                         {skillsArray.map((skill, index) => (
                           <span
                             key={index}
-                            className="px-2 py-1 bg-slate-100 text-slate-700 text-xs rounded-md"
+                            className="px-2 py-1 bg-sky-400 text-white text-xs rounded-md"
                           >
                             {skill}
                           </span>
