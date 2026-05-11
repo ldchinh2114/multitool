@@ -702,11 +702,15 @@ export default function ResumeBuilder() {
                   <Text style={styles.sectionHeader}>{t('workExperience').toUpperCase()}</Text>
                   {resumeData.work.filter(w => w.company || w.position).map((work) => (
                     <View key={work.id} style={styles.entry}>
-                      <Text style={styles.entryTitle}>{work.position || t('positionFallback')}</Text>
-                      <Text style={styles.entrySubtitle}>{work.company || t('companyFallback')}</Text>
-                      {work.startDate && work.endDate && (
-                        <Text style={styles.entryDate}>{work.startDate} - {work.endDate}</Text>
-                      )}
+                      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <View style={{ flex: 1 }}>
+                          <Text style={styles.entryTitle}>{work.position || t('positionFallback')}</Text>
+                          <Text style={styles.entrySubtitle}>{work.company || t('companyFallback')}</Text>
+                        </View>
+                        {work.startDate && work.endDate && (
+                          <Text style={styles.entryDate}>{work.startDate} - {work.endDate}</Text>
+                        )}
+                      </View>
                       {work.description && <Text style={styles.entryDescription}>{work.description}</Text>}
                     </View>
                   ))}
@@ -719,8 +723,10 @@ export default function ResumeBuilder() {
                   <Text style={styles.sectionHeader}>{t('projects').toUpperCase()}</Text>
                   {resumeData.projects.filter(p => p.name).map((project) => (
                     <View key={project.id} style={styles.entry}>
-                      <Text style={styles.entryTitle}>{project.name}</Text>
-                      {project.date && <Text style={styles.entryDate}>{project.date}</Text>}
+                      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <Text style={styles.entryTitle}>{project.name}</Text>
+                        {project.date && <Text style={styles.entryDate}>{project.date}</Text>}
+                      </View>
                       {project.link && <Text style={styles.entryLink}>{project.link}</Text>}
                       {project.description && <Text style={styles.entryDescription}>{project.description}</Text>}
                     </View>
@@ -866,11 +872,15 @@ export default function ResumeBuilder() {
                   <Text style={styles.sectionHeader}>{t('workExperience').toUpperCase()}</Text>
                   {resumeData.work.filter(w => w.company || w.position).map((work) => (
                     <View key={work.id} style={styles.entry}>
-                      <Text style={styles.entryTitle}>{work.position || t('positionFallback')}</Text>
-                      <Text style={styles.entrySubtitle}>{work.company || t('companyFallback')}</Text>
-                      {work.startDate && work.endDate && (
-                        <Text style={styles.entryDate}>{work.startDate} - {work.endDate}</Text>
-                      )}
+                      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <View style={{ flex: 1 }}>
+                          <Text style={styles.entryTitle}>{work.position || t('positionFallback')}</Text>
+                          <Text style={styles.entrySubtitle}>{work.company || t('companyFallback')}</Text>
+                        </View>
+                        {work.startDate && work.endDate && (
+                          <Text style={styles.entryDate}>{work.startDate} - {work.endDate}</Text>
+                        )}
+                      </View>
                       {work.description && <Text style={styles.entryDescription}>{work.description}</Text>}
                     </View>
                   ))}
@@ -883,8 +893,10 @@ export default function ResumeBuilder() {
                   <Text style={styles.sectionHeader}>{t('projects').toUpperCase()}</Text>
                   {resumeData.projects.filter(p => p.name).map((project) => (
                     <View key={project.id} style={styles.entry}>
-                      <Text style={styles.entryTitle}>{project.name}</Text>
-                      {project.date && <Text style={styles.entryDate}>{project.date}</Text>}
+                      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <Text style={styles.entryTitle}>{project.name}</Text>
+                        {project.date && <Text style={styles.entryDate}>{project.date}</Text>}
+                      </View>
                       {project.link && <Text style={styles.entryLink}>{project.link}</Text>}
                       {project.description && <Text style={styles.entryDescription}>{project.description}</Text>}
                     </View>

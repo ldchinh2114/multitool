@@ -53,7 +53,6 @@ The app supports hot-reload, so changes to your code will automatically update i
 
 ```
 multitool/
-├── docs/              # Documentation files
 ├── public/            # Static assets
 ├── src/
 │   ├── app/           # Next.js App Router pages
