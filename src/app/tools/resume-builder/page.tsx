@@ -382,6 +382,15 @@ export default function ResumeBuilder() {
     if (currentDraftId) setHasUnsavedChanges(true);
   };
 
+  const proficiencyLabel = (level: ProficiencyLevel): string => {
+    return level === 'Beginner' ? t('beginner') :
+      level === 'Elementary' ? t('elementary') :
+      level === 'Intermediate' ? t('intermediate') :
+      level === 'Upper Intermediate' ? t('upperIntermediate') :
+      level === 'Advanced' ? t('advanced') :
+      t('fluent');
+  };
+
   const handleStrengthsChange = (value: string) => {
     setStrengths(value);
     if (currentDraftId) setHasUnsavedChanges(true);
@@ -645,16 +654,18 @@ export default function ResumeBuilder() {
     languageItem: {
       fontSize: 9,
       color: '#334155',
-      marginBottom: 3,
       wordBreak: 'break-word',
+      flex: 1,
     },
     languageLevel: {
-      fontSize: 8,
-      color: '#2563eb',
       backgroundColor: '#dbeafe',
-      padding: '1 4',
-      borderRadius: 2,
-      wordBreak: 'break-word',
+      padding: '2 6',
+      borderRadius: 7,
+      marginLeft: 4,
+    },
+    languageLevelText: {
+      fontSize: 9,
+      color: '#1d4ed8',
     },
     strength: {
       fontSize: 9,
@@ -793,16 +804,11 @@ export default function ResumeBuilder() {
                 <View style={styles.section}>
                   <Text style={styles.sectionHeader}>{t('langs').toUpperCase()}</Text>
                   {resumeData.languages.filter(l => l.name).map((lang) => (
-                    <View key={lang.id} style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 2 }}>
+                    <View key={lang.id} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}>
                       <Text style={styles.languageItem}>{lang.name}</Text>
-                      <Text style={styles.languageLevel}>{
-                        lang.proficiency === 'Beginner' ? t('beginner') :
-                        lang.proficiency === 'Elementary' ? t('elementary') :
-                        lang.proficiency === 'Intermediate' ? t('intermediate') :
-                        lang.proficiency === 'Upper Intermediate' ? t('upperIntermediate') :
-                        lang.proficiency === 'Advanced' ? t('advanced') :
-                        t('fluent')
-                      }</Text>
+                      <View style={styles.languageLevel}>
+                        <Text style={styles.languageLevelText}>{proficiencyLabel(lang.proficiency)}</Text>
+                      </View>
                     </View>
                   ))}
                 </View>
@@ -963,16 +969,11 @@ export default function ResumeBuilder() {
                 <View style={styles.section}>
                   <Text style={styles.sectionHeader}>{t('langs').toUpperCase()}</Text>
                   {resumeData.languages.filter(l => l.name).map((lang) => (
-                    <View key={lang.id} style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 2 }}>
+                    <View key={lang.id} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}>
                       <Text style={styles.languageItem}>{lang.name}</Text>
-                      <Text style={styles.languageLevel}>{
-                        lang.proficiency === 'Beginner' ? t('beginner') :
-                        lang.proficiency === 'Elementary' ? t('elementary') :
-                        lang.proficiency === 'Intermediate' ? t('intermediate') :
-                        lang.proficiency === 'Upper Intermediate' ? t('upperIntermediate') :
-                        lang.proficiency === 'Advanced' ? t('advanced') :
-                        t('fluent')
-                      }</Text>
+                      <View style={styles.languageLevel}>
+                        <Text style={styles.languageLevelText}>{proficiencyLabel(lang.proficiency)}</Text>
+                      </View>
                     </View>
                   ))}
                 </View>
@@ -1956,12 +1957,7 @@ export default function ResumeBuilder() {
                           <div key={lang.id} className="flex justify-between items-center">
                             <span className="text-sm text-slate-700 dark:text-slate-300">{lang.name}</span>
                             <span className="text-xs px-2 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full">
-                              {lang.proficiency === 'Beginner' ? t('beginner') :
-                               lang.proficiency === 'Elementary' ? t('elementary') :
-                               lang.proficiency === 'Intermediate' ? t('intermediate') :
-                               lang.proficiency === 'Upper Intermediate' ? t('upperIntermediate') :
-                               lang.proficiency === 'Advanced' ? t('advanced') :
-                               t('fluent')}
+                              {proficiencyLabel(lang.proficiency)}
                             </span>
                           </div>
                         ))}
