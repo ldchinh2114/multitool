@@ -73,6 +73,8 @@ export default function ResumeBuilder() {
   const [toastDraftTitle, setToastDraftTitle] = useState('');
   const [saveToastTimeout, setSaveToastTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [currentEditingTitle, setCurrentEditingTitle] = useState('');
+  const [renamingDraftId, setRenamingDraftId] = useState<string | null>(null);
+  const [renameInput, setRenameInput] = useState('');
 
   // Load data from localStorage on mount
   useEffect(() => {
@@ -411,6 +413,27 @@ export default function ResumeBuilder() {
     setShowDraftList(false);
   };
 
+  const createNewBlankDraft = () => {
+    const now = Date.now();
+    const title = draftTitle.trim() || `Draft ${drafts.length + 1}`;
+    const newDraft: Draft = {
+      id: (now + 1).toString(),
+      title,
+      createdAt: now,
+      updatedAt: now,
+      expiresAt: now + DRAFT_EXPIRY_MS,
+      resumeData: initialResumeData,
+      strengths: 'Type your strength 1, Type your strength 2, Type your strength 3, Type your strength 4',
+    };
+    setDrafts((prev) => [...prev, newDraft]);
+    setCurrentDraftId(newDraft.id);
+    setResumeData(initialResumeData);
+    setStrengths('Type your strength 1, Type your strength 2, Type your strength 3, Type your strength 4');
+    setDraftTitle('');
+    setShowDraftList(false);
+    setHasUnsavedChanges(false);
+  };
+
   const updateDraft = (draftId: string) => {
     setDrafts((prev) =>
       prev.map((draft) =>
@@ -447,6 +470,32 @@ export default function ResumeBuilder() {
     if (currentDraftId === draftId) {
       setCurrentDraftId(null);
     }
+  };
+
+  const startRenaming = (draft: Draft) => {
+    setRenamingDraftId(draft.id);
+    setRenameInput(draft.title);
+  };
+
+  const confirmRename = () => {
+    if (!renamingDraftId) return;
+    const trimmed = renameInput.trim();
+    if (!trimmed) {
+      cancelRename();
+      return;
+    }
+    setDrafts((prev) =>
+      prev.map((draft) =>
+        draft.id === renamingDraftId ? { ...draft, title: trimmed } : draft
+      )
+    );
+    setRenamingDraftId(null);
+    setRenameInput('');
+  };
+
+  const cancelRename = () => {
+    setRenamingDraftId(null);
+    setRenameInput('');
   };
 
   const loadDraft = (draft: Draft) => {
@@ -1951,7 +2000,7 @@ export default function ResumeBuilder() {
               </button>
             </div>
             
-            <div className="p-4 border-b border-slate-200 dark:border-slate-700">
+            <div className="p-4 border-b border-slate-200 dark:border-slate-700 space-y-3">
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -1969,6 +2018,13 @@ export default function ResumeBuilder() {
                   {t('addDraft')}
                 </button>
               </div>
+              <button
+                onClick={createNewBlankDraft}
+                className="w-full flex items-center justify-center gap-2 border-2 border-dashed border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 px-4 py-3 rounded-lg hover:border-blue-500 hover:text-blue-600 dark:hover:border-blue-400 dark:hover:text-blue-400 transition-colors font-medium"
+              >
+                <File size={18} />
+                {t('newDraft')}
+              </button>
             </div>
 
             <div className="flex-1 overflow-y-auto p-4">
@@ -1991,40 +2047,74 @@ export default function ResumeBuilder() {
                       }`}
                     >
                       <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h3 className="font-medium text-slate-800 dark:text-slate-200 flex items-center gap-2">
-                            {currentDraftId === draft.id && (
-                              <span className="w-2 h-2 bg-amber-500 rounded-full" />
-                            )}
-                            {draft.title}
-                          </h3>
-                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                            {t('createdAt')}: {formatDate(draft.createdAt)}
-                          </p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">
-                            {t('lastModified')}: {formatDate(draft.updatedAt)}
-                          </p>
-                          <div className="flex items-center gap-1 mt-1 text-xs text-amber-600">
-                            <Clock size={12} />
-                            {t('expiresIn')}: {countdown[draft.id] || 'Calculating...'}
+                        <div className="flex-1 min-w-0">
+                          {renamingDraftId === draft.id ? (
+                            <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                              <input
+                                type="text"
+                                value={renameInput}
+                                onChange={(e) => setRenameInput(e.target.value)}
+                                className="flex-1 px-2 py-1 text-sm border border-blue-500 dark:border-blue-400 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') confirmRename();
+                                  if (e.key === 'Escape') cancelRename();
+                                }}
+                                autoFocus
+                              />
+                              <button
+                                onClick={confirmRename}
+                                className="text-green-600 hover:text-green-700 p-1"
+                                title={t('save')}
+                              >
+                                <Save size={16} />
+                              </button>
+                              <button
+                                onClick={cancelRename}
+                                className="text-red-500 hover:text-red-600 p-1"
+                                title={t('cancel')}
+                              >
+                                <X size={16} />
+                              </button>
+                            </div>
+                          ) : (
+                            <>
+                              <h3 className="font-medium text-slate-800 dark:text-slate-200 flex items-center gap-2 truncate">
+                                {currentDraftId === draft.id && (
+                                  <span className="w-2 h-2 bg-amber-500 rounded-full shrink-0" />
+                                )}
+                                {draft.title}
+                              </h3>
+                              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                {t('createdAt')}: {formatDate(draft.createdAt)}
+                              </p>
+                              <p className="text-xs text-slate-500 dark:text-slate-400">
+                                {t('lastModified')}: {formatDate(draft.updatedAt)}
+                              </p>
+                              <div className="flex items-center gap-1 mt-1 text-xs text-amber-600">
+                                <Clock size={12} />
+                                {t('expiresIn')}: {countdown[draft.id] || 'Calculating...'}
+                              </div>
+                            </>
+                          )}
+                        </div>
+                        {renamingDraftId !== draft.id && (
+                          <div className="flex gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
+                            <button
+                              onClick={() => startRenaming(draft)}
+                              className="text-blue-600 hover:text-blue-700 p-1"
+                              title={t('renameDraft')}
+                            >
+                              <Edit3 size={16} />
+                            </button>
+                            <button
+                              onClick={() => deleteDraft(draft.id)}
+                              className="text-red-500 hover:text-red-600 p-1"
+                              title={t('deleteDraft')}
+                            >
+                              <Trash2 size={16} />
+                            </button>
                           </div>
-                        </div>
-                        <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
-                          <button
-                            onClick={() => loadDraft(draft)}
-                            className="text-blue-600 hover:text-blue-700 p-1"
-                            title={t('editDraft')}
-                          >
-                            <Edit3 size={16} />
-                          </button>
-                          <button
-                            onClick={() => deleteDraft(draft.id)}
-                            className="text-red-500 hover:text-red-600 p-1"
-                            title={t('deleteDraft')}
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
+                        )}
                       </div>
                     </div>
                   ))}

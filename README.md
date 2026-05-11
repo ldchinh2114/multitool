@@ -4,12 +4,12 @@ A web-based multi-tool application built with Next.js, React, and Tailwind CSS.
 
 ## Features
 
-- **Resume Builder** - Create and edit resumes with live preview and PDF export
-- **Dictionary** - Word definitions and translations (EN/VI)
-- **Currency Converter** - Convert between currencies
-- **Unit Converter** - Convert between different units of measurement
-- **Dark Mode Support** - Toggle between light and dark themes
-- **Multi-language** - English and Vietnamese UI
+- **Resume Builder** - Create and edit resumes with live preview and PDF export. Supports multiple drafts with 7-day expiry, draft renaming, and blank draft creation.
+- **Dictionary** - Word definitions, pronunciations, auto-suggestions, and EN/VI translator
+- **Currency Converter** - Real-time exchange rates for major currencies
+- **Unit Converter** - Convert between length and weight units
+- **Dark Mode** - Toggle between light and dark themes with system preference detection
+- **Multi-language** - Full English and Vietnamese UI
 
 ## Prerequisites
 
