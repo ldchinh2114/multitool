@@ -53,12 +53,9 @@ async function translate(text: string, sl: string = 'en', tl: string = 'vi'): Pr
 function AudioPlayer({ word, phonetics }: { word?: string; phonetics?: DictionaryResponse['phonetics'] }) {
   const { t } = useLanguage();
   const [isPlaying, setIsPlaying] = useState(false);
-  const [audioSources, setAudioSources] = useState<{ url: string; accent: string; title: string }[]>([]);
-  const [selectedSource, setSelectedSource] = useState<string>('');
-  const [volumeBoost, setVolumeBoost] = useState(2.0); // Boost volume to 200%
+  const [volumeBoost, setVolumeBoost] = useState(2.0);
   const [showSettings, setShowSettings] = useState(false);
   const audioContextRef = useRef<AudioContext | null>(null);
-  const [useTTS, setUseTTS] = useState(false);
   
   // TTS fallback state
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
@@ -66,18 +63,13 @@ function AudioPlayer({ word, phonetics }: { word?: string; phonetics?: Dictionar
   const [rate, setRate] = useState(0.9);
   const synthRef = useRef<SpeechSynthesis | null>(null);
 
-  // Extract audio sources from phonetics data
-  useEffect(() => {
-    if (!phonetics || phonetics.length === 0) {
-      setAudioSources([]);
-      setUseTTS(true);
-      return;
-    }
+  // Derive audio sources from phonetics data (pure computation)
+  const audioSources = useMemo(() => {
+    if (!phonetics || phonetics.length === 0) return [];
 
     const sources: { url: string; accent: string; title: string }[] = [];
     phonetics.forEach((phonetic) => {
       if (phonetic.audio) {
-        // Determine accent from URL
         let accent = 'US';
         let title = '🇺🇸 US';
         if (phonetic.audio.includes('gb') || phonetic.audio.includes('uk')) {
@@ -87,23 +79,28 @@ function AudioPlayer({ word, phonetics }: { word?: string; phonetics?: Dictionar
           accent = 'US';
           title = '🇺🇸 US';
         }
-        
-        // Avoid duplicates
         if (!sources.find(s => s.url === phonetic.audio)) {
           sources.push({ url: phonetic.audio, accent, title });
         }
       }
     });
-
-    if (sources.length > 0) {
-      setAudioSources(sources);
-      setSelectedSource(sources[0].url);
-      setUseTTS(false);
-    } else {
-      setAudioSources([]);
-      setUseTTS(true);
-    }
+    return sources;
   }, [phonetics]);
+
+  // User preference overrides
+  const [preferTTS, setPreferTTS] = useState(false);
+  const [userSelectedUrl, setUserSelectedUrl] = useState('');
+
+  // Derived values
+  const hasAudio = audioSources.length > 0;
+  const useTTS = !hasAudio || preferTTS;
+  const selectedSource = hasAudio ? (userSelectedUrl || audioSources[0].url) : '';
+
+  // Track selectedVoice with a ref to avoid stale closure in voice loading
+  const selectedVoiceRef = useRef(selectedVoice);
+
+  // Sync ref with state value
+  useEffect(() => { selectedVoiceRef.current = selectedVoice; }, [selectedVoice]);
 
   // Load voices for TTS fallback
   useEffect(() => {
@@ -113,7 +110,7 @@ function AudioPlayer({ word, phonetics }: { word?: string; phonetics?: Dictionar
       const availableVoices = synthRef.current?.getVoices() || [];
       setVoices(availableVoices);
       const englishVoices = availableVoices.filter(v => v.lang.startsWith('en'));
-      if (englishVoices.length > 0 && !selectedVoice) {
+      if (englishVoices.length > 0 && !selectedVoiceRef.current) {
         const preferred = englishVoices.find(v => v.name.includes('Google') || v.name.includes('Samantha')) || englishVoices[0];
         setSelectedVoice(preferred.name);
       }
@@ -235,8 +232,8 @@ function AudioPlayer({ word, phonetics }: { word?: string; phonetics?: Dictionar
         <select
           value={selectedSource}
           onChange={(e) => {
-            setSelectedSource(e.target.value);
-            setUseTTS(false);
+            setUserSelectedUrl(e.target.value);
+            setPreferTTS(false);
           }}
           className="rounded-full border border-purple-200 bg-white px-3 py-2 text-xs font-medium text-purple-700 shadow-sm transition-colors hover:bg-purple-50 dark:border-purple-800 dark:bg-gray-800 dark:text-purple-300"
         >
@@ -249,7 +246,7 @@ function AudioPlayer({ word, phonetics }: { word?: string; phonetics?: Dictionar
       {/* TTS toggle when audio files exist */}
       {audioSources.length > 0 && (
         <button
-          onClick={() => setUseTTS(!useTTS)}
+          onClick={() => setPreferTTS(!preferTTS)}
           className={cn(
             'rounded-full px-3 py-2 text-xs font-medium transition-colors',
             useTTS
@@ -595,7 +592,7 @@ function DictionaryMode() {
               )}
               
               <div className="mt-6">
-                <AudioPlayer word={data.word} phonetics={data.phonetics} />
+                <AudioPlayer key={data.word} word={data.word} phonetics={data.phonetics} />
               </div>
             </div>
 
@@ -693,11 +690,7 @@ function TranslatorMode() {
   );
 
   useEffect(() => {
-    if (sourceText) {
-      debouncedTranslate(sourceText, sourceLang, targetLang);
-    } else {
-      setTargetText('');
-    }
+    debouncedTranslate(sourceText, sourceLang, targetLang);
   }, [sourceText, sourceLang, targetLang, debouncedTranslate]);
 
   const swapLanguages = () => {

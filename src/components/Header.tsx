@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/cn';
 import { ToolInfo } from '@/lib/types';
-import { LayoutGrid, Coins, BookOpen, Ruler, Menu, X } from 'lucide-react';
+import { LayoutGrid, Coins, BookOpen, Ruler, FileText, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { useLanguage } from '@/lib/language-context';
 import { ThemeToggle } from './ThemeToggle';
@@ -16,6 +16,7 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   Coins,
   BookOpen,
   Ruler,
+  FileText,
 };
 
 export function Header() {
@@ -56,6 +57,14 @@ export function Header() {
       icon: 'Ruler',
       path: '/tools/unit',
       color: 'bg-orange-500',
+    },
+    {
+      id: 'resume-builder',
+      name: t('resumeBuilder'),
+      description: language === 'vi' ? 'Tạo CV chuyên nghiệp' : 'Professional Resume Builder',
+      icon: 'FileText',
+      path: '/tools/resume-builder',
+      color: 'bg-indigo-500',
     },
   ];
 

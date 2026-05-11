@@ -174,6 +174,9 @@ const translations = {
     schoolFallback: 'School',
     certificationFallback: 'Certification',
     issuerFallback: 'Issuer',
+    // Empty states
+    noWorkExperience: 'No work experience added yet. Click "Add" to add one.',
+    noProjectsYet: 'No projects added yet. Click "Add" to add one.',
     // Drafts
     drafts: 'Drafts',
     addDraft: 'Add Draft',
@@ -191,6 +194,7 @@ const translations = {
     draftUpdated: 'Draft updated successfully',
     draftDeleted: 'Draft deleted successfully',
     // Common
+    save: 'Save',
     loading: 'Loading...',
     error: 'Error',
     tryAgain: 'Try Again',
@@ -274,6 +278,7 @@ const translations = {
     unitSubtitle: 'Chuyển đổi giữa các đơn vị chiều dài và trọng lượng khác nhau',
     enterValue: 'Nhập giá trị',
     // Common
+    save: 'Lưu',
     loading: 'Đang tải...',
     error: 'Lỗi',
     tryAgain: 'Thử lại',
@@ -364,6 +369,9 @@ const translations = {
     schoolFallback: 'Trường',
     certificationFallback: 'Chứng chỉ',
     issuerFallback: 'Tổ chức cấp',
+    // Empty states
+    noWorkExperience: 'Chưa có kinh nghiệm làm việc. Nhấn "Thêm" để thêm.',
+    noProjectsYet: 'Chưa có dự án nào. Nhấn "Thêm" để thêm.',
     // Drafts
     drafts: 'Bản nháp',
     addDraft: 'Thêm bản nháp',

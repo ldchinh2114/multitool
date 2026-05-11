@@ -1,7 +1,7 @@
 // Định nghĩa các kiểu dữ liệu chung cho toàn bộ ứng dụng
 
 // Các công cụ có sẵn trong hub
-export type ToolType = 'dashboard' | 'currency' | 'dictionary' | 'unit';
+export type ToolType = 'dashboard' | 'currency' | 'dictionary' | 'unit' | 'resume-builder';
 
 // Thông tin công cụ cho navigation
 export interface ToolInfo {
