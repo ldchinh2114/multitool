@@ -680,7 +680,7 @@ export default function ResumeBuilder() {
     try {
       const ResumeDocument = (
       <Document>
-        <Page size="A4" style={styles.page}>
+        <Page size={[595.28, 2000]} wrap={false} style={styles.page}>
           {/* Header */}
           <View style={styles.header}>
             <Text style={styles.name}>{resumeData.profile.name || t('yourName')}</Text>
@@ -845,7 +845,7 @@ export default function ResumeBuilder() {
     try {
     const ResumeDocument = (
       <Document>
-        <Page size="A4" style={styles.page}>
+        <Page size={[595.28, 2000]} wrap={false} style={styles.page}>
           {/* Header */}
           <View style={styles.header}>
             <Text style={styles.name}>{resumeData.profile.name || t('yourName')}</Text>
@@ -1725,10 +1725,10 @@ export default function ResumeBuilder() {
         </div>
 
         {/* Preview Panel */}
-        <div className="w-[60%] print:w-full overflow-auto flex justify-center bg-slate-200 dark:bg-slate-800 p-4 print:p-0 print:bg-white print:overflow-visible">
-          <div           className="w-[210mm] min-h-[297mm] bg-white dark:bg-slate-900 shadow-xl print:shadow-none print:w-full print:min-h-0 print:m-0 animate-in fade-in zoom-in-95 duration-300">
+        <div className="w-[60%] print:w-full overflow-y-auto flex justify-center items-start bg-slate-200 dark:bg-slate-800 p-4 print:p-0 print:bg-white print:overflow-visible">
+          <div           className="w-[210mm] min-h-[297mm] bg-white dark:bg-slate-900 shadow-xl print:shadow-none print:w-full print:m-0 animate-in fade-in zoom-in-95 duration-300">
             {/* Resume Preview - Modern Executive Style */}
-            <div className="p-8 print:p-0">
+            <div className="p-8 print:p-0 break-words">
               {/* Header */}
               <header className="mb-6 border-b-2 border-slate-800 dark:border-slate-600 pb-4">
                 {/* Name and Title - Centered */}
