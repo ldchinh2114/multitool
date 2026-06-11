@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { pdf } from '@react-pdf/renderer';
-import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Font, Image } from '@react-pdf/renderer';
 import {
   User,
   Briefcase,
@@ -21,6 +21,8 @@ import {
   Edit3,
   X,
   Globe,
+  Heart,
+  Camera,
 } from 'lucide-react';
 import { ResumeData, WorkExperience, Project, Education, Certification, Language, Draft, initialResumeData, ProficiencyLevel } from '@/lib/resume-types';
 import { cn } from '@/lib/cn';
@@ -44,7 +46,7 @@ Font.register({
 // Disable hyphenation to prevent words like "proficient" from being split with "-"
 Font.registerHyphenationCallback((word: string) => [word]);
 
-type TabType = 'profile' | 'work' | 'projects' | 'education' | 'certifications' | 'languages' | 'skills' | 'strengths';
+type TabType = 'profile' | 'work' | 'projects' | 'education' | 'certifications' | 'languages' | 'skills' | 'strengths' | 'hobbies';
 
 const STORAGE_KEY = 'resume-builder-data';
 const STRENGTHS_STORAGE_KEY = 'resume-builder-strengths';
@@ -75,6 +77,7 @@ export default function ResumeBuilder() {
   const [currentEditingTitle, setCurrentEditingTitle] = useState('');
   const [renamingDraftId, setRenamingDraftId] = useState<string | null>(null);
   const [renameInput, setRenameInput] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load data from localStorage on mount
   useEffect(() => {
@@ -217,6 +220,37 @@ export default function ResumeBuilder() {
       profile: { ...prev.profile, [field]: value },
     }));
     if (currentDraftId) setHasUnsavedChanges(true);
+  };
+
+  const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image size should be less than 5MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const dataUrl = event.target?.result as string;
+      updateProfile('avatarUrl', dataUrl);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveAvatar = () => {
+    updateProfile('avatarUrl', '');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const addWorkExperience = () => {
@@ -404,6 +438,14 @@ export default function ResumeBuilder() {
     if (currentDraftId) setHasUnsavedChanges(true);
   };
 
+  const handleHobbiesChange = (value: string) => {
+    setResumeData((prev) => ({
+      ...prev,
+      hobbies: value,
+    }));
+    if (currentDraftId) setHasUnsavedChanges(true);
+  };
+
   const createDraft = () => {
     const title = draftTitle.trim() || `Draft ${drafts.length + 1}`;
     const now = Date.now();
@@ -415,6 +457,7 @@ export default function ResumeBuilder() {
       expiresAt: now + DRAFT_EXPIRY_MS,
       resumeData,
       strengths,
+      hobbies: resumeData.hobbies,
     };
     setDrafts((prev) => [...prev, newDraft]);
     setCurrentDraftId(newDraft.id);
@@ -433,6 +476,7 @@ export default function ResumeBuilder() {
       expiresAt: now + DRAFT_EXPIRY_MS,
       resumeData: initialResumeData,
       strengths: 'Type your strength 1, Type your strength 2, Type your strength 3, Type your strength 4',
+      hobbies: '',
     };
     setDrafts((prev) => [...prev, newDraft]);
     setCurrentDraftId(newDraft.id);
@@ -447,7 +491,7 @@ export default function ResumeBuilder() {
     setDrafts((prev) =>
       prev.map((draft) =>
         draft.id === draftId
-          ? { ...draft, updatedAt: Date.now(), expiresAt: Date.now() + DRAFT_EXPIRY_MS, resumeData, strengths }
+          ? { ...draft, updatedAt: Date.now(), expiresAt: Date.now() + DRAFT_EXPIRY_MS, resumeData, strengths, hobbies: resumeData.hobbies }
           : draft
       )
     );
@@ -538,17 +582,53 @@ export default function ResumeBuilder() {
       borderBottomColor: '#1e293b',
       paddingBottom: 15,
     },
+    headerWithAvatar: {
+      marginBottom: 20,
+      borderBottomWidth: 2,
+      borderBottomColor: '#1e293b',
+      paddingBottom: 15,
+      flexDirection: 'row',
+      gap: 15,
+    },
+    avatarImage: {
+      width: 120,
+      height: 120,
+      borderRadius: 60,
+      objectFit: 'cover',
+    },
+    avatarImageSmall: {
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      objectFit: 'cover',
+    },
+    headerContent: {
+      flex: 1,
+      justifyContent: 'center',
+    },
     name: {
       fontSize: 28,
       fontWeight: 'bold',
       color: '#0f172a',
+      marginBottom: 5,
       textAlign: 'center',
+    },
+    nameLeft: {
+      fontSize: 28,
+      fontWeight: 'bold',
+      color: '#0f172a',
       marginBottom: 5,
     },
     title: {
       fontSize: 16,
       color: '#2563eb',
+      marginBottom: 10,
+      wordBreak: 'break-word',
       textAlign: 'center',
+    },
+    titleLeft: {
+      fontSize: 16,
+      color: '#2563eb',
       marginBottom: 10,
       wordBreak: 'break-word',
     },
@@ -557,6 +637,11 @@ export default function ResumeBuilder() {
       justifyContent: 'center',
       flexWrap: 'wrap',
       gap: 15,
+    },
+    contactInfoLeft: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 10,
     },
     contactItem: {
       fontSize: 9,
@@ -674,26 +759,52 @@ export default function ResumeBuilder() {
       lineHeight: 1.4,
       wordBreak: 'break-word',
     },
+    hobbyItem: {
+      fontSize: 9,
+      color: '#334155',
+      marginBottom: 6,
+      lineHeight: 1.4,
+      wordBreak: 'break-word',
+    },
   });
 
   const handleDownload = async () => {
     try {
+      const hasAvatar = Boolean(resumeData.profile.avatarUrl);
       const ResumeDocument = (
       <Document>
         <Page size={[595.28, 2000]} wrap={false} style={styles.page}>
           {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.name}>{resumeData.profile.name || t('yourName')}</Text>
-            <Text style={styles.title}>{resumeData.profile.title || t('jobTitleFallback')}</Text>
-            <View style={styles.contactInfo}>
-              {resumeData.profile.email && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('emailLabel')}</Text> {resumeData.profile.email}</Text>}
-              {resumeData.profile.phone && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('phoneLabel')}</Text> {resumeData.profile.phone}</Text>}
-              {resumeData.profile.location && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('locationLabel')}</Text> {resumeData.profile.location}</Text>}
-              {resumeData.profile.website && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('websiteLabel')}</Text> {resumeData.profile.website}</Text>}
-              {resumeData.profile.linkedin && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('linkedinLabel')}</Text> {resumeData.profile.linkedin}</Text>}
-              {resumeData.profile.facebook && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('facebookLabel')}</Text> {resumeData.profile.facebook}</Text>}
+          {hasAvatar ? (
+            <View style={styles.headerWithAvatar}>
+              <Image source={resumeData.profile.avatarUrl} style={styles.avatarImage} />
+              <View style={styles.headerContent}>
+                <Text style={styles.nameLeft}>{resumeData.profile.name || t('yourName')}</Text>
+                <Text style={styles.titleLeft}>{resumeData.profile.title || t('jobTitleFallback')}</Text>
+                <View style={styles.contactInfoLeft}>
+                  {resumeData.profile.email && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('emailLabel')}</Text> {resumeData.profile.email}</Text>}
+                  {resumeData.profile.phone && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('phoneLabel')}</Text> {resumeData.profile.phone}</Text>}
+                  {resumeData.profile.location && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('locationLabel')}</Text> {resumeData.profile.location}</Text>}
+                  {resumeData.profile.website && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('websiteLabel')}</Text> {resumeData.profile.website}</Text>}
+                  {resumeData.profile.linkedin && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('linkedinLabel')}</Text> {resumeData.profile.linkedin}</Text>}
+                  {resumeData.profile.facebook && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('facebookLabel')}</Text> {resumeData.profile.facebook}</Text>}
+                </View>
+              </View>
             </View>
-          </View>
+          ) : (
+            <View style={styles.header}>
+              <Text style={styles.name}>{resumeData.profile.name || t('yourName')}</Text>
+              <Text style={styles.title}>{resumeData.profile.title || t('jobTitleFallback')}</Text>
+              <View style={styles.contactInfo}>
+                {resumeData.profile.email && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('emailLabel')}</Text> {resumeData.profile.email}</Text>}
+                {resumeData.profile.phone && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('phoneLabel')}</Text> {resumeData.profile.phone}</Text>}
+                {resumeData.profile.location && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('locationLabel')}</Text> {resumeData.profile.location}</Text>}
+                {resumeData.profile.website && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('websiteLabel')}</Text> {resumeData.profile.website}</Text>}
+                {resumeData.profile.linkedin && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('linkedinLabel')}</Text> {resumeData.profile.linkedin}</Text>}
+                {resumeData.profile.facebook && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('facebookLabel')}</Text> {resumeData.profile.facebook}</Text>}
+              </View>
+            </View>
+          )}
 
           {/* Two Column Layout */}
           <View style={styles.columns}>
@@ -820,6 +931,16 @@ export default function ResumeBuilder() {
                   <Text style={styles.sectionHeader}>{t('strengths').toUpperCase()}</Text>
                   {strengthsArray.map((strength, index) => (
                     <Text key={index} style={styles.strength}>• {strength}</Text>
+                  ))}
+                </View>
+              )}
+
+              {/* Hobbies */}
+              {hobbiesArray.length > 0 && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionHeader}>{t('hobbies').toUpperCase()}</Text>
+                  {hobbiesArray.map((hobby, index) => (
+                    <Text key={index} style={styles.hobbyItem}>• {hobby}</Text>
                   ))}
                 </View>
               )}
@@ -843,22 +964,41 @@ export default function ResumeBuilder() {
 
   const handlePreview = async () => {
     try {
+      const hasAvatar = Boolean(resumeData.profile.avatarUrl);
     const ResumeDocument = (
       <Document>
         <Page size={[595.28, 2000]} wrap={false} style={styles.page}>
           {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.name}>{resumeData.profile.name || t('yourName')}</Text>
-            <Text style={styles.title}>{resumeData.profile.title || t('jobTitleFallback')}</Text>
-            <View style={styles.contactInfo}>
-              {resumeData.profile.email && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('emailLabel')}</Text> {resumeData.profile.email}</Text>}
-              {resumeData.profile.phone && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('phoneLabel')}</Text> {resumeData.profile.phone}</Text>}
-              {resumeData.profile.location && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('locationLabel')}</Text> {resumeData.profile.location}</Text>}
-              {resumeData.profile.website && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('websiteLabel')}</Text> {resumeData.profile.website}</Text>}
-              {resumeData.profile.linkedin && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('linkedinLabel')}</Text> {resumeData.profile.linkedin}</Text>}
-              {resumeData.profile.facebook && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('facebookLabel')}</Text> {resumeData.profile.facebook}</Text>}
+          {hasAvatar ? (
+            <View style={styles.headerWithAvatar}>
+              <Image source={resumeData.profile.avatarUrl} style={styles.avatarImage} />
+              <View style={styles.headerContent}>
+                <Text style={styles.nameLeft}>{resumeData.profile.name || t('yourName')}</Text>
+                <Text style={styles.titleLeft}>{resumeData.profile.title || t('jobTitleFallback')}</Text>
+                <View style={styles.contactInfoLeft}>
+                  {resumeData.profile.email && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('emailLabel')}</Text> {resumeData.profile.email}</Text>}
+                  {resumeData.profile.phone && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('phoneLabel')}</Text> {resumeData.profile.phone}</Text>}
+                  {resumeData.profile.location && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('locationLabel')}</Text> {resumeData.profile.location}</Text>}
+                  {resumeData.profile.website && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('websiteLabel')}</Text> {resumeData.profile.website}</Text>}
+                  {resumeData.profile.linkedin && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('linkedinLabel')}</Text> {resumeData.profile.linkedin}</Text>}
+                  {resumeData.profile.facebook && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('facebookLabel')}</Text> {resumeData.profile.facebook}</Text>}
+                </View>
+              </View>
             </View>
-          </View>
+          ) : (
+            <View style={styles.header}>
+              <Text style={styles.name}>{resumeData.profile.name || t('yourName')}</Text>
+              <Text style={styles.title}>{resumeData.profile.title || t('jobTitleFallback')}</Text>
+              <View style={styles.contactInfo}>
+                {resumeData.profile.email && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('emailLabel')}</Text> {resumeData.profile.email}</Text>}
+                {resumeData.profile.phone && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('phoneLabel')}</Text> {resumeData.profile.phone}</Text>}
+                {resumeData.profile.location && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('locationLabel')}</Text> {resumeData.profile.location}</Text>}
+                {resumeData.profile.website && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('websiteLabel')}</Text> {resumeData.profile.website}</Text>}
+                {resumeData.profile.linkedin && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('linkedinLabel')}</Text> {resumeData.profile.linkedin}</Text>}
+                {resumeData.profile.facebook && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('facebookLabel')}</Text> {resumeData.profile.facebook}</Text>}
+              </View>
+            </View>
+          )}
 
           {/* Two Column Layout */}
           <View style={styles.columns}>
@@ -985,6 +1125,16 @@ export default function ResumeBuilder() {
                   <Text style={styles.sectionHeader}>{t('strengths').toUpperCase()}</Text>
                   {strengthsArray.map((strength, index) => (
                     <Text key={index} style={styles.strength}>• {strength}</Text>
+                  ))}
+                </View>
+              )}
+
+              {/* Hobbies */}
+              {hobbiesArray.length > 0 && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionHeader}>{t('hobbies').toUpperCase()}</Text>
+                  {hobbiesArray.map((hobby, index) => (
+                    <Text key={index} style={styles.hobbyItem}>• {hobby}</Text>
                   ))}
                 </View>
               )}
@@ -1012,6 +1162,11 @@ export default function ResumeBuilder() {
     .map((s) => s.trim())
     .filter((s) => s);
 
+  const hobbiesArray = resumeData.hobbies
+    .split(',')
+    .map((s) => s.trim())
+    .filter((s) => s);
+
   const tabs = [
     { id: 'profile' as TabType, label: t('profile'), icon: User },
     { id: 'work' as TabType, label: t('work'), icon: Briefcase },
@@ -1021,6 +1176,7 @@ export default function ResumeBuilder() {
     { id: 'languages' as TabType, label: t('langs'), icon: Globe },
     { id: 'skills' as TabType, label: t('skills'), icon: Sparkles },
     { id: 'strengths' as TabType, label: t('strengths'), icon: Trophy },
+    { id: 'hobbies' as TabType, label: t('hobbies'), icon: Heart },
   ];
 
   return (
@@ -1106,21 +1262,22 @@ export default function ResumeBuilder() {
       <div className="flex gap-4 h-[calc(100vh-80px)] print:h-auto print:block">
         {/* Editor Panel - Hidden on print */}
         <div className="w-[40%] bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden flex flex-col print:hidden animate-in fade-in slide-in-from-left-4 duration-300">
-          {/* Tab Navigation */}
-          <nav className="flex border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+          {/* Tab Navigation - Scrollable */}
+          <nav className="flex overflow-x-auto border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-600">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
-                  'flex-1 flex items-center justify-center gap-2 py-3 px-2 text-sm font-medium transition-all relative',
+                  'flex-shrink-0 flex items-center justify-center gap-1.5 py-3 px-3 text-xs sm:text-sm font-medium transition-all relative',
                   activeTab === tab.id
                     ? 'text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-700'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700'
                 )}
+                title={tab.label}
               >
-                <tab.icon size={16} />
-                <span className="hidden lg:inline">{tab.label}</span>
+                <tab.icon size={15} />
+                <span>{tab.label}</span>
                 {activeTab === tab.id && (
                   <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
                 )}
@@ -1134,6 +1291,132 @@ export default function ResumeBuilder() {
             {activeTab === 'profile' && (
               <div className="space-y-4 animate-in fade-in slide-in-from-right-2 duration-200">
                 <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('personalInformation')}</h3>
+                
+                {/* Avatar Section */}
+                <div className="bg-slate-50 dark:bg-slate-700 rounded-lg p-4 border border-slate-200 dark:border-slate-600">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">{t('uploadAvatar')}</label>
+                  <div className="flex flex-col gap-4">
+                    <div className="flex items-center gap-4">
+                      {/* Avatar Preview */}
+                      <div className="w-20 h-20 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-600 flex items-center justify-center shrink-0 border-2 border-slate-300 dark:border-slate-500">
+                        {resumeData.profile.avatarUrl ? (
+                          <div
+                            className="w-full h-full"
+                            style={{
+                              overflow: 'hidden',
+                            }}
+                          >
+                            <img
+                              src={resumeData.profile.avatarUrl}
+                              alt={t('avatarAlt')}
+                              className="w-full h-full"
+                              style={{
+                                objectFit: 'cover',
+                                objectPosition: `${resumeData.profile.avatarTransform.x}% ${resumeData.profile.avatarTransform.y}%`,
+                                transform: `scale(${resumeData.profile.avatarTransform.zoom})`,
+                              }}
+                            />
+                          </div>
+                        ) : (
+                          <Camera size={28} className="text-slate-400 dark:text-slate-500" />
+                        )}
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/*"
+                          onChange={handleAvatarUpload}
+                          className="hidden"
+                        />
+                        <button
+                          onClick={() => fileInputRef.current?.click()}
+                          className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                        >
+                          {t('uploadAvatar')}
+                        </button>
+                        {resumeData.profile.avatarUrl && (
+                          <button
+                            onClick={handleRemoveAvatar}
+                            className="px-4 py-2 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 text-sm rounded-lg hover:bg-red-200 dark:hover:bg-red-800 transition-colors"
+                          >
+                            {t('removeAvatar')}
+                          </button>
+                        )}
+                        <p className="text-xs text-slate-500">{t('noAvatar')}</p>
+                      </div>
+                    </div>
+                    {/* Avatar Frame Adjustment */}
+                    {resumeData.profile.avatarUrl && (
+                      <div className="space-y-3 border-t border-slate-200 dark:border-slate-600 pt-3">
+                        <p className="text-xs font-medium text-slate-600 dark:text-slate-400">Adjust frame</p>
+                        <div>
+                          <label className="block text-xs text-slate-500 mb-1">Zoom: {Math.round(resumeData.profile.avatarTransform.zoom * 100)}%</label>
+                          <input
+                            type="range"
+                            min="100"
+                            max="300"
+                            value={Math.round(resumeData.profile.avatarTransform.zoom * 100)}
+                            onChange={(e) => {
+                              const val = parseInt(e.target.value) / 100;
+                              setResumeData((prev) => ({
+                                ...prev,
+                                profile: { ...prev.profile, avatarTransform: { ...prev.profile.avatarTransform, zoom: val } },
+                              }));
+                              if (currentDraftId) setHasUnsavedChanges(true);
+                            }}
+                            className="w-full h-2 bg-slate-200 dark:bg-slate-600 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs text-slate-500 mb-1">Horizontal position</label>
+                          <input
+                            type="range"
+                            min="0"
+                            max="100"
+                            value={resumeData.profile.avatarTransform.x}
+                            onChange={(e) => {
+                              const val = parseInt(e.target.value);
+                              setResumeData((prev) => ({
+                                ...prev,
+                                profile: { ...prev.profile, avatarTransform: { ...prev.profile.avatarTransform, x: val } },
+                              }));
+                              if (currentDraftId) setHasUnsavedChanges(true);
+                            }}
+                            className="w-full h-2 bg-slate-200 dark:bg-slate-600 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                          />
+                          <div className="flex justify-between text-xs text-slate-400 mt-0.5">
+                            <span>Left</span>
+                            <span>Right</span>
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block text-xs text-slate-500 mb-1">Vertical position</label>
+                          <input
+                            type="range"
+                            min="0"
+                            max="100"
+                            value={resumeData.profile.avatarTransform.y}
+                            onChange={(e) => {
+                              const val = parseInt(e.target.value);
+                              setResumeData((prev) => ({
+                                ...prev,
+                                profile: { ...prev.profile, avatarTransform: { ...prev.profile.avatarTransform, y: val } },
+                              }));
+                              if (currentDraftId) setHasUnsavedChanges(true);
+                            }}
+                            className="w-full h-2 bg-slate-200 dark:bg-slate-600 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                          />
+                          <div className="flex justify-between text-xs text-slate-400 mt-0.5">
+                            <span>Top</span>
+                            <span>Bottom</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
                 <div className="space-y-3">
                   <div>
                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('fullName')}</label>
@@ -1721,6 +2004,41 @@ export default function ResumeBuilder() {
                 )}
               </div>
             )}
+
+            {/* Hobbies Tab */}
+            {activeTab === 'hobbies' && (
+              <div className="space-y-4 animate-in fade-in slide-in-from-right-2 duration-200">
+                <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('hobbies')}</h3>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                    {t('enterHobbies')}
+                  </label>
+                  <textarea
+                    value={resumeData.hobbies}
+                    onChange={(e) => handleHobbiesChange(e.target.value)}
+                    rows={6}
+                    className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
+                    placeholder="Reading, Traveling, Photography, Playing guitar..."
+                  />
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                    {t('hobbiesExample')}
+                  </p>
+                </div>
+                {hobbiesArray.length > 0 && (
+                  <div className="mt-4">
+                    <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{t('hobbiesPreview')}</h4>
+                    <ul className="space-y-2">
+                      {hobbiesArray.map((hobby, index) => (
+                        <li key={index} className="flex items-start gap-2 text-sm text-slate-700">
+                          <span className="text-blue-600 mt-0.5">•</span>
+                          {hobby}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
@@ -1731,54 +2049,124 @@ export default function ResumeBuilder() {
             <div className="p-8 print:p-0 break-words">
               {/* Header */}
               <header className="mb-6 border-b-2 border-slate-800 dark:border-slate-600 pb-4">
-                {/* Name and Title - Centered */}
-                <div className="text-center mb-4">
-                  <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-1">
-                    {resumeData.profile.name || t('yourName')}
-                  </h1>
-                  <p className="text-xl text-blue-600 dark:text-blue-400 font-medium">
-                    {resumeData.profile.title || t('jobTitleFallback')}
-                  </p>
-                </div>
-                {/* Contact Info - Horizontal row with dividers */}
-                <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-slate-600 dark:text-slate-400">
-                  {resumeData.profile.email && (
-                    <span className="flex items-center gap-1">
-                      <span className="text-blue-600 dark:text-blue-400 font-medium">{t('emailLabel')}</span>
-                      {resumeData.profile.email}
-                    </span>
-                  )}
-                  {resumeData.profile.phone && (
-                    <span className="flex items-center gap-1">
-                      <span className="text-blue-600 dark:text-blue-400 font-medium">{t('phoneLabel')}</span>
-                      {resumeData.profile.phone}
-                    </span>
-                  )}
-                  {resumeData.profile.location && (
-                    <span className="flex items-center gap-1">
-                      <span className="text-blue-600 dark:text-blue-400 font-medium">{t('locationLabel')}</span>
-                      {resumeData.profile.location}
-                    </span>
-                  )}
-                  {resumeData.profile.website && (
-                    <span className="flex items-center gap-1">
-                      <span className="text-blue-600 dark:text-blue-400 font-medium">{t('websiteLabel')}</span>
-                      {resumeData.profile.website}
-                    </span>
-                  )}
-                  {resumeData.profile.linkedin && (
-                    <span className="flex items-center gap-1">
-                      <span className="text-blue-600 dark:text-blue-400 font-medium">{t('linkedinLabel')}</span>
-                      {resumeData.profile.linkedin}
-                    </span>
-                  )}
-                  {resumeData.profile.facebook && (
-                    <span className="flex items-center gap-1">
-                      <span className="text-blue-600 dark:text-blue-400 font-medium">{t('facebookLabel')}</span>
-                      {resumeData.profile.facebook}
-                    </span>
-                  )}
-                </div>
+                {resumeData.profile.avatarUrl ? (
+                  <div className="flex gap-4 items-start">
+                    {/* Avatar - Left side */}
+                    <div className="w-28 h-28 rounded-full overflow-hidden shrink-0 border-2 border-slate-300">
+                      <img
+                        src={resumeData.profile.avatarUrl}
+                        alt={t('avatarAlt')}
+                        className="w-full h-full"
+                        style={{
+                          objectFit: 'cover',
+                          objectPosition: `${resumeData.profile.avatarTransform.x}% ${resumeData.profile.avatarTransform.y}%`,
+                          transform: `scale(${resumeData.profile.avatarTransform.zoom})`,
+                          width: '100%',
+                          height: '100%',
+                        }}
+                      />
+                    </div>
+                    {/* Name and Info - Right side */}
+                    <div className="flex-1 min-w-0">
+                      <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-1">
+                        {resumeData.profile.name || t('yourName')}
+                      </h1>
+                      <p className="text-xl text-blue-600 dark:text-blue-400 font-medium mb-3">
+                        {resumeData.profile.title || t('jobTitleFallback')}
+                      </p>
+                      {/* Contact Info - Left aligned when avatar present */}
+                      <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-slate-600 dark:text-slate-400">
+                        {resumeData.profile.email && (
+                          <span className="flex items-center gap-1">
+                            <span className="text-blue-600 dark:text-blue-400 font-medium">{t('emailLabel')}</span>
+                            {resumeData.profile.email}
+                          </span>
+                        )}
+                        {resumeData.profile.phone && (
+                          <span className="flex items-center gap-1">
+                            <span className="text-blue-600 dark:text-blue-400 font-medium">{t('phoneLabel')}</span>
+                            {resumeData.profile.phone}
+                          </span>
+                        )}
+                        {resumeData.profile.location && (
+                          <span className="flex items-center gap-1">
+                            <span className="text-blue-600 dark:text-blue-400 font-medium">{t('locationLabel')}</span>
+                            {resumeData.profile.location}
+                          </span>
+                        )}
+                        {resumeData.profile.website && (
+                          <span className="flex items-center gap-1">
+                            <span className="text-blue-600 dark:text-blue-400 font-medium">{t('websiteLabel')}</span>
+                            {resumeData.profile.website}
+                          </span>
+                        )}
+                        {resumeData.profile.linkedin && (
+                          <span className="flex items-center gap-1">
+                            <span className="text-blue-600 dark:text-blue-400 font-medium">{t('linkedinLabel')}</span>
+                            {resumeData.profile.linkedin}
+                          </span>
+                        )}
+                        {resumeData.profile.facebook && (
+                          <span className="flex items-center gap-1">
+                            <span className="text-blue-600 dark:text-blue-400 font-medium">{t('facebookLabel')}</span>
+                            {resumeData.profile.facebook}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    {/* Name and Title - Centered (no avatar) */}
+                    <div className="text-center mb-4">
+                      <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-1">
+                        {resumeData.profile.name || t('yourName')}
+                      </h1>
+                      <p className="text-xl text-blue-600 dark:text-blue-400 font-medium">
+                        {resumeData.profile.title || t('jobTitleFallback')}
+                      </p>
+                    </div>
+                    {/* Contact Info - Horizontal row with dividers */}
+                    <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-slate-600 dark:text-slate-400">
+                      {resumeData.profile.email && (
+                        <span className="flex items-center gap-1">
+                          <span className="text-blue-600 dark:text-blue-400 font-medium">{t('emailLabel')}</span>
+                          {resumeData.profile.email}
+                        </span>
+                      )}
+                      {resumeData.profile.phone && (
+                        <span className="flex items-center gap-1">
+                          <span className="text-blue-600 dark:text-blue-400 font-medium">{t('phoneLabel')}</span>
+                          {resumeData.profile.phone}
+                        </span>
+                      )}
+                      {resumeData.profile.location && (
+                        <span className="flex items-center gap-1">
+                          <span className="text-blue-600 dark:text-blue-400 font-medium">{t('locationLabel')}</span>
+                          {resumeData.profile.location}
+                        </span>
+                      )}
+                      {resumeData.profile.website && (
+                        <span className="flex items-center gap-1">
+                          <span className="text-blue-600 dark:text-blue-400 font-medium">{t('websiteLabel')}</span>
+                          {resumeData.profile.website}
+                        </span>
+                      )}
+                      {resumeData.profile.linkedin && (
+                        <span className="flex items-center gap-1">
+                          <span className="text-blue-600 dark:text-blue-400 font-medium">{t('linkedinLabel')}</span>
+                          {resumeData.profile.linkedin}
+                        </span>
+                      )}
+                      {resumeData.profile.facebook && (
+                        <span className="flex items-center gap-1">
+                          <span className="text-blue-600 dark:text-blue-400 font-medium">{t('facebookLabel')}</span>
+                          {resumeData.profile.facebook}
+                        </span>
+                      )}
+                    </div>
+                  </>
+                )}
               </header>
 
               {/* Two Column Layout */}
@@ -1983,6 +2371,23 @@ export default function ResumeBuilder() {
                       <p className="text-sm text-slate-500 dark:text-slate-400">Add your strengths in the editor</p>
                     )}
                   </section>
+
+                  {/* Hobbies */}
+                  {hobbiesArray.length > 0 && (
+                    <section>
+                      <h2 className="text-lg font-bold text-slate-800 mb-3 uppercase tracking-wide border-b border-slate-300 pb-1">
+                        {t('hobbies')}
+                      </h2>
+                      <ul className="space-y-2 text-sm text-slate-700">
+                        {hobbiesArray.map((hobby, index) => (
+                          <li key={index} className="flex items-start gap-2">
+                            <span className="text-blue-600 mt-1">•</span>
+                            <span className="leading-relaxed">{hobby}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  )}
                 </div>
               </div>
             </div>

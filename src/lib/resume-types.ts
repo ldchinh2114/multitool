@@ -9,6 +9,12 @@ export interface ResumeData {
     linkedin: string;
     facebook: string;
     summary: string;
+    avatarUrl: string;
+    avatarTransform: {
+      x: number;
+      y: number;
+      zoom: number;
+    };
   };
   work: WorkExperience[];
   projects: Project[];
@@ -16,6 +22,7 @@ export interface ResumeData {
   certifications: Certification[];
   languages: Language[];
   skills: string;
+  hobbies: string;
 }
 
 export interface WorkExperience {
@@ -72,6 +79,7 @@ export interface Draft {
   expiresAt: number;
   resumeData: ResumeData;
   strengths: string;
+  hobbies: string;
 }
 
 export const initialResumeData: ResumeData = {
@@ -85,6 +93,8 @@ export const initialResumeData: ResumeData = {
     linkedin: 'Type your LinkedIn URL',
     facebook: 'Type your Facebook URL',
     summary: 'Type your professional summary here. Write about your experience, skills, and career goals...',
+    avatarUrl: '',
+    avatarTransform: { x: 50, y: 50, zoom: 1 },
   },
   work: [
     {
@@ -119,4 +129,5 @@ export const initialResumeData: ResumeData = {
   certifications: [],
   languages: [],
   skills: 'Type your skill 1, Type your skill 2, Type your skill 3',
+  hobbies: '',
 };
