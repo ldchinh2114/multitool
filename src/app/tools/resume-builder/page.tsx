@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { pdf } from '@react-pdf/renderer';
-import { Document, Page, Text, View, StyleSheet, Font, Image } from '@react-pdf/renderer';
 import {
   User,
   Briefcase,
@@ -27,24 +25,6 @@ import {
 import { ResumeData, WorkExperience, Project, Education, Certification, Language, Draft, initialResumeData, ProficiencyLevel } from '@/lib/resume-types';
 import { cn } from '@/lib/cn';
 import { useLanguage } from '@/lib/language-context';
-
-// Register Be Vietnam Pro font for Vietnamese support
-Font.register({
-  family: 'Be Vietnam Pro',
-  fonts: [
-    {
-      src: '/font/BeVietnamPro-Regular.ttf',
-      fontWeight: 400,
-    },
-    {
-      src: '/font/BeVietnamPro-Bold.ttf',
-      fontWeight: 700,
-    },
-  ],
-});
-
-// Disable hyphenation to prevent words like "proficient" from being split with "-"
-Font.registerHyphenationCallback((word: string) => [word]);
 
 type TabType = 'profile' | 'work' | 'projects' | 'education' | 'certifications' | 'languages' | 'skills' | 'strengths' | 'hobbies';
 
@@ -77,6 +57,7 @@ export default function ResumeBuilder() {
   const [currentEditingTitle, setCurrentEditingTitle] = useState('');
   const [renamingDraftId, setRenamingDraftId] = useState<string | null>(null);
   const [renameInput, setRenameInput] = useState('');
+  const [isGenerating, setIsGenerating] = useState<'download' | 'preview' | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load data from localStorage on mount
@@ -255,7 +236,7 @@ export default function ResumeBuilder() {
 
   const addWorkExperience = () => {
     const newWork: WorkExperience = {
-      id: crypto.randomUUID(),
+      id: crypto.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`,
       company: '',
       position: '',
       startDate: '',
@@ -287,7 +268,7 @@ export default function ResumeBuilder() {
 
   const addProject = () => {
     const newProject: Project = {
-      id: crypto.randomUUID(),
+      id: crypto.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`,
       name: '',
       date: '',
       link: '',
@@ -318,7 +299,7 @@ export default function ResumeBuilder() {
 
   const addEducation = () => {
     const newEducation: Education = {
-      id: crypto.randomUUID(),
+      id: crypto.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`,
       school: '',
       degree: '',
       startDate: '',
@@ -351,7 +332,7 @@ export default function ResumeBuilder() {
 
   const addCertification = () => {
     const newCertification: Certification = {
-      id: crypto.randomUUID(),
+      id: crypto.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`,
       name: '',
       issuer: '',
       issueDate: '',
@@ -387,7 +368,7 @@ export default function ResumeBuilder() {
 
   const addLanguage = () => {
     const newLanguage: Language = {
-      id: crypto.randomUUID(),
+      id: crypto.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`,
       name: '',
       proficiency: 'Intermediate',
     };
@@ -571,207 +552,241 @@ export default function ResumeBuilder() {
     });
   };
 
-  const styles = StyleSheet.create({
-    page: {
-      padding: 40,
-      fontFamily: 'Be Vietnam Pro',
-    },
-    header: {
-      marginBottom: 20,
-      borderBottomWidth: 2,
-      borderBottomColor: '#1e293b',
-      paddingBottom: 15,
-    },
-    headerWithAvatar: {
-      marginBottom: 20,
-      borderBottomWidth: 2,
-      borderBottomColor: '#1e293b',
-      paddingBottom: 15,
-      flexDirection: 'row',
-      gap: 15,
-    },
-    avatarImage: {
-      width: 120,
-      height: 120,
-      borderRadius: 60,
-      objectFit: 'cover',
-    },
-    avatarImageSmall: {
-      width: 80,
-      height: 80,
-      borderRadius: 40,
-      objectFit: 'cover',
-    },
-    headerContent: {
-      flex: 1,
-      justifyContent: 'center',
-    },
-    name: {
-      fontSize: 28,
-      fontWeight: 'bold',
-      color: '#0f172a',
-      marginBottom: 5,
-      textAlign: 'center',
-    },
-    nameLeft: {
-      fontSize: 28,
-      fontWeight: 'bold',
-      color: '#0f172a',
-      marginBottom: 5,
-    },
-    title: {
-      fontSize: 16,
-      color: '#2563eb',
-      marginBottom: 10,
-      wordBreak: 'break-word',
-      textAlign: 'center',
-    },
-    titleLeft: {
-      fontSize: 16,
-      color: '#2563eb',
-      marginBottom: 10,
-      wordBreak: 'break-word',
-    },
-    contactInfo: {
-      flexDirection: 'row',
-      justifyContent: 'center',
-      flexWrap: 'wrap',
-      gap: 15,
-    },
-    contactInfoLeft: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: 10,
-    },
-    contactItem: {
-      fontSize: 9,
-      color: '#475569',
-      wordBreak: 'break-word',
-    },
-    contactLabel: {
-      fontSize: 9,
-      fontWeight: 'bold',
-      color: '#2563eb',
-      wordBreak: 'break-word',
-    },
-    columns: {
-      flexDirection: 'row',
-      gap: 20,
-    },
-    leftColumn: {
-      flex: 2,
-    },
-    rightColumn: {
-      flex: 1,
-    },
-    section: {
-      marginBottom: 15,
-    },
-    sectionHeader: {
-      fontSize: 11,
-      fontWeight: 'bold',
-      color: '#1e293b',
-      marginBottom: 8,
-      borderBottomWidth: 0.5,
-      borderBottomColor: '#94a3b8',
-      paddingBottom: 3,
-    },
-    bodyText: {
-      fontSize: 10,
-      color: '#334155',
-      lineHeight: 1.5,
-      wordBreak: 'break-word',
-    },
-    entry: {
-      marginBottom: 10,
-    },
-    entryTitle: {
-      fontSize: 11,
-      fontWeight: 'bold',
-      color: '#0f172a',
-      marginBottom: 2,
-      wordBreak: 'break-word',
-    },
-    entrySubtitle: {
-      fontSize: 10,
-      color: '#2563eb',
-      marginBottom: 2,
-      wordBreak: 'break-word',
-    },
-    entryDate: {
-      fontSize: 9,
-      color: '#64748b',
-      marginBottom: 2,
-      wordBreak: 'break-word',
-    },
-    entryLink: {
-      fontSize: 9,
-      color: '#2563eb',
-      marginBottom: 2,
-      wordBreak: 'break-word',
-    },
-    entryDescription: {
-      fontSize: 9,
-      color: '#334155',
-      lineHeight: 1.4,
-      marginTop: 3,
-      wordBreak: 'break-word',
-    },
-    entrySmall: {
-      fontSize: 8,
-      color: '#475569',
-      marginBottom: 2,
-      wordBreak: 'break-word',
-    },
-    skillsContainer: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: 5,
-    },
-    skill: {
-      fontSize: 9,
-      color: '#4338ca',
-      backgroundColor: '#e0e7ff',
-      padding: '3 6',
-      borderRadius: 3,
-      wordBreak: 'break-word',
-    },
-    languageItem: {
-      fontSize: 9,
-      color: '#334155',
-      wordBreak: 'break-word',
-      flex: 1,
-    },
-    languageLevel: {
-      backgroundColor: '#dbeafe',
-      padding: '2 6',
-      borderRadius: 7,
-      marginLeft: 4,
-    },
-    languageLevelText: {
-      fontSize: 9,
-      color: '#1d4ed8',
-    },
-    strength: {
-      fontSize: 9,
-      color: '#334155',
-      marginBottom: 8,
-      lineHeight: 1.4,
-      wordBreak: 'break-word',
-    },
-    hobbyItem: {
-      fontSize: 9,
-      color: '#334155',
-      marginBottom: 6,
-      lineHeight: 1.4,
-      wordBreak: 'break-word',
-    },
-  });
+  const buildResumeDocument = async () => {
+    // Dynamically import @react-pdf/renderer at runtime only when needed
+    const pdfModule = await import('@react-pdf/renderer');
+    const { Document, Page, Text, View, StyleSheet, Image } = pdfModule;
 
-  const handleDownload = async () => {
-    try {
-      const hasAvatar = Boolean(resumeData.profile.avatarUrl);
-      const ResumeDocument = (
+    // Register fonts at runtime (not at module level)
+    pdfModule.Font.register({
+      family: 'Be Vietnam Pro',
+      fonts: [
+        {
+          src: '/font/BeVietnamPro-Regular.ttf',
+          fontWeight: 400,
+        },
+        {
+          src: '/font/BeVietnamPro-Bold.ttf',
+          fontWeight: 700,
+        },
+      ],
+    });
+
+    // Disable hyphenation to prevent words like "proficient" from being split with "-"
+    pdfModule.Font.registerHyphenationCallback((word: string) => [word]);
+
+    const styles = StyleSheet.create({
+      page: {
+        padding: 40,
+        fontFamily: 'Be Vietnam Pro',
+      },
+      header: {
+        marginBottom: 20,
+        borderBottomWidth: 2,
+        borderBottomColor: '#1e293b',
+        paddingBottom: 15,
+      },
+      headerWithAvatar: {
+        marginBottom: 20,
+        borderBottomWidth: 2,
+        borderBottomColor: '#1e293b',
+        paddingBottom: 15,
+        flexDirection: 'row',
+        gap: 15,
+      },
+      avatarImage: {
+        width: 120,
+        height: 120,
+        borderRadius: 60,
+        objectFit: 'cover',
+      },
+      avatarImageSmall: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        objectFit: 'cover',
+      },
+      headerContent: {
+        flex: 1,
+        justifyContent: 'center',
+      },
+      name: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        color: '#0f172a',
+        marginBottom: 5,
+        textAlign: 'center',
+      },
+      nameLeft: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        color: '#0f172a',
+        marginBottom: 5,
+      },
+      title: {
+        fontSize: 16,
+        color: '#2563eb',
+        marginBottom: 10,
+        wordBreak: 'break-word',
+        textAlign: 'center',
+      },
+      titleLeft: {
+        fontSize: 16,
+        color: '#2563eb',
+        marginBottom: 10,
+        wordBreak: 'break-word',
+      },
+      contactInfo: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        flexWrap: 'wrap',
+        gap: 15,
+      },
+      contactInfoLeft: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 10,
+      },
+      contactItem: {
+        fontSize: 9,
+        color: '#475569',
+        wordBreak: 'break-word',
+      },
+      contactLabel: {
+        fontSize: 9,
+        fontWeight: 'bold',
+        color: '#2563eb',
+        wordBreak: 'break-word',
+      },
+      columns: {
+        flexDirection: 'row',
+        gap: 20,
+      },
+      leftColumn: {
+        flex: 2,
+      },
+      rightColumn: {
+        flex: 1,
+      },
+      section: {
+        marginBottom: 15,
+      },
+      sectionHeader: {
+        fontSize: 11,
+        fontWeight: 'bold',
+        color: '#1e293b',
+        marginBottom: 8,
+        borderBottomWidth: 0.5,
+        borderBottomColor: '#94a3b8',
+        paddingBottom: 3,
+      },
+      bodyText: {
+        fontSize: 10,
+        color: '#334155',
+        lineHeight: 1.5,
+        wordBreak: 'break-word',
+      },
+      entry: {
+        marginBottom: 10,
+      },
+      entryTitle: {
+        fontSize: 11,
+        fontWeight: 'bold',
+        color: '#0f172a',
+        marginBottom: 2,
+        wordBreak: 'break-word',
+      },
+      entrySubtitle: {
+        fontSize: 10,
+        color: '#2563eb',
+        marginBottom: 2,
+        wordBreak: 'break-word',
+      },
+      entryDate: {
+        fontSize: 9,
+        color: '#64748b',
+        marginBottom: 2,
+        wordBreak: 'break-word',
+      },
+      entryLink: {
+        fontSize: 9,
+        color: '#2563eb',
+        marginBottom: 2,
+        wordBreak: 'break-word',
+      },
+      entryDescription: {
+        fontSize: 9,
+        color: '#334155',
+        lineHeight: 1.4,
+        marginTop: 3,
+        wordBreak: 'break-word',
+      },
+      entrySmall: {
+        fontSize: 8,
+        color: '#475569',
+        marginBottom: 2,
+        wordBreak: 'break-word',
+      },
+      skillsContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 5,
+      },
+      skill: {
+        fontSize: 9,
+        color: '#4338ca',
+        backgroundColor: '#e0e7ff',
+        padding: '3 6',
+        borderRadius: 3,
+        wordBreak: 'break-word',
+      },
+      languageItem: {
+        fontSize: 9,
+        color: '#334155',
+        wordBreak: 'break-word',
+        flex: 1,
+      },
+      languageLevel: {
+        backgroundColor: '#dbeafe',
+        padding: '2 6',
+        borderRadius: 7,
+        marginLeft: 4,
+      },
+      languageLevelText: {
+        fontSize: 9,
+        color: '#1d4ed8',
+      },
+      strength: {
+        fontSize: 9,
+        color: '#334155',
+        marginBottom: 8,
+        lineHeight: 1.4,
+        wordBreak: 'break-word',
+      },
+      hobbyItem: {
+        fontSize: 9,
+        color: '#334155',
+        marginBottom: 6,
+        lineHeight: 1.4,
+        wordBreak: 'break-word',
+      },
+    });
+
+    const hasAvatar = Boolean(resumeData.profile.avatarUrl);
+    const skillsArray = resumeData.skills
+      .split(',')
+      .map((s) => s.trim())
+      .filter((s) => s);
+    const strengthsArray = strengths
+      .split(',')
+      .map((s) => s.trim())
+      .filter((s) => s);
+    const hobbiesArray = resumeData.hobbies
+      .split(',')
+      .map((s) => s.trim())
+      .filter((s) => s);
+
+    return (
       <Document>
         <Page size={[595.28, 2000]} wrap={false} style={styles.page}>
           {/* Header */}
@@ -949,206 +964,43 @@ export default function ResumeBuilder() {
         </Page>
       </Document>
     );
+  };
 
-    const blob = await pdf(ResumeDocument).toBlob();
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'resume.pdf';
-    link.click();
-    URL.revokeObjectURL(url);
+  const handleDownload = async () => {
+    if (isGenerating) return;
+    setIsGenerating('download');
+    try {
+      const { pdf } = await import('@react-pdf/renderer');
+      const ResumeDocument = await buildResumeDocument();
+      const blob = await pdf(ResumeDocument).toBlob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'resume.pdf';
+      link.click();
+      URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Error generating PDF:', error);
+      alert('Failed to generate PDF. Please try reloading the page.');
+    } finally {
+      setIsGenerating(null);
     }
   };
 
   const handlePreview = async () => {
+    if (isGenerating) return;
+    setIsGenerating('preview');
     try {
-      const hasAvatar = Boolean(resumeData.profile.avatarUrl);
-    const ResumeDocument = (
-      <Document>
-        <Page size={[595.28, 2000]} wrap={false} style={styles.page}>
-          {/* Header */}
-          {hasAvatar ? (
-            <View style={styles.headerWithAvatar}>
-              <Image source={resumeData.profile.avatarUrl} style={styles.avatarImage} />
-              <View style={styles.headerContent}>
-                <Text style={styles.nameLeft}>{resumeData.profile.name || t('yourName')}</Text>
-                <Text style={styles.titleLeft}>{resumeData.profile.title || t('jobTitleFallback')}</Text>
-                <View style={styles.contactInfoLeft}>
-                  {resumeData.profile.email && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('emailLabel')}</Text> {resumeData.profile.email}</Text>}
-                  {resumeData.profile.phone && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('phoneLabel')}</Text> {resumeData.profile.phone}</Text>}
-                  {resumeData.profile.location && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('locationLabel')}</Text> {resumeData.profile.location}</Text>}
-                  {resumeData.profile.website && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('websiteLabel')}</Text> {resumeData.profile.website}</Text>}
-                  {resumeData.profile.linkedin && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('linkedinLabel')}</Text> {resumeData.profile.linkedin}</Text>}
-                  {resumeData.profile.facebook && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('facebookLabel')}</Text> {resumeData.profile.facebook}</Text>}
-                </View>
-              </View>
-            </View>
-          ) : (
-            <View style={styles.header}>
-              <Text style={styles.name}>{resumeData.profile.name || t('yourName')}</Text>
-              <Text style={styles.title}>{resumeData.profile.title || t('jobTitleFallback')}</Text>
-              <View style={styles.contactInfo}>
-                {resumeData.profile.email && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('emailLabel')}</Text> {resumeData.profile.email}</Text>}
-                {resumeData.profile.phone && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('phoneLabel')}</Text> {resumeData.profile.phone}</Text>}
-                {resumeData.profile.location && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('locationLabel')}</Text> {resumeData.profile.location}</Text>}
-                {resumeData.profile.website && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('websiteLabel')}</Text> {resumeData.profile.website}</Text>}
-                {resumeData.profile.linkedin && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('linkedinLabel')}</Text> {resumeData.profile.linkedin}</Text>}
-                {resumeData.profile.facebook && <Text style={styles.contactItem}><Text style={styles.contactLabel}>{t('facebookLabel')}</Text> {resumeData.profile.facebook}</Text>}
-              </View>
-            </View>
-          )}
-
-          {/* Two Column Layout */}
-          <View style={styles.columns}>
-            {/* Left Column */}
-            <View style={styles.leftColumn}>
-              {/* Summary */}
-              {resumeData.profile.summary && (
-                <View style={styles.section}>
-                  <Text style={styles.sectionHeader}>{t('selfSummary').toUpperCase()}</Text>
-                  <Text style={styles.bodyText}>{resumeData.profile.summary}</Text>
-                </View>
-              )}
-
-              {/* Work Experience */}
-              {resumeData.work.length > 0 && resumeData.work.some(w => w.company || w.position) && (
-                <View style={styles.section}>
-                  <Text style={styles.sectionHeader}>{t('workExperience').toUpperCase()}</Text>
-                  {resumeData.work.filter(w => w.company || w.position).map((work) => (
-                    <View key={work.id} style={styles.entry}>
-                      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <View style={{ flex: 1 }}>
-                          <Text style={styles.entryTitle}>{work.position || t('positionFallback')}</Text>
-                          <Text style={styles.entrySubtitle}>{work.company || t('companyFallback')}</Text>
-                        </View>
-                        {work.startDate && work.endDate && (
-                          <Text style={styles.entryDate}>{work.startDate} - {work.endDate}</Text>
-                        )}
-                      </View>
-                      {work.description && <Text style={styles.entryDescription}>{work.description}</Text>}
-                    </View>
-                  ))}
-                </View>
-              )}
-
-              {/* Projects */}
-              {resumeData.projects.length > 0 && resumeData.projects.some(p => p.name) && (
-                <View style={styles.section}>
-                  <Text style={styles.sectionHeader}>{t('projects').toUpperCase()}</Text>
-                  {resumeData.projects.filter(p => p.name).map((project) => (
-                    <View key={project.id} style={styles.entry}>
-                      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <Text style={styles.entryTitle}>{project.name}</Text>
-                        {project.date && <Text style={styles.entryDate}>{project.date}</Text>}
-                      </View>
-                      {project.link && <Text style={styles.entryLink}>{project.link}</Text>}
-                      {project.description && <Text style={styles.entryDescription}>{project.description}</Text>}
-                    </View>
-                  ))}
-                </View>
-              )}
-            </View>
-
-            {/* Right Column */}
-            <View style={styles.rightColumn}>
-              {/* Skills */}
-              {skillsArray.length > 0 && (
-                <View style={styles.section}>
-                  <Text style={styles.sectionHeader}>{t('skills').toUpperCase()}</Text>
-                  <View style={styles.skillsContainer}>
-                    {skillsArray.map((skill, index) => (
-                      <Text key={index} style={styles.skill}>{skill}</Text>
-                    ))}
-                  </View>
-                </View>
-              )}
-
-              {/* Education */}
-              {resumeData.education.length > 0 && resumeData.education.some(e => e.school || e.degree) && (
-                <View style={styles.section}>
-                  <Text style={styles.sectionHeader}>{t('education').toUpperCase()}</Text>
-                  {resumeData.education.filter(e => e.school || e.degree).map((edu) => (
-                    <View key={edu.id} style={styles.entry}>
-                      <Text style={styles.entryTitle}>{edu.degree || t('degreeFallback')}</Text>
-                      <Text style={styles.entrySubtitle}>{edu.school || t('schoolFallback')}</Text>
-                      {(edu.startDate || edu.endDate) && (
-                        <Text style={styles.entryDate}>{edu.startDate && edu.endDate ? `${edu.startDate} - ${edu.endDate}` : edu.startDate || edu.endDate}</Text>
-                      )}
-                      {edu.gpa && <Text style={styles.entrySmall}>GPA: {edu.gpa}</Text>}
-                      {edu.academicRank && <Text style={styles.entrySmall}>{t('academicRank')}: {edu.academicRank}</Text>}
-                    </View>
-                  ))}
-                </View>
-              )}
-
-              {/* Certifications */}
-              {resumeData.certifications.length > 0 && resumeData.certifications.some(c => c.name || c.issuer) && (
-                <View style={styles.section}>
-                  <Text style={styles.sectionHeader}>{t('certifications').toUpperCase()}</Text>
-                  {resumeData.certifications.filter(c => c.name || c.issuer).map((cert) => (
-                    <View key={cert.id} style={styles.entry}>
-                      <Text style={styles.entryTitle}>{cert.name || t('certificationFallback')}</Text>
-                      <Text style={styles.entrySubtitle}>{cert.issuer || t('issuerFallback')}</Text>
-                      {cert.issueDate && (
-                        <Text style={styles.entryDate}>
-                          {cert.issueDate}{cert.expirationDate ? ` - ${cert.expirationDate}` : ''}
-                        </Text>
-                      )}
-                      {cert.credentialId && <Text style={styles.entrySmall}>ID: {cert.credentialId}</Text>}
-                      {cert.credentialUrl && <Text style={styles.entryLink}>{cert.credentialUrl}</Text>}
-                      {cert.description && <Text style={styles.entryDescription}>{cert.description}</Text>}
-                    </View>
-                  ))}
-                </View>
-              )}
-
-              {/* Languages */}
-              {resumeData.languages.length > 0 && resumeData.languages.some(l => l.name) && (
-                <View style={styles.section}>
-                  <Text style={styles.sectionHeader}>{t('langs').toUpperCase()}</Text>
-                  {resumeData.languages.filter(l => l.name).map((lang) => (
-                    <View key={lang.id} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}>
-                      <Text style={styles.languageItem}>{lang.name}</Text>
-                      <View style={styles.languageLevel}>
-                        <Text style={styles.languageLevelText}>{proficiencyLabel(lang.proficiency)}</Text>
-                      </View>
-                    </View>
-                  ))}
-                </View>
-              )}
-
-              {/* Strengths */}
-              {strengthsArray.length > 0 && (
-                <View style={styles.section}>
-                  <Text style={styles.sectionHeader}>{t('strengths').toUpperCase()}</Text>
-                  {strengthsArray.map((strength, index) => (
-                    <Text key={index} style={styles.strength}>• {strength}</Text>
-                  ))}
-                </View>
-              )}
-
-              {/* Hobbies */}
-              {hobbiesArray.length > 0 && (
-                <View style={styles.section}>
-                  <Text style={styles.sectionHeader}>{t('hobbies').toUpperCase()}</Text>
-                  {hobbiesArray.map((hobby, index) => (
-                    <Text key={index} style={styles.hobbyItem}>• {hobby}</Text>
-                  ))}
-                </View>
-              )}
-            </View>
-          </View>
-        </Page>
-      </Document>
-    );
-
-    const blob = await pdf(ResumeDocument).toBlob();
-    const url = URL.createObjectURL(blob);
-    window.open(url, '_blank');
+      const { pdf } = await import('@react-pdf/renderer');
+      const ResumeDocument = await buildResumeDocument();
+      const blob = await pdf(ResumeDocument).toBlob();
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank');
     } catch (error) {
       console.error('Error generating PDF preview:', error);
+      alert('Failed to generate PDF preview. Please try reloading the page.');
+    } finally {
+      setIsGenerating(null);
     }
   };
 
@@ -1216,15 +1068,26 @@ export default function ResumeBuilder() {
             )}
             <button
             onClick={handlePreview}
-            className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium"
+            disabled={isGenerating === 'preview'}
+            className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            👁️ Preview PDF
+            {isGenerating === 'preview' ? (
+              <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            ) : (
+              '👁️'
+            )}
+            Preview PDF
           </button>
           <button
             onClick={handleDownload}
-            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            disabled={isGenerating === 'download'}
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <Download size={18} />
+            {isGenerating === 'download' ? (
+              <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <Download size={18} />
+            )}
             {t('downloadPdf')}
           </button>
         </div>

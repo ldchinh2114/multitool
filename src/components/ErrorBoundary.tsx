@@ -1,12 +1,10 @@
 'use client';
 
-import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { Component, ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
-  onError?: (error: Error) => void;
 }
 
 interface State {
@@ -14,10 +12,6 @@ interface State {
   error: Error | null;
 }
 
-/**
- * Error Boundary - Bắt lỗi trong React components
- * Prevents entire app from crashing when a component fails
- */
 export class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -28,38 +22,52 @@ export class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('ErrorBoundary caught an error:', error, errorInfo);
-    this.props.onError?.(error);
   }
 
-  handleReset = (): void => {
+  handleReload = () => {
     this.setState({ hasError: false, error: null });
+    window.location.reload();
   };
 
-  render(): ReactNode {
+  render() {
     if (this.state.hasError) {
       if (this.props.fallback) {
         return this.props.fallback;
       }
 
       return (
-        <div className="flex min-h-[200px] items-center justify-center rounded-lg border border-red-200 bg-red-50 p-6 dark:border-red-900 dark:bg-red-950">
-          <div className="text-center">
-            <AlertTriangle className="mx-auto h-12 w-12 text-red-500 dark:text-red-400" />
-            <h3 className="mt-4 text-lg font-semibold text-red-800 dark:text-red-200">
+        <div className="min-h-screen bg-slate-100 dark:bg-slate-900 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8 max-w-md w-full text-center">
+            <div className="text-6xl mb-4">⚠️</div>
+            <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-3">
               Something went wrong
-            </h3>
-            <p className="mt-2 text-sm text-red-600 dark:text-red-400">
-              {this.state.error?.message || 'An unexpected error occurred'}
+            </h2>
+            <p className="text-slate-600 dark:text-slate-400 mb-6">
+              The resume builder encountered an error. This is usually caused by a version mismatch after a recent update.
             </p>
-            <button
-              onClick={this.handleReset}
-              className="mt-4 inline-flex items-center gap-2 rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600"
-            >
-              <RefreshCw className="h-4 w-4" />
-              Try Again
-            </button>
+            <div className="space-y-3">
+              <button
+                onClick={this.handleReload}
+                className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              >
+                Reload Page
+              </button>
+              <p className="text-xs text-slate-500 dark:text-slate-500">
+                If the problem persists, try clearing your browser cache and reloading.
+              </p>
+            </div>
+            {this.state.error && (
+              <details className="mt-4 text-left">
+                <summary className="text-xs text-slate-500 cursor-pointer hover:text-slate-700">
+                  Error details
+                </summary>
+                <pre className="mt-2 text-xs text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950 p-2 rounded overflow-auto max-h-32">
+                  {this.state.error.message}
+                </pre>
+              </details>
+            )}
           </div>
         </div>
       );
@@ -68,5 +76,3 @@ export class ErrorBoundary extends Component<Props, State> {
     return this.props.children;
   }
 }
-
-export default ErrorBoundary;
