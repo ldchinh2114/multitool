@@ -25,6 +25,7 @@ import {
 import { ResumeData, WorkExperience, Project, Education, Certification, Language, Draft, initialResumeData, ProficiencyLevel } from '@/lib/resume-types';
 import { cn } from '@/lib/cn';
 import { useLanguage } from '@/lib/language-context';
+import { sanitizeResumeData, sanitizeDraft } from '@/lib/sanitize-resume-data';
 
 type TabType = 'profile' | 'work' | 'projects' | 'education' | 'certifications' | 'languages' | 'skills' | 'strengths' | 'hobbies';
 
@@ -85,7 +86,8 @@ export default function ResumeBuilder() {
 
       if (savedData) {
         const parsedData = JSON.parse(savedData);
-        setResumeData(parsedData);
+        // Deep-merge with defaults to handle missing fields from old versions
+        setResumeData(sanitizeResumeData(parsedData));
       }
 
       if (savedStrengths) {
@@ -109,10 +111,12 @@ export default function ResumeBuilder() {
     try {
       const savedDrafts = localStorage.getItem(DRAFTS_STORAGE_KEY);
       if (savedDrafts) {
-        const parsedDrafts: Draft[] = JSON.parse(savedDrafts);
+        const parsedDrafts = JSON.parse(savedDrafts);
         const now = Date.now();
-        const validDrafts = parsedDrafts.filter(draft => draft.expiresAt > now);
-        if (validDrafts.length !== parsedDrafts.length) {
+        // Sanitize each draft to fill in missing fields from old versions
+        const sanitizedDrafts: Draft[] = parsedDrafts.map((draft: unknown) => sanitizeDraft(draft as Partial<Draft>));
+        const validDrafts = sanitizedDrafts.filter((draft: Draft) => draft.expiresAt > now);
+        if (validDrafts.length !== sanitizedDrafts.length) {
           localStorage.setItem(DRAFTS_STORAGE_KEY, JSON.stringify(validDrafts));
         }
         setDrafts(validDrafts);
