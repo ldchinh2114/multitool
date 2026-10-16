@@ -27,8 +27,7 @@ describe('ErrorBoundary', () => {
       </ErrorBoundary>
     )
     expect(screen.getByText('Something went wrong')).toBeDefined()
-    expect(screen.getByText('Test error')).toBeDefined()
-    expect(screen.getByText('Try Again')).toBeDefined()
+    expect(screen.getByText('Reload Page')).toBeDefined()
   })
 
   it('renders custom fallback on error', () => {
@@ -40,13 +39,13 @@ describe('ErrorBoundary', () => {
     expect(screen.getByText('Custom error UI')).toBeDefined()
   })
 
-  it('calls onError when an error occurs', () => {
-    const onError = vi.fn()
+  it('shows the error message in the details section', () => {
     render(
-      <ErrorBoundary onError={onError}>
-        <ThrowError message="Test error" />
+      <ErrorBoundary>
+        <ThrowError message="Boom" />
       </ErrorBoundary>
     )
-    expect(onError).toHaveBeenCalledWith(expect.any(Error))
+    expect(screen.getByText('Error details')).toBeDefined()
+    expect(screen.getByText('Boom')).toBeDefined()
   })
 })
