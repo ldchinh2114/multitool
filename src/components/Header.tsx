@@ -7,7 +7,6 @@ import { ToolInfo } from '@/lib/types';
 import { LayoutGrid, Coins, Languages, Ruler, FileText, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { useLanguage } from '@/lib/language-context';
-import { ThemeToggle } from './ThemeToggle';
 import { LanguageToggle } from './LanguageToggle';
 
 // Map icon names to components
@@ -120,7 +119,6 @@ export function Header() {
         {/* Right side: Mobile menu */}
         <div className="flex items-center gap-2">
           <LanguageToggle />
-          <ThemeToggle />
           {/* Mobile menu button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

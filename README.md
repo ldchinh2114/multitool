@@ -8,7 +8,6 @@ A web-based multi-tool application built with Next.js, React, and Tailwind CSS.
 - **Dictionary** - Word definitions, pronunciations, auto-suggestions, and EN/VI translator
 - **Currency Converter** - Real-time exchange rates for major currencies
 - **Unit Converter** - Convert between length and weight units
-- **Dark Mode** - Toggle between light and dark themes with system preference detection
 - **Multi-language** - Full English and Vietnamese UI
 
 ## Prerequisites

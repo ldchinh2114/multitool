@@ -38,13 +38,13 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="min-h-screen bg-slate-100 dark:bg-slate-900 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8 max-w-md w-full text-center">
+        <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-lg p-8 max-w-md w-full text-center">
             <div className="text-6xl mb-4">⚠️</div>
-            <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-3">
+            <h2 className="text-2xl font-bold text-slate-800 mb-3">
               Something went wrong
             </h2>
-            <p className="text-slate-600 dark:text-slate-400 mb-6">
+            <p className="text-slate-600 mb-6">
               The resume builder encountered an error. This is usually caused by a version mismatch after a recent update.
             </p>
             <div className="space-y-3">
@@ -54,7 +54,7 @@ export class ErrorBoundary extends Component<Props, State> {
               >
                 Reload Page
               </button>
-              <p className="text-xs text-slate-500 dark:text-slate-500">
+              <p className="text-xs text-slate-500">
                 If the problem persists, try clearing your browser cache and reloading.
               </p>
             </div>
@@ -63,7 +63,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 <summary className="text-xs text-slate-500 cursor-pointer hover:text-slate-700">
                   Error details
                 </summary>
-                <pre className="mt-2 text-xs text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950 p-2 rounded overflow-auto max-h-32">
+                <pre className="mt-2 text-xs text-red-600 bg-red-50 p-2 rounded overflow-auto max-h-32">
                   {this.state.error.message}
                 </pre>
               </details>

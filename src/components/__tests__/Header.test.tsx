@@ -69,11 +69,10 @@ describe('Header', () => {
     expect(screen.getByText('Unit Converter')).toBeDefined()
   })
 
-  it('renders LanguageToggle and ThemeToggle', () => {
+  it('renders LanguageToggle', () => {
     renderWithProvider()
     expect(screen.getByText('EN')).toBeDefined()
     expect(screen.getByText('VI')).toBeDefined()
-    expect(screen.getByLabelText('Switch to dark mode')).toBeDefined()
   })
 
   it('has a mobile menu button on small screens', () => {

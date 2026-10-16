@@ -274,7 +274,7 @@ function AudioPlayer({ word, phonetics }: { word?: string; phonetics?: Dictionar
             setUserSelectedUrl(e.target.value);
             setPreferTTS(false);
           }}
-          className="rounded-full border border-purple-200 bg-white px-3 py-2 text-xs font-medium text-purple-700 shadow-sm transition-colors hover:bg-purple-50 dark:border-purple-800 dark:bg-gray-800 dark:text-purple-300"
+          className="rounded-full border border-purple-200 bg-white px-3 py-2 text-xs font-medium text-purple-700 shadow-sm transition-colors hover:bg-purple-50"
         >
           {audioSources.map((source, idx) => (
             <option key={idx} value={source.url}>{source.title}</option>
@@ -289,8 +289,8 @@ function AudioPlayer({ word, phonetics }: { word?: string; phonetics?: Dictionar
           className={cn(
             'rounded-full px-3 py-2 text-xs font-medium transition-colors',
             useTTS
-              ? 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400'
+              ? 'bg-purple-100 text-purple-700'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
           )}
           title="Toggle Text-to-Speech"
         >
@@ -300,18 +300,18 @@ function AudioPlayer({ word, phonetics }: { word?: string; phonetics?: Dictionar
 
       <button
         onClick={() => setShowSettings(!showSettings)}
-        className="p-2 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 transition-colors"
+        className="p-2 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 transition-colors"
         title="Audio settings"
       >
         <Settings className="h-4 w-4" />
       </button>
 
       {showSettings && (
-        <div className="w-full mt-2 p-4 rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800 shadow-lg">
+        <div className="w-full mt-2 p-4 rounded-xl border border-gray-200 bg-white shadow-lg">
           <div className="space-y-4">
             {/* Volume Boost */}
             <div>
-              <label className="text-xs font-medium text-gray-700 dark:text-gray-300 block mb-2">
+              <label className="text-xs font-medium text-gray-700 block mb-2">
                 🔊 Volume Boost: {Math.round(volumeBoost * 100)}%
               </label>
               <input
@@ -321,7 +321,7 @@ function AudioPlayer({ word, phonetics }: { word?: string; phonetics?: Dictionar
                 step="0.1"
                 value={volumeBoost}
                 onChange={(e) => setVolumeBoost(parseFloat(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-purple-500"
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-purple-500"
               />
               <div className="flex justify-between text-xs text-gray-500 mt-1">
                 <span>100%</span>
@@ -334,11 +334,11 @@ function AudioPlayer({ word, phonetics }: { word?: string; phonetics?: Dictionar
             {useTTS && (
               <>
                 <div>
-                  <label className="text-xs font-medium text-gray-700 dark:text-gray-300 block mb-2">Voice</label>
+                  <label className="text-xs font-medium text-gray-700 block mb-2">Voice</label>
                   <select
                     value={selectedVoice}
                     onChange={(e) => setSelectedVoice(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-sm"
+                    className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 text-sm"
                   >
                     {voices.filter(v => v.lang.startsWith('en')).map(v => (
                       <option key={v.name} value={v.name}>{v.name} ({v.lang})</option>
@@ -346,7 +346,7 @@ function AudioPlayer({ word, phonetics }: { word?: string; phonetics?: Dictionar
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-700 dark:text-gray-300 block mb-2">Speed: {rate.toFixed(1)}x</label>
+                  <label className="text-xs font-medium text-gray-700 block mb-2">Speed: {rate.toFixed(1)}x</label>
                   <input
                     type="range"
                     min="0.5"
@@ -354,7 +354,7 @@ function AudioPlayer({ word, phonetics }: { word?: string; phonetics?: Dictionar
                     step="0.1"
                     value={rate}
                     onChange={(e) => setRate(parseFloat(e.target.value))}
-                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-purple-500"
+                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-purple-500"
                   />
                 </div>
               </>
@@ -409,11 +409,11 @@ function DefinitionCard({
   };
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-gray-50 p-6 dark:border-gray-800 dark:bg-gray-800">
+    <div className="rounded-xl border border-gray-200 bg-gray-50 p-6">
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <BookMarked className="h-5 w-5 text-purple-500" />
-          <span className="text-lg font-semibold italic text-gray-900 dark:text-gray-100">
+          <span className="text-lg font-semibold italic text-gray-900">
             {partOfSpeech}
           </span>
         </div>
@@ -421,7 +421,7 @@ function DefinitionCard({
         <button
           onClick={handleTranslate}
           disabled={isTranslating}
-          className="flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-xs font-medium text-purple-600 shadow-sm transition-all hover:bg-purple-50 dark:bg-gray-700 dark:text-purple-400 dark:hover:bg-gray-600"
+          className="flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-xs font-medium text-purple-600 shadow-sm transition-all hover:bg-purple-50"
         >
           {isTranslating ? (
             <Loader2 className="h-3 w-3 animate-spin" />
@@ -438,25 +438,25 @@ function DefinitionCard({
             <div className="flex items-start gap-3">
               <span className="mt-2.5 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-purple-500" />
               <div className="flex flex-col gap-2">
-                <p className="text-xl font-medium text-gray-800 dark:text-gray-200 leading-relaxed">
+                <p className="text-xl font-medium text-gray-800 leading-relaxed">
                   {showTranslation && translatedData[idx] ? translatedData[idx].definition : def.definition}
                 </p>
                 {showTranslation && (
-                  <p className="text-lg text-gray-500 dark:text-gray-400 italic">
+                  <p className="text-lg text-gray-500 italic">
                     {def.definition}
                   </p>
                 )}
               </div>
             </div>
             {def.example && (
-              <div className="ml-5 rounded-xl bg-white p-4 border border-purple-100/50 italic text-gray-600 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-400">
+              <div className="ml-5 rounded-xl bg-white p-4 border border-purple-100/50 italic text-gray-600">
                 <div className="flex flex-col gap-2">
                   <div className="text-lg">
                     <Lightbulb className="mb-1 mr-2 inline h-5 w-5 text-yellow-500" />
                     &quot;{showTranslation && translatedData[idx]?.example ? translatedData[idx].example : def.example}&quot;
                   </div>
                   {showTranslation && translatedData[idx]?.example && (
-                    <p className="text-base text-gray-500 dark:text-gray-500">
+                    <p className="text-base text-gray-500">
                       &quot;{def.example}&quot;
                     </p>
                   )}
@@ -486,8 +486,8 @@ function RelatedWords({
 }) {
   if (words.length === 0) return null;
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-      <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
+    <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+      <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-gray-700">
         {icon}
         {title}
       </h3>
@@ -496,7 +496,7 @@ function RelatedWords({
           <button
             key={word}
             onClick={() => onSelect(word)}
-            className="rounded-full bg-purple-50 px-3 py-1.5 text-xs font-medium text-purple-700 transition-colors hover:bg-purple-100 dark:bg-purple-900/30 dark:text-purple-300 dark:hover:bg-purple-900/50"
+            className="rounded-full bg-purple-50 px-3 py-1.5 text-xs font-medium text-purple-700 transition-colors hover:bg-purple-100"
           >
             {word}
           </button>
@@ -655,7 +655,7 @@ function WordDetails({
 
   if (loading && !hasAnything) {
     return (
-      <div className="flex items-center justify-center gap-3 rounded-2xl border border-gray-200 bg-white p-10 text-gray-500 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400">
+      <div className="flex items-center justify-center gap-3 rounded-2xl border border-gray-200 bg-white p-10 text-gray-500">
         <Loader2 className="h-6 w-6 animate-spin text-purple-500" />
         <span>{t('searchingDetails')}</span>
       </div>
@@ -664,9 +664,9 @@ function WordDetails({
 
   if (!hasAnything) {
     return (
-      <div className="rounded-2xl border border-gray-200 bg-white p-10 text-center dark:border-gray-800 dark:bg-gray-900">
+      <div className="rounded-2xl border border-gray-200 bg-white p-10 text-center">
         <Info className="mx-auto h-10 w-10 text-gray-400" />
-        <p className="mt-3 text-gray-600 dark:text-gray-400">{t('noWordInfo')}</p>
+        <p className="mt-3 text-gray-600">{t('noWordInfo')}</p>
       </div>
     );
   }
@@ -674,19 +674,19 @@ function WordDetails({
   return (
     <div className="space-y-6">
       {loading && (
-        <div className="flex items-center justify-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+        <div className="flex items-center justify-center gap-2 text-xs text-gray-500">
           <Loader2 className="h-3.5 w-3.5 animate-spin text-purple-500" />
           {t('searchingDetails')}
         </div>
       )}
       {/* Word header: spelling, phonetic and audio */}
       {entry && (
-        <div className="rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-sm dark:border-gray-800 dark:bg-gray-900">
-          <h2 className="text-5xl font-black capitalize tracking-tight text-gray-900 dark:text-gray-100">
+        <div className="rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-sm">
+          <h2 className="text-5xl font-black capitalize tracking-tight text-gray-900">
             {entry.word}
           </h2>
           {entry.phonetic && (
-            <p className="mt-2 text-lg text-gray-500 dark:text-gray-400">{entry.phonetic}</p>
+            <p className="mt-2 text-lg text-gray-500">{entry.phonetic}</p>
           )}
           <div className="mt-6">
             <AudioPlayer key={entry.word} word={entry.word} phonetics={entry.phonetics} />
@@ -696,8 +696,8 @@ function WordDetails({
 
       {/* Alternative translations from the translator, grouped by part of speech */}
       {alternatives.length > 0 && (
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-          <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
+        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+          <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-gray-700">
             <Languages className="h-4 w-4 text-purple-500" />
             {t('otherTranslations')}
           </h3>
@@ -705,14 +705,14 @@ function WordDetails({
             {alternatives.map((alt, idx) => (
               <div key={idx} className="flex flex-wrap items-baseline gap-2">
                 {alt.partOfSpeech && (
-                  <span className="text-xs font-semibold italic text-gray-500 dark:text-gray-400">
+                  <span className="text-xs font-semibold italic text-gray-500">
                     {alt.partOfSpeech}
                   </span>
                 )}
                 {alt.terms.map((term) => (
                   <span
                     key={term}
-                    className="rounded-lg bg-purple-50 px-2.5 py-1 text-sm text-purple-700 dark:bg-purple-900/30 dark:text-purple-300"
+                    className="rounded-lg bg-purple-50 px-2.5 py-1 text-sm text-purple-700"
                   >
                     {term}
                   </span>
@@ -742,7 +742,7 @@ function WordDetails({
       {/* Definitions and examples */}
       {meanings.length > 0 && (
         <div className="space-y-6">
-          <h3 className="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-gray-100">
+          <h3 className="flex items-center gap-2 text-xl font-bold text-gray-900">
             <BookOpen className="h-5 w-5 text-purple-500" />
             {t('definitions')}
           </h3>
@@ -881,32 +881,32 @@ export function Translate() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-gray-50 py-12 dark:bg-gray-950">
+      <div className="min-h-screen bg-gray-50 py-12">
         <div className="container mx-auto max-w-5xl px-4">
           {/* Header */}
           <div className="mb-8 text-center">
             <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 shadow-lg">
               <Languages className="h-8 w-8 text-white" />
             </div>
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900">
               {t('translateTitle')}
             </h1>
-            <p className="mt-2 text-gray-600 dark:text-gray-400">
+            <p className="mt-2 text-gray-600">
               {t('translateSubtitle')}
             </p>
           </div>
 
           {/* Language selector */}
-          <div className="mb-6 flex items-center justify-between rounded-2xl border border-gray-200 bg-white p-2 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+          <div className="mb-6 flex items-center justify-between rounded-2xl border border-gray-200 bg-white p-2 shadow-sm">
             <div className="flex flex-1 items-center justify-center gap-4">
               <div className="flex flex-col items-center">
                 <span className="mb-1 text-[10px] uppercase tracking-wider text-gray-500">{t('sourceLanguage')}</span>
-                <span className="font-bold text-gray-900 dark:text-gray-100">{sourceLang === 'en' ? t('english') : t('vietnamese')}</span>
+                <span className="font-bold text-gray-900">{sourceLang === 'en' ? t('english') : t('vietnamese')}</span>
               </div>
 
               <button
                 onClick={swapLanguages}
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-all hover:bg-purple-100 hover:text-purple-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-purple-900/30 dark:hover:text-purple-400"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-all hover:bg-purple-100 hover:text-purple-600"
                 title={t('swapLanguages')}
               >
                 <ArrowLeftRight className="h-5 w-5" />
@@ -914,7 +914,7 @@ export function Translate() {
 
               <div className="flex flex-col items-center">
                 <span className="mb-1 text-[10px] uppercase tracking-wider text-gray-500">{t('targetLanguage')}</span>
-                <span className="font-bold text-gray-900 dark:text-gray-100">{targetLang === 'en' ? t('english') : t('vietnamese')}</span>
+                <span className="font-bold text-gray-900">{targetLang === 'en' ? t('english') : t('vietnamese')}</span>
               </div>
             </div>
           </div>
@@ -928,13 +928,13 @@ export function Translate() {
                 onChange={handleSourceChange}
                 onBlur={() => setShowSuggestions(false)}
                 placeholder={t('enterTextToTranslate')}
-                className="h-60 w-full resize-none rounded-2xl border-2 border-gray-200 bg-white p-6 pl-12 text-xl shadow-sm transition-all focus:border-purple-500 focus:outline-none focus:ring-4 focus:ring-purple-500/10 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-100"
+                className="h-60 w-full resize-none rounded-2xl border-2 border-gray-200 bg-white p-6 pl-12 text-xl shadow-sm transition-all focus:border-purple-500 focus:outline-none focus:ring-4 focus:ring-purple-500/10"
                 autoFocus
               />
               {sourceText && (
                 <button
                   onClick={clearText}
-                  className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                  className="absolute right-4 top-4 text-gray-400 hover:text-gray-600"
                   title={t('clearText')}
                 >
                   <X className="h-5 w-5" />
@@ -949,7 +949,7 @@ export function Translate() {
                       key={suggestion}
                       onMouseDown={(e) => e.preventDefault()}
                       onClick={() => selectWord(suggestion)}
-                      className="rounded-full border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-600 shadow-sm transition-colors hover:border-purple-300 hover:text-purple-600 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:hover:text-purple-400"
+                      className="rounded-full border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-600 shadow-sm transition-colors hover:border-purple-300 hover:text-purple-600"
                     >
                       {suggestion}
                     </button>
@@ -961,7 +961,7 @@ export function Translate() {
             {/* Target text area */}
             <div className="relative">
               <div className={cn(
-                'h-60 w-full overflow-y-auto rounded-2xl border-2 border-transparent bg-purple-50 p-6 text-xl shadow-inner transition-all dark:bg-purple-900/10 dark:text-gray-100',
+                'h-60 w-full overflow-y-auto rounded-2xl border-2 border-transparent bg-purple-50 p-6 text-xl shadow-inner transition-all',
                 isTranslating && 'opacity-50'
               )}>
                 {targetText ? (
@@ -975,7 +975,7 @@ export function Translate() {
                 {targetText && (
                   <button
                     onClick={copyToClipboard}
-                    className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-gray-600 shadow-sm transition-all hover:bg-gray-50 active:scale-95 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                    className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-gray-600 shadow-sm transition-all hover:bg-gray-50 active:scale-95"
                     title={t('copyTranslation')}
                   >
                     {copied ? <Check className="h-5 w-5 text-green-500" /> : <Copy className="h-5 w-5" />}
@@ -996,7 +996,7 @@ export function Translate() {
             <div className="mt-8 space-y-6">
               <div className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-purple-500" />
-                <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                <h2 className="text-xl font-bold text-gray-900">
                   {t('wordDetails')}
                 </h2>
               </div>
@@ -1013,13 +1013,13 @@ export function Translate() {
           {/* Empty state */}
           {!trimmed && (
             <div className="mt-16 text-center">
-              <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
+              <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-gray-100">
                 <BookOpen className="h-12 w-12 text-gray-400" />
               </div>
-              <h3 className="text-xl font-medium text-gray-900 dark:text-gray-100">
+              <h3 className="text-xl font-medium text-gray-900">
                 {t('enterTextToTranslate')}
               </h3>
-              <p className="mt-2 text-gray-600 dark:text-gray-400">
+              <p className="mt-2 text-gray-600">
                 {t('translateSubtitle')}
               </p>
             </div>
@@ -1027,12 +1027,12 @@ export function Translate() {
 
           {/* Error state */}
           {failed && !isTranslating && (
-            <div className="mx-auto mt-12 max-w-md rounded-2xl border border-red-100 bg-red-50 p-8 text-center dark:border-red-900/30 dark:bg-red-900/10">
+            <div className="mx-auto mt-12 max-w-md rounded-2xl border border-red-100 bg-red-50 p-8 text-center">
               <AlertCircle className="mx-auto h-12 w-12 text-red-500" />
-              <h3 className="mt-4 text-lg font-bold text-red-900 dark:text-red-100">
+              <h3 className="mt-4 text-lg font-bold text-red-900">
                 {t('error')}
               </h3>
-              <p className="mt-2 text-red-600 dark:text-red-400">{t('translationError')}</p>
+              <p className="mt-2 text-red-600">{t('translationError')}</p>
             </div>
           )}
         </div>

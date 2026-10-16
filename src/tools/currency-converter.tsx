@@ -80,8 +80,8 @@ function CurrencyConverterContent() {
     return (
       <div className="mx-auto max-w-2xl space-y-6 p-6">
         <div className="text-center">
-          <h2 className="text-2xl font-bold dark:text-gray-100">{t('currencyTitle')}</h2>
-          <p className="text-gray-600 dark:text-gray-400">
+          <h2 className="text-2xl font-bold">{t('currencyTitle')}</h2>
+          <p className="text-gray-600">
             {t('loadingRates')}
           </p>
         </div>
@@ -94,45 +94,45 @@ function CurrencyConverterContent() {
   if (error) {
     return (
       <div className="mx-auto max-w-2xl space-y-6 p-6">
-        <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-center dark:border-red-900/50 dark:bg-red-950/20">
+        <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-center">
           <AlertCircle className="mx-auto h-12 w-12 text-red-500" />
-          <h3 className="mt-4 text-lg font-semibold text-red-800 dark:text-red-400">
+          <h3 className="mt-4 text-lg font-semibold text-red-800">
             {t('errorLoadingRates')}
           </h3>
-          <p className="mt-2 text-red-600 dark:text-red-300">{error}</p>
+          <p className="mt-2 text-red-600">{error}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 dark:bg-gray-950">
+    <div className="min-h-screen bg-gray-50 py-12">
       <div className="container mx-auto max-w-2xl px-4">
         {/* Header */}
         <div className="mb-8 text-center">
           <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg">
             <Coins className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
             {t('currencyTitle')}
           </h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400">
+          <p className="mt-2 text-gray-600">
             {t('currencySubtitle')}
           </p>
         </div>
 
         {/* Main Card */}
-        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
           {/* Amount Input */}
           <div className="mb-6">
-            <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label className="mb-2 block text-sm font-medium text-gray-700">
               {t('amount')}
             </label>
             <input
               type="number"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-lg font-medium focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-lg font-medium focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500/20"
               placeholder={t('enterAmount')}
               min="0"
               step="0.01"
@@ -143,13 +143,13 @@ function CurrencyConverterContent() {
           <div className="mb-6 flex items-center gap-4">
             {/* From Currency */}
             <div className="flex-1">
-              <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label className="mb-2 block text-sm font-medium text-gray-700">
                 {t('fromCurrency')}
               </label>
               <select
                 value={fromCurrency}
                 onChange={(e) => setFromCurrency(e.target.value as CurrencyCode)}
-                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 font-medium focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 font-medium focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500/20"
               >
                 {CURRENCIES.map((currency) => (
                   <option key={currency.code} value={currency.code}>
@@ -163,22 +163,22 @@ function CurrencyConverterContent() {
             <div className="pt-8">
               <button
                 onClick={handleSwap}
-                className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
+                className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 transition-colors hover:bg-gray-200"
                 aria-label="Swap currencies"
               >
-                <ArrowRightLeft className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                <ArrowRightLeft className="h-5 w-5 text-gray-600" />
               </button>
             </div>
 
             {/* To Currency */}
             <div className="flex-1">
-              <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label className="mb-2 block text-sm font-medium text-gray-700">
                 {t('toCurrency')}
               </label>
               <select
                 value={toCurrency}
                 onChange={(e) => setToCurrency(e.target.value as CurrencyCode)}
-                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 font-medium focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 font-medium focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500/20"
               >
                 {CURRENCIES.map((currency) => (
                   <option key={currency.code} value={currency.code}>
@@ -220,8 +220,8 @@ function CurrencyConverterContent() {
         </div>
 
         {/* Quick Reference */}
-        <div className="mt-6 rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
-          <h3 className="mb-4 text-sm font-semibold text-gray-700 dark:text-gray-300">
+        <div className="mt-6 rounded-xl border border-gray-200 bg-white p-6">
+          <h3 className="mb-4 text-sm font-semibold text-gray-700">
             {t('quickReference')}
           </h3>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
@@ -230,12 +230,12 @@ function CurrencyConverterContent() {
               return (
                 <div
                   key={currency.code}
-                  className="rounded-lg bg-gray-50 p-3 text-center dark:bg-gray-800"
+                  className="rounded-lg bg-gray-50 p-3 text-center"
                 >
-                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                  <div className="text-xs text-gray-500">
                     {currency.code}
                   </div>
-                  <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                  <div className="text-lg font-bold text-gray-900">
                     {rate ? rate.toFixed(2) : '-'}
                   </div>
                 </div>

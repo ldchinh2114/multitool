@@ -17,7 +17,7 @@ export function LoadingSkeleton({
 }: LoadingSkeletonProps) {
   const skeletons = Array.from({ length: count }, (_, i) => i);
 
-  const baseClasses = 'animate-pulse bg-gray-200 dark:bg-gray-700 rounded';
+  const baseClasses = 'animate-pulse bg-gray-200 rounded';
 
   const variantClasses = {
     text: 'h-4 w-full',

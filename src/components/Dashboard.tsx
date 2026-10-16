@@ -41,7 +41,7 @@ function ToolCard({
       href={href}
       className={cn(
         'group relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all duration-300',
-        'hover:shadow-xl hover:scale-[1.02] dark:border-gray-800 dark:bg-gray-900',
+        'hover:shadow-xl hover:scale-[1.02]',
         sizeClasses[size],
         className
       )}
@@ -68,16 +68,16 @@ function ToolCard({
 
         {/* Content */}
         <div className="flex-1">
-          <h3 className="text-xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
+          <h3 className="text-xl font-bold tracking-tight text-gray-900">
             {title}
           </h3>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+          <p className="mt-2 text-sm text-gray-600">
             {description}
           </p>
         </div>
 
         {/* CTA */}
-        <div className="mt-4 flex items-center gap-2 text-sm font-medium text-blue-600 dark:text-blue-400">
+        <div className="mt-4 flex items-center gap-2 text-sm font-medium text-blue-600">
           <span>Open Tool</span>
           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
         </div>
@@ -94,21 +94,21 @@ export function Dashboard() {
   const { t } = useLanguage();
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="border-b border-gray-200 bg-white py-16 dark:border-gray-800 dark:bg-gray-900">
+      <section className="border-b border-gray-200 bg-white py-16">
         <div className="container mx-auto max-w-7xl px-4 text-center">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-blue-100 px-4 py-1.5 text-sm font-medium text-blue-700 dark:bg-blue-900 dark:text-blue-300">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-blue-100 px-4 py-1.5 text-sm font-medium text-blue-700">
             <Zap className="h-4 w-4" />
             {t('welcomeMessage')}
           </div>
-          <h1 className="mx-auto max-w-3xl text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-5xl md:text-6xl">
+          <h1 className="mx-auto max-w-3xl text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
             {t('heroTitlePart1')}{' '}
             <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
               {t('heroTitlePart2')}
             </span>
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-600 dark:text-gray-400">
+          <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-600">
             {t('heroSubtitle')}
           </p>
         </div>
@@ -166,39 +166,39 @@ export function Dashboard() {
       </section>
 
       {/* Features Section */}
-      <section className="border-t border-gray-200 py-16 dark:border-gray-800">
+      <section className="border-t border-gray-200 py-16">
         <div className="container mx-auto max-w-7xl px-4">
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             <div className="text-center">
-              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-900">
-                <Zap className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100">
+                <Zap className="h-6 w-6 text-blue-600" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <h3 className="text-lg font-semibold text-gray-900">
                 {t('lightningFast')}
               </h3>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              <p className="mt-2 text-sm text-gray-600">
                 {t('lightningFastDesc')}
               </p>
             </div>
             <div className="text-center">
-              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-green-100 dark:bg-green-900">
-                <Shield className="h-6 w-6 text-green-600 dark:text-green-400" />
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-green-100">
+                <Shield className="h-6 w-6 text-green-600" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <h3 className="text-lg font-semibold text-gray-900">
                 {t('privacyFirst')}
               </h3>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              <p className="mt-2 text-sm text-gray-600">
                 {t('privacyFirstDesc')}
               </p>
             </div>
             <div className="text-center">
-              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-purple-100 dark:bg-purple-900">
-                <Smartphone className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-purple-100">
+                <Smartphone className="h-6 w-6 text-purple-600" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <h3 className="text-lg font-semibold text-gray-900">
                 {t('mobileFriendly')}
               </h3>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              <p className="mt-2 text-sm text-gray-600">
                 {t('mobileFriendlyDesc')}
               </p>
             </div>

@@ -93,23 +93,23 @@ function UnitConverterContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 dark:bg-gray-950">
+    <div className="min-h-screen bg-gray-50 py-12">
       <div className="container mx-auto max-w-2xl px-4">
         {/* Header */}
         <div className="mb-8 text-center">
           <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-red-600 shadow-lg">
             <Calculator className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
             Unit Converter
           </h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400">
+          <p className="mt-2 text-gray-600">
             Convert between different units of length and weight
           </p>
         </div>
 
         {/* Category Selector */}
-        <div className="mb-6 flex gap-2 rounded-xl bg-gray-100 p-2 dark:bg-gray-800">
+        <div className="mb-6 flex gap-2 rounded-xl bg-gray-100 p-2">
           {CATEGORIES.map((cat) => (
             <button
               key={cat.id}
@@ -117,8 +117,8 @@ function UnitConverterContent() {
               className={cn(
                 'flex flex-1 items-center justify-center gap-2 rounded-lg py-3 text-sm font-medium transition-all',
                 category === cat.id
-                  ? 'bg-white text-gray-900 shadow-sm dark:bg-gray-700 dark:text-gray-100'
-                  : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100'
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
               )}
             >
               {cat.icon}
@@ -128,17 +128,17 @@ function UnitConverterContent() {
         </div>
 
         {/* Main Card */}
-        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
           {/* Amount Input */}
           <div className="mb-6">
-            <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label className="mb-2 block text-sm font-medium text-gray-700">
               Value
             </label>
             <input
               type="number"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-lg font-medium focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-lg font-medium focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
               placeholder="Enter value"
               min="0"
               step="0.0001"
@@ -149,13 +149,13 @@ function UnitConverterContent() {
           <div className="mb-6 flex items-center gap-4">
             {/* From Unit */}
             <div className="flex-1">
-              <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label className="mb-2 block text-sm font-medium text-gray-700">
                 From
               </label>
               <select
                 value={fromUnit}
                 onChange={(e) => setFromUnit(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 font-medium focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 font-medium focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
               >
                 {currentUnits.map((unit) => (
                   <option key={unit.id} value={unit.id}>
@@ -169,22 +169,22 @@ function UnitConverterContent() {
             <div className="pt-8">
               <button
                 onClick={handleSwap}
-                className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
+                className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 transition-colors hover:bg-gray-200"
                 aria-label="Swap units"
               >
-                <ArrowRightLeft className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                <ArrowRightLeft className="h-5 w-5 text-gray-600" />
               </button>
             </div>
 
             {/* To Unit */}
             <div className="flex-1">
-              <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label className="mb-2 block text-sm font-medium text-gray-700">
                 To
               </label>
               <select
                 value={toUnit}
                 onChange={(e) => setToUnit(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 font-medium focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 font-medium focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
               >
                 {currentUnits.map((unit) => (
                   <option key={unit.id} value={unit.id}>
@@ -215,8 +215,8 @@ function UnitConverterContent() {
         </div>
 
         {/* Quick Reference */}
-        <div className="mt-6 rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
-          <h3 className="mb-4 text-sm font-semibold text-gray-700 dark:text-gray-300">
+        <div className="mt-6 rounded-xl border border-gray-200 bg-white p-6">
+          <h3 className="mb-4 text-sm font-semibold text-gray-700">
             Quick Reference - 1 {currentUnits.find((u) => u.id === fromUnit)?.name}
           </h3>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
@@ -229,12 +229,12 @@ function UnitConverterContent() {
                 return (
                   <div
                     key={unit.id}
-                    className="rounded-lg bg-gray-50 p-3 text-center dark:bg-gray-800"
+                    className="rounded-lg bg-gray-50 p-3 text-center"
                   >
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                    <div className="text-xs text-gray-500">
                       {unit.symbol}
                     </div>
-                    <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                    <div className="text-lg font-bold text-gray-900">
                       {formatResult(value)}
                     </div>
                   </div>

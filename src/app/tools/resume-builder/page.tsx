@@ -1036,10 +1036,10 @@ export default function ResumeBuilder() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 p-4 print:p-0 print:bg-white">
+    <div className="min-h-screen bg-slate-100 p-4 print:p-0 print:bg-white">
       {/* Header - Hidden on print */}
 <header className="mb-4 flex items-center justify-between print:hidden">
-          <h1 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
             <span className="text-3xl">📄</span> {t('resumeMe')}
           </h1>
           <div className="flex gap-2">
@@ -1097,7 +1097,7 @@ export default function ResumeBuilder() {
         </div>
         <button
           onClick={() => setLanguage(language === 'en' ? 'vi' : 'en')}
-          className="flex items-center gap-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors font-medium"
+          className="flex items-center gap-2 bg-slate-200 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-300 transition-colors font-medium"
         >
           {language === 'en' ? '🇻🇳 VI' : '🇺🇸 EN'}
         </button>
@@ -1105,10 +1105,10 @@ export default function ResumeBuilder() {
 
       {/* Draft Title Display - Shown when editing a draft */}
       {currentDraftId && (
-        <div className="bg-amber-50 dark:bg-amber-950 border-b border-amber-200 dark:border-amber-800 px-6 py-3">
+        <div className="bg-amber-50 border-b border-amber-200 px-6 py-3">
           <div className="flex items-center gap-2">
-            <span className="text-amber-700 dark:text-amber-300 font-medium">Editing:</span>
-            <span className="text-amber-900 dark:text-amber-100 font-semibold text-lg">
+            <span className="text-amber-700 font-medium">Editing:</span>
+            <span className="text-amber-900 font-semibold text-lg">
               {drafts.find(d => d.id === currentDraftId)?.title || currentEditingTitle || `Draft ${drafts.length + 1}`}
             </span>
             {!hasUnsavedChanges && (
@@ -1128,9 +1128,9 @@ export default function ResumeBuilder() {
       {/* Main Container */}
       <div className="flex gap-4 h-[calc(100vh-80px)] print:h-auto print:block">
         {/* Editor Panel - Hidden on print */}
-        <div className="w-[40%] bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden flex flex-col print:hidden animate-in fade-in slide-in-from-left-4 duration-300">
+        <div className="w-[40%] bg-white rounded-xl shadow-lg overflow-hidden flex flex-col print:hidden animate-in fade-in slide-in-from-left-4 duration-300">
           {/* Tab Navigation - Scrollable */}
-          <nav className="flex overflow-x-auto border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-600">
+          <nav className="flex overflow-x-auto border-b border-slate-200 bg-slate-50 scrollbar-thin scrollbar-thumb-slate-300">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
@@ -1138,8 +1138,8 @@ export default function ResumeBuilder() {
                 className={cn(
                   'flex-shrink-0 flex items-center justify-center gap-1.5 py-3 px-3 text-xs sm:text-sm font-medium transition-all relative',
                   activeTab === tab.id
-                    ? 'text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-700'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700'
+                    ? 'text-blue-600 bg-white'
+                    : 'text-slate-600 hover:text-slate-800 hover:bg-slate-100'
                 )}
                 title={tab.label}
               >
@@ -1157,15 +1157,15 @@ export default function ResumeBuilder() {
             {/* Profile Tab */}
             {activeTab === 'profile' && (
               <div className="space-y-4 animate-in fade-in slide-in-from-right-2 duration-200">
-                <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('personalInformation')}</h3>
+                <h3 className="text-lg font-semibold text-slate-800">{t('personalInformation')}</h3>
                 
                 {/* Avatar Section */}
-                <div className="bg-slate-50 dark:bg-slate-700 rounded-lg p-4 border border-slate-200 dark:border-slate-600">
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">{t('uploadAvatar')}</label>
+                <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+                  <label className="block text-sm font-medium text-slate-700 mb-3">{t('uploadAvatar')}</label>
                   <div className="flex flex-col gap-4">
                     <div className="flex items-center gap-4">
                       {/* Avatar Preview */}
-                      <div className="w-20 h-20 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-600 flex items-center justify-center shrink-0 border-2 border-slate-300 dark:border-slate-500">
+                      <div className="w-20 h-20 rounded-full overflow-hidden bg-slate-200 flex items-center justify-center shrink-0 border-2 border-slate-300">
                         {resumeData.profile.avatarUrl ? (
                           <div
                             className="w-full h-full"
@@ -1185,7 +1185,7 @@ export default function ResumeBuilder() {
                             />
                           </div>
                         ) : (
-                          <Camera size={28} className="text-slate-400 dark:text-slate-500" />
+                          <Camera size={28} className="text-slate-400" />
                         )}
                       </div>
                       <div className="flex flex-col gap-2">
@@ -1205,7 +1205,7 @@ export default function ResumeBuilder() {
                         {resumeData.profile.avatarUrl && (
                           <button
                             onClick={handleRemoveAvatar}
-                            className="px-4 py-2 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 text-sm rounded-lg hover:bg-red-200 dark:hover:bg-red-800 transition-colors"
+                            className="px-4 py-2 bg-red-100 text-red-700 text-sm rounded-lg hover:bg-red-200 transition-colors"
                           >
                             {t('removeAvatar')}
                           </button>
@@ -1215,8 +1215,8 @@ export default function ResumeBuilder() {
                     </div>
                     {/* Avatar Frame Adjustment */}
                     {resumeData.profile.avatarUrl && (
-                      <div className="space-y-3 border-t border-slate-200 dark:border-slate-600 pt-3">
-                        <p className="text-xs font-medium text-slate-600 dark:text-slate-400">Adjust frame</p>
+                      <div className="space-y-3 border-t border-slate-200 pt-3">
+                        <p className="text-xs font-medium text-slate-600">Adjust frame</p>
                         <div>
                           <label className="block text-xs text-slate-500 mb-1">Zoom: {Math.round(resumeData.profile.avatarTransform.zoom * 100)}%</label>
                           <input
@@ -1232,7 +1232,7 @@ export default function ResumeBuilder() {
                               }));
                               if (currentDraftId) setHasUnsavedChanges(true);
                             }}
-                            className="w-full h-2 bg-slate-200 dark:bg-slate-600 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                            className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
                           />
                         </div>
                         <div>
@@ -1250,7 +1250,7 @@ export default function ResumeBuilder() {
                               }));
                               if (currentDraftId) setHasUnsavedChanges(true);
                             }}
-                            className="w-full h-2 bg-slate-200 dark:bg-slate-600 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                            className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
                           />
                           <div className="flex justify-between text-xs text-slate-400 mt-0.5">
                             <span>Left</span>
@@ -1272,7 +1272,7 @@ export default function ResumeBuilder() {
                               }));
                               if (currentDraftId) setHasUnsavedChanges(true);
                             }}
-                            className="w-full h-2 bg-slate-200 dark:bg-slate-600 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                            className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
                           />
                           <div className="flex justify-between text-xs text-slate-400 mt-0.5">
                             <span>Top</span>
@@ -1286,96 +1286,96 @@ export default function ResumeBuilder() {
 
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('fullName')}</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">{t('fullName')}</label>
                     <input
                       type="text"
                       value={resumeData.profile.name}
                       onChange={(e) => updateProfile('name', e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                      className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                       placeholder="Nguyễn Văn A"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('jobTitle')}</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">{t('jobTitle')}</label>
                     <input
                       type="text"
                       value={resumeData.profile.title}
                       onChange={(e) => updateProfile('title', e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                      className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                       placeholder="Kỹ sư phần mềm cấp cao"
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('email')}</label>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">{t('email')}</label>
                       <input
                         type="email"
                         value={resumeData.profile.email}
                         onChange={(e) => updateProfile('email', e.target.value)}
-                        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                        className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                         placeholder="nguyenvana@email.com"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('phone')}</label>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">{t('phone')}</label>
                       <input
                         type="tel"
                         value={resumeData.profile.phone}
                         onChange={(e) => updateProfile('phone', e.target.value)}
-                        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                        className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                         placeholder="+84 123 456 789"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('location')}</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">{t('location')}</label>
                     <input
                       type="text"
                       value={resumeData.profile.location}
                       onChange={(e) => updateProfile('location', e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                      className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                       placeholder="Hà Nội, Việt Nam"
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('website')}</label>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">{t('website')}</label>
                       <input
                         type="text"
                         value={resumeData.profile.website}
                         onChange={(e) => updateProfile('website', e.target.value)}
-                        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                        className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                         placeholder="https://nguyenvana.dev"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('linkedin')}</label>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">{t('linkedin')}</label>
                       <input
                         type="text"
                         value={resumeData.profile.linkedin}
                         onChange={(e) => updateProfile('linkedin', e.target.value)}
-                        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                        className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                         placeholder="linkedin.com/in/nguyenvana"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('facebook')}</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">{t('facebook')}</label>
                     <input
                       type="text"
                       value={resumeData.profile.facebook}
                       onChange={(e) => updateProfile('facebook', e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                      className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                       placeholder="facebook.com/nguyenvana"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('selfSummary')}</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">{t('selfSummary')}</label>
                     <textarea
                       value={resumeData.profile.summary}
                       onChange={(e) => updateProfile('summary', e.target.value)}
                       rows={4}
-                      className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
+                      className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
                       placeholder={t('selfSummaryPlaceholder')}
                     />
                   </div>
@@ -1387,7 +1387,7 @@ export default function ResumeBuilder() {
             {activeTab === 'work' && (
               <div className="space-y-4 animate-in fade-in slide-in-from-right-2 duration-200">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('workExperience')}</h3>
+                  <h3 className="text-lg font-semibold text-slate-800">{t('workExperience')}</h3>
                   <button
                     onClick={addWorkExperience}
                     className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 font-medium"
@@ -1396,9 +1396,9 @@ export default function ResumeBuilder() {
                   </button>
                 </div>
                 {resumeData.work.map((work, index) => (
-                  <div key={work.id} className="border border-slate-200 dark:border-slate-600 rounded-lg p-4 space-y-3">
+                  <div key={work.id} className="border border-slate-200 rounded-lg p-4 space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-slate-500 dark:text-slate-400">{t('position')} {index + 1}</span>
+                      <span className="text-sm font-medium text-slate-500">{t('position')} {index + 1}</span>
                       <button
                         onClick={() => deleteWorkExperience(work.id)}
                         className="text-red-500 hover:text-red-600 p-1"
@@ -1408,61 +1408,61 @@ export default function ResumeBuilder() {
                       </button>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('company')}</label>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">{t('company')}</label>
                       <input
                         type="text"
                         value={work.company}
                         onChange={(e) => updateWorkExperience(work.id, 'company', e.target.value)}
-                        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                        className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                         placeholder={t('company')}
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('position')}</label>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">{t('position')}</label>
                       <input
                         type="text"
                         value={work.position}
                         onChange={(e) => updateWorkExperience(work.id, 'position', e.target.value)}
-                        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                        className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                         placeholder={t('jobTitle')}
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('startDate')}</label>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('startDate')}</label>
                         <input
                           type="text"
                           value={work.startDate}
                           onChange={(e) => updateWorkExperience(work.id, 'startDate', e.target.value)}
-                          className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                          className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                           placeholder="2021-03"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('endDate')}</label>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('endDate')}</label>
                         <input
                           type="text"
                           value={work.endDate}
                           onChange={(e) => updateWorkExperience(work.id, 'endDate', e.target.value)}
-                          className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                          className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                           placeholder={t('present')}
                         />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('description')}</label>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">{t('description')}</label>
                       <textarea
                         value={work.description}
                         onChange={(e) => updateWorkExperience(work.id, 'description', e.target.value)}
                         rows={3}
-                        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
+                        className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
                         placeholder={t('workDescriptionPlaceholder')}
                       />
                     </div>
                   </div>
                 ))}
                 {resumeData.work.length === 0 && (
-                  <p className="text-slate-500 dark:text-slate-400 text-center py-4">{t('noWorkExperience')}</p>
+                  <p className="text-slate-500 text-center py-4">{t('noWorkExperience')}</p>
                 )}
               </div>
             )}
@@ -1471,7 +1471,7 @@ export default function ResumeBuilder() {
             {activeTab === 'projects' && (
               <div className="space-y-4 animate-in fade-in slide-in-from-right-2 duration-200">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('projects')}</h3>
+                  <h3 className="text-lg font-semibold text-slate-800">{t('projects')}</h3>
                   <button
                     onClick={addProject}
                     className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 font-medium"
@@ -1480,9 +1480,9 @@ export default function ResumeBuilder() {
                   </button>
                 </div>
                 {resumeData.projects.map((project, index) => (
-                  <div key={project.id} className="border border-slate-200 dark:border-slate-600 rounded-lg p-4 space-y-3">
+                  <div key={project.id} className="border border-slate-200 rounded-lg p-4 space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-slate-500 dark:text-slate-400">{t('projectName')} {index + 1}</span>
+                      <span className="text-sm font-medium text-slate-500">{t('projectName')} {index + 1}</span>
                       <button
                         onClick={() => deleteProject(project.id)}
                         className="text-red-500 hover:text-red-600 p-1"
@@ -1492,51 +1492,51 @@ export default function ResumeBuilder() {
                       </button>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('projectName')}</label>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">{t('projectName')}</label>
                       <input
                         type="text"
                         value={project.name}
                         onChange={(e) => updateProject(project.id, 'name', e.target.value)}
-                        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                        className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                         placeholder={t('projectName')}
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('datePeriod')}</label>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('datePeriod')}</label>
                         <input
                           type="text"
                           value={project.date}
                           onChange={(e) => updateProject(project.id, 'date', e.target.value)}
-                          className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                          className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                           placeholder="2023"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('link')}</label>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('link')}</label>
                         <input
                           type="text"
                           value={project.link}
                           onChange={(e) => updateProject(project.id, 'link', e.target.value)}
-                          className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                          className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                           placeholder="https://github.com/..."
                         />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('description')}</label>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">{t('description')}</label>
                       <textarea
                         value={project.description}
                         onChange={(e) => updateProject(project.id, 'description', e.target.value)}
                         rows={3}
-                        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
+                        className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
                         placeholder={t('projectDescriptionPlaceholder')}
                       />
                     </div>
                   </div>
                 ))}
                 {resumeData.projects.length === 0 && (
-                  <p className="text-slate-500 dark:text-slate-400 text-center py-4">{t('noProjectsYet')}</p>
+                  <p className="text-slate-500 text-center py-4">{t('noProjectsYet')}</p>
                 )}
               </div>
             )}
@@ -1545,7 +1545,7 @@ export default function ResumeBuilder() {
             {activeTab === 'education' && (
               <div className="space-y-4 animate-in fade-in slide-in-from-right-2 duration-200">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('education')}</h3>
+                  <h3 className="text-lg font-semibold text-slate-800">{t('education')}</h3>
                   <button
                     onClick={addEducation}
                     className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 font-medium"
@@ -1554,9 +1554,9 @@ export default function ResumeBuilder() {
                   </button>
                 </div>
                 {resumeData.education.map((edu, index) => (
-                  <div key={edu.id} className="border border-slate-200 dark:border-slate-600 rounded-lg p-4 space-y-3">
+                  <div key={edu.id} className="border border-slate-200 rounded-lg p-4 space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-slate-500 dark:text-slate-400">{t('education')} {index + 1}</span>
+                      <span className="text-sm font-medium text-slate-500">{t('education')} {index + 1}</span>
                       <button
                         onClick={() => deleteEducation(edu.id)}
                         className="text-red-500 hover:text-red-600 p-1"
@@ -1566,65 +1566,65 @@ export default function ResumeBuilder() {
                       </button>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('schoolUniversity')}</label>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">{t('schoolUniversity')}</label>
                       <input
                         type="text"
                         value={edu.school}
                         onChange={(e) => updateEducation(edu.id, 'school', e.target.value)}
-                        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                        className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                         placeholder={t('schoolPlaceholder')}
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('degree')}</label>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">{t('degree')}</label>
                       <input
                         type="text"
                         value={edu.degree}
                         onChange={(e) => updateEducation(edu.id, 'degree', e.target.value)}
-                        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                        className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                         placeholder={t('degreePlaceholder')}
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('startDate')}</label>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('startDate')}</label>
                         <input
                           type="text"
                           value={edu.startDate}
                           onChange={(e) => updateEducation(edu.id, 'startDate', e.target.value)}
-                          className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                          className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                           placeholder="2014-09"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('endDate')}</label>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('endDate')}</label>
                         <input
                           type="text"
                           value={edu.endDate}
                           onChange={(e) => updateEducation(edu.id, 'endDate', e.target.value)}
-                          className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                          className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                           placeholder="2018-05"
                         />
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('gpa')}</label>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('gpa')}</label>
                         <input
                           type="text"
                           value={edu.gpa}
                           onChange={(e) => updateEducation(edu.id, 'gpa', e.target.value)}
-                          className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                          className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                           placeholder="3.8/4.0"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('academicRank')}</label>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('academicRank')}</label>
                         <input
                           type="text"
                           value={edu.academicRank}
                           onChange={(e) => updateEducation(edu.id, 'academicRank', e.target.value)}
-                          className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                          className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                           placeholder="Excellent"
                         />
                       </div>
@@ -1632,7 +1632,7 @@ export default function ResumeBuilder() {
                   </div>
                 ))}
                 {resumeData.education.length === 0 && (
-                  <p className="text-slate-500 dark:text-slate-400 text-center py-4">{t('noEducationYet')}</p>
+                  <p className="text-slate-500 text-center py-4">{t('noEducationYet')}</p>
                 )}
               </div>
             )}
@@ -1641,7 +1641,7 @@ export default function ResumeBuilder() {
             {activeTab === 'certifications' && (
               <div className="space-y-4 animate-in fade-in slide-in-from-right-2 duration-200">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('certifications')}</h3>
+                  <h3 className="text-lg font-semibold text-slate-800">{t('certifications')}</h3>
                   <button
                     onClick={addCertification}
                     className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 font-medium"
@@ -1650,9 +1650,9 @@ export default function ResumeBuilder() {
                   </button>
                 </div>
                 {resumeData.certifications.map((cert, index) => (
-                  <div key={cert.id} className="border border-slate-200 dark:border-slate-600 rounded-lg p-4 space-y-3">
+                  <div key={cert.id} className="border border-slate-200 rounded-lg p-4 space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-slate-500 dark:text-slate-400">{t('certificationName')} {index + 1}</span>
+                      <span className="text-sm font-medium text-slate-500">{t('certificationName')} {index + 1}</span>
                       <button
                         onClick={() => deleteCertification(cert.id)}
                         className="text-red-500 hover:text-red-600 p-1"
@@ -1662,83 +1662,83 @@ export default function ResumeBuilder() {
                       </button>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('certificationName')}</label>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">{t('certificationName')}</label>
                       <input
                         type="text"
                         value={cert.name}
                         onChange={(e) => updateCertification(cert.id, 'name', e.target.value)}
-                        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                        className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                         placeholder={t('certificationName')}
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('issuer')}</label>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">{t('issuer')}</label>
                       <input
                         type="text"
                         value={cert.issuer}
                         onChange={(e) => updateCertification(cert.id, 'issuer', e.target.value)}
-                        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                        className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                         placeholder={t('issuer')}
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('issueDate')}</label>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('issueDate')}</label>
                         <input
                           type="text"
                           value={cert.issueDate}
                           onChange={(e) => updateCertification(cert.id, 'issueDate', e.target.value)}
-                          className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                          className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                           placeholder="2023-03"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('expirationDate')}</label>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('expirationDate')}</label>
                         <input
                           type="text"
                           value={cert.expirationDate}
                           onChange={(e) => updateCertification(cert.id, 'expirationDate', e.target.value)}
-                          className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                          className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                           placeholder="2025-03"
                         />
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('credentialId')}</label>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('credentialId')}</label>
                         <input
                           type="text"
                           value={cert.credentialId}
                           onChange={(e) => updateCertification(cert.id, 'credentialId', e.target.value)}
-                          className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                          className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                           placeholder={t('credentialId')}
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('credentialUrl')}</label>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('credentialUrl')}</label>
                         <input
                           type="text"
                           value={cert.credentialUrl}
                           onChange={(e) => updateCertification(cert.id, 'credentialUrl', e.target.value)}
-                          className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                          className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                           placeholder="https://..."
                         />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('certificationDescription')}</label>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">{t('certificationDescription')}</label>
                       <textarea
                         value={cert.description}
                         onChange={(e) => updateCertification(cert.id, 'description', e.target.value)}
                         rows={3}
-                        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
+                        className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
                         placeholder={t('certificationDescription')}
                       />
                     </div>
                   </div>
                 ))}
                 {resumeData.certifications.length === 0 && (
-                  <p className="text-slate-500 dark:text-slate-400 text-center py-4">{t('noCertificationsYet')}</p>
+                  <p className="text-slate-500 text-center py-4">{t('noCertificationsYet')}</p>
                 )}
               </div>
             )}
@@ -1747,7 +1747,7 @@ export default function ResumeBuilder() {
             {activeTab === 'languages' && (
               <div className="space-y-4 animate-in fade-in slide-in-from-right-2 duration-200">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('langs')}</h3>
+                  <h3 className="text-lg font-semibold text-slate-800">{t('langs')}</h3>
                   <button
                     onClick={addLanguage}
                     className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 font-medium"
@@ -1756,9 +1756,9 @@ export default function ResumeBuilder() {
                   </button>
                 </div>
                 {resumeData.languages.map((lang, index) => (
-                  <div key={lang.id} className="border border-slate-200 dark:border-slate-600 rounded-lg p-4 space-y-3">
+                  <div key={lang.id} className="border border-slate-200 rounded-lg p-4 space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-slate-500 dark:text-slate-400">{t('langs')} {index + 1}</span>
+                      <span className="text-sm font-medium text-slate-500">{t('langs')} {index + 1}</span>
                       <button
                         onClick={() => deleteLanguage(lang.id)}
                         className="text-red-500 hover:text-red-600 p-1"
@@ -1768,21 +1768,21 @@ export default function ResumeBuilder() {
                       </button>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('languageName')}</label>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">{t('languageName')}</label>
                       <input
                         type="text"
                         value={lang.name}
                         onChange={(e) => updateLanguage(lang.id, 'name', e.target.value)}
-                        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                        className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                         placeholder="English, Japanese, Korean..."
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('proficiencyLevel')}</label>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">{t('proficiencyLevel')}</label>
                       <select
                         value={lang.proficiency}
                         onChange={(e) => updateLanguage(lang.id, 'proficiency', e.target.value as ProficiencyLevel)}
-                        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                        className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                       >
                         <option value="Beginner">{t('beginner')}</option>
                         <option value="Elementary">{t('elementary')}</option>
@@ -1795,7 +1795,7 @@ export default function ResumeBuilder() {
                   </div>
                 ))}
                 {resumeData.languages.length === 0 && (
-                  <p className="text-slate-500 dark:text-slate-400 text-center py-4">{t('noLanguagesYet')}</p>
+                  <p className="text-slate-500 text-center py-4">{t('noLanguagesYet')}</p>
                 )}
               </div>
             )}
@@ -1803,30 +1803,30 @@ export default function ResumeBuilder() {
             {/* Skills Tab */}
             {activeTab === 'skills' && (
               <div className="space-y-4 animate-in fade-in slide-in-from-right-2 duration-200">
-                <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('skills')}</h3>
+                <h3 className="text-lg font-semibold text-slate-800">{t('skills')}</h3>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
                     {t('enterSkills')}
                   </label>
                   <textarea
                     value={resumeData.skills}
                     onChange={(e) => handleSkillsChange(e.target.value)}
                     rows={6}
-                    className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
+                    className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
                     placeholder="JavaScript, TypeScript, React, Node.js, Python, AWS..."
                   />
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                  <p className="text-xs text-slate-500 mt-2">
                     {t('skillsExample')}
                   </p>
                 </div>
                 {skillsArray.length > 0 && (
                   <div className="mt-4">
-                    <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{t('skillsPreview')}</h4>
+                    <h4 className="text-sm font-medium text-slate-700 mb-2">{t('skillsPreview')}</h4>
                     <div className="flex flex-wrap gap-2">
                       {skillsArray.map((skill, index) => (
                         <span
                           key={index}
-                          className="px-3 py-1 bg-indigo-100 dark:bg-indigo-800 text-indigo-700 dark:text-indigo-300 text-sm rounded-full"
+                          className="px-3 py-1 bg-indigo-100 text-indigo-700 text-sm rounded-full"
                         >
                           {skill}
                         </span>
@@ -1840,25 +1840,25 @@ export default function ResumeBuilder() {
             {/* Strengths Tab */}
             {activeTab === 'strengths' && (
               <div className="space-y-4 animate-in fade-in slide-in-from-right-2 duration-200">
-                <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('strengths')}</h3>
+                <h3 className="text-lg font-semibold text-slate-800">{t('strengths')}</h3>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
                     {t('enterStrengths')}
                   </label>
                   <textarea
                     value={strengths}
                     onChange={(e) => handleStrengthsChange(e.target.value)}
                     rows={6}
-                    className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
+                    className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
                     placeholder="Strong problem-solving abilities, Excellent communication skills..."
                   />
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                  <p className="text-xs text-slate-500 mt-2">
                     {t('strengthsExample')}
                   </p>
                 </div>
                 {strengthsArray.length > 0 && (
                   <div className="mt-4">
-                    <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{t('strengthsPreview')}</h4>
+                    <h4 className="text-sm font-medium text-slate-700 mb-2">{t('strengthsPreview')}</h4>
                     <ul className="space-y-2">
                       {strengthsArray.map((strength, index) => (
                         <li key={index} className="flex items-start gap-2 text-sm text-slate-700">
@@ -1875,25 +1875,25 @@ export default function ResumeBuilder() {
             {/* Hobbies Tab */}
             {activeTab === 'hobbies' && (
               <div className="space-y-4 animate-in fade-in slide-in-from-right-2 duration-200">
-                <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('hobbies')}</h3>
+                <h3 className="text-lg font-semibold text-slate-800">{t('hobbies')}</h3>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
                     {t('enterHobbies')}
                   </label>
                   <textarea
                     value={resumeData.hobbies}
                     onChange={(e) => handleHobbiesChange(e.target.value)}
                     rows={6}
-                    className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
+                    className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
                     placeholder="Reading, Traveling, Photography, Playing guitar..."
                   />
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                  <p className="text-xs text-slate-500 mt-2">
                     {t('hobbiesExample')}
                   </p>
                 </div>
                 {hobbiesArray.length > 0 && (
                   <div className="mt-4">
-                    <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{t('hobbiesPreview')}</h4>
+                    <h4 className="text-sm font-medium text-slate-700 mb-2">{t('hobbiesPreview')}</h4>
                     <ul className="space-y-2">
                       {hobbiesArray.map((hobby, index) => (
                         <li key={index} className="flex items-start gap-2 text-sm text-slate-700">
@@ -1910,12 +1910,12 @@ export default function ResumeBuilder() {
         </div>
 
         {/* Preview Panel */}
-        <div className="w-[60%] print:w-full overflow-y-auto flex justify-center items-start bg-slate-200 dark:bg-slate-800 p-4 print:p-0 print:bg-white print:overflow-visible">
-          <div           className="w-[210mm] min-h-[297mm] bg-white dark:bg-slate-900 shadow-xl print:shadow-none print:w-full print:m-0 animate-in fade-in zoom-in-95 duration-300">
+        <div className="w-[60%] print:w-full overflow-y-auto flex justify-center items-start bg-slate-200 p-4 print:p-0 print:bg-white print:overflow-visible">
+          <div           className="w-[210mm] min-h-[297mm] bg-white shadow-xl print:shadow-none print:w-full print:m-0 animate-in fade-in zoom-in-95 duration-300">
             {/* Resume Preview - Modern Executive Style */}
             <div className="p-8 print:p-0 break-words">
               {/* Header */}
-              <header className="mb-6 border-b-2 border-slate-800 dark:border-slate-600 pb-4">
+              <header className="mb-6 border-b-2 border-slate-800 pb-4">
                 {resumeData.profile.avatarUrl ? (
                   <div className="flex gap-4 items-start">
                     {/* Avatar - Left side */}
@@ -1935,47 +1935,47 @@ export default function ResumeBuilder() {
                     </div>
                     {/* Name and Info - Right side */}
                     <div className="flex-1 min-w-0">
-                      <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-1">
+                      <h1 className="text-4xl font-bold text-slate-900 mb-1">
                         {resumeData.profile.name || t('yourName')}
                       </h1>
-                      <p className="text-xl text-blue-600 dark:text-blue-400 font-medium mb-3">
+                      <p className="text-xl text-blue-600 font-medium mb-3">
                         {resumeData.profile.title || t('jobTitleFallback')}
                       </p>
                       {/* Contact Info - Left aligned when avatar present */}
-                      <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-slate-600 dark:text-slate-400">
+                      <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-slate-600">
                         {resumeData.profile.email && (
                           <span className="flex items-center gap-1">
-                            <span className="text-blue-600 dark:text-blue-400 font-medium">{t('emailLabel')}</span>
+                            <span className="text-blue-600 font-medium">{t('emailLabel')}</span>
                             {resumeData.profile.email}
                           </span>
                         )}
                         {resumeData.profile.phone && (
                           <span className="flex items-center gap-1">
-                            <span className="text-blue-600 dark:text-blue-400 font-medium">{t('phoneLabel')}</span>
+                            <span className="text-blue-600 font-medium">{t('phoneLabel')}</span>
                             {resumeData.profile.phone}
                           </span>
                         )}
                         {resumeData.profile.location && (
                           <span className="flex items-center gap-1">
-                            <span className="text-blue-600 dark:text-blue-400 font-medium">{t('locationLabel')}</span>
+                            <span className="text-blue-600 font-medium">{t('locationLabel')}</span>
                             {resumeData.profile.location}
                           </span>
                         )}
                         {resumeData.profile.website && (
                           <span className="flex items-center gap-1">
-                            <span className="text-blue-600 dark:text-blue-400 font-medium">{t('websiteLabel')}</span>
+                            <span className="text-blue-600 font-medium">{t('websiteLabel')}</span>
                             {resumeData.profile.website}
                           </span>
                         )}
                         {resumeData.profile.linkedin && (
                           <span className="flex items-center gap-1">
-                            <span className="text-blue-600 dark:text-blue-400 font-medium">{t('linkedinLabel')}</span>
+                            <span className="text-blue-600 font-medium">{t('linkedinLabel')}</span>
                             {resumeData.profile.linkedin}
                           </span>
                         )}
                         {resumeData.profile.facebook && (
                           <span className="flex items-center gap-1">
-                            <span className="text-blue-600 dark:text-blue-400 font-medium">{t('facebookLabel')}</span>
+                            <span className="text-blue-600 font-medium">{t('facebookLabel')}</span>
                             {resumeData.profile.facebook}
                           </span>
                         )}
@@ -1986,48 +1986,48 @@ export default function ResumeBuilder() {
                   <>
                     {/* Name and Title - Centered (no avatar) */}
                     <div className="text-center mb-4">
-                      <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-1">
+                      <h1 className="text-4xl font-bold text-slate-900 mb-1">
                         {resumeData.profile.name || t('yourName')}
                       </h1>
-                      <p className="text-xl text-blue-600 dark:text-blue-400 font-medium">
+                      <p className="text-xl text-blue-600 font-medium">
                         {resumeData.profile.title || t('jobTitleFallback')}
                       </p>
                     </div>
                     {/* Contact Info - Horizontal row with dividers */}
-                    <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-slate-600 dark:text-slate-400">
+                    <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-slate-600">
                       {resumeData.profile.email && (
                         <span className="flex items-center gap-1">
-                          <span className="text-blue-600 dark:text-blue-400 font-medium">{t('emailLabel')}</span>
+                          <span className="text-blue-600 font-medium">{t('emailLabel')}</span>
                           {resumeData.profile.email}
                         </span>
                       )}
                       {resumeData.profile.phone && (
                         <span className="flex items-center gap-1">
-                          <span className="text-blue-600 dark:text-blue-400 font-medium">{t('phoneLabel')}</span>
+                          <span className="text-blue-600 font-medium">{t('phoneLabel')}</span>
                           {resumeData.profile.phone}
                         </span>
                       )}
                       {resumeData.profile.location && (
                         <span className="flex items-center gap-1">
-                          <span className="text-blue-600 dark:text-blue-400 font-medium">{t('locationLabel')}</span>
+                          <span className="text-blue-600 font-medium">{t('locationLabel')}</span>
                           {resumeData.profile.location}
                         </span>
                       )}
                       {resumeData.profile.website && (
                         <span className="flex items-center gap-1">
-                          <span className="text-blue-600 dark:text-blue-400 font-medium">{t('websiteLabel')}</span>
+                          <span className="text-blue-600 font-medium">{t('websiteLabel')}</span>
                           {resumeData.profile.website}
                         </span>
                       )}
                       {resumeData.profile.linkedin && (
                         <span className="flex items-center gap-1">
-                          <span className="text-blue-600 dark:text-blue-400 font-medium">{t('linkedinLabel')}</span>
+                          <span className="text-blue-600 font-medium">{t('linkedinLabel')}</span>
                           {resumeData.profile.linkedin}
                         </span>
                       )}
                       {resumeData.profile.facebook && (
                         <span className="flex items-center gap-1">
-                          <span className="text-blue-600 dark:text-blue-400 font-medium">{t('facebookLabel')}</span>
+                          <span className="text-blue-600 font-medium">{t('facebookLabel')}</span>
                           {resumeData.profile.facebook}
                         </span>
                       )}
@@ -2043,10 +2043,10 @@ export default function ResumeBuilder() {
                   {/* Summary */}
                   {resumeData.profile.summary && (
                     <section>
-                      <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2 uppercase tracking-wide border-b border-slate-300 dark:border-slate-600 pb-1">
+                      <h2 className="text-lg font-bold text-slate-800 mb-2 uppercase tracking-wide border-b border-slate-300 pb-1">
                         {t('selfSummary')}
                       </h2>
-                      <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                      <p className="text-sm text-slate-700 leading-relaxed">
                         {resumeData.profile.summary}
                       </p>
                     </section>
@@ -2063,15 +2063,15 @@ export default function ResumeBuilder() {
                           <div key={work.id}>
                             <div className="flex justify-between items-start mb-1">
                               <div>
-                                <h3 className="font-semibold text-slate-900 dark:text-white">{work.position || t('positionFallback')}</h3>
-                                <p className="text-blue-600 dark:text-blue-400 text-sm">{work.company || t('companyFallback')}</p>
+                                <h3 className="font-semibold text-slate-900">{work.position || t('positionFallback')}</h3>
+                                <p className="text-blue-600 text-sm">{work.company || t('companyFallback')}</p>
                               </div>
-                              <span className="text-sm text-slate-500 dark:text-slate-400">
+                              <span className="text-sm text-slate-500">
                                 {work.startDate && work.endDate ? `${work.startDate} - ${work.endDate}` : ''}
                               </span>
                             </div>
                             {work.description && (
-                              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mt-1">
+                              <p className="text-sm text-slate-600 leading-relaxed mt-1">
                                 {work.description}
                               </p>
                             )}
@@ -2091,9 +2091,9 @@ export default function ResumeBuilder() {
                         {resumeData.projects.filter(p => p.name).map((project) => (
                           <div key={project.id} className="mb-3">
                             <div className="flex justify-between items-start">
-                              <h3 className="font-semibold text-slate-900 dark:text-white">{project.name}</h3>
+                              <h3 className="font-semibold text-slate-900">{project.name}</h3>
                               {project.date && (
-                                <span className="text-sm text-slate-500 dark:text-slate-400">{project.date}</span>
+                                <span className="text-sm text-slate-500">{project.date}</span>
                               )}
                             </div>
                             {project.link && (
@@ -2101,13 +2101,13 @@ export default function ResumeBuilder() {
                                 href={project.link.startsWith('http') ? project.link : `https://${project.link}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-blue-600 dark:text-blue-400 text-xs hover:underline"
+                                className="text-blue-600 text-xs hover:underline"
                               >
                                 {project.link}
                               </a>
                             )}
                             {project.description && (
-                              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mt-1">
+                              <p className="text-sm text-slate-600 leading-relaxed mt-1">
                                 {project.description}
                               </p>
                             )}
@@ -2130,7 +2130,7 @@ export default function ResumeBuilder() {
                         {skillsArray.map((skill, index) => (
                           <span
                             key={index}
-                            className="px-2 py-1 bg-indigo-100 dark:bg-indigo-800 text-indigo-700 dark:text-indigo-300 text-xs rounded-md"
+                            className="px-2 py-1 bg-indigo-100 text-indigo-700 text-xs rounded-md"
                           >
                             {skill}
                           </span>
@@ -2149,7 +2149,7 @@ export default function ResumeBuilder() {
                         {resumeData.education.filter(e => e.school || e.degree).map((edu) => (
                           <div key={edu.id}>
                             <h3 className="font-semibold text-slate-900 text-sm">{edu.degree || t('degreeFallback')}</h3>
-                            <p className="text-blue-600 dark:text-blue-400 text-sm">{edu.school || t('schoolFallback')}</p>
+                            <p className="text-blue-600 text-sm">{edu.school || t('schoolFallback')}</p>
                             <p className="text-xs text-slate-500 mt-1">
                               {(edu.startDate || edu.endDate) ? (edu.startDate && edu.endDate ? `${edu.startDate} - ${edu.endDate}` : edu.startDate || edu.endDate) : ''}
                             </p>
@@ -2171,7 +2171,7 @@ export default function ResumeBuilder() {
                         {resumeData.certifications.filter(c => c.name || c.issuer).map((cert) => (
                           <div key={cert.id}>
                             <h3 className="font-semibold text-slate-900 text-sm">{cert.name || t('certificationFallback')}</h3>
-                            <p className="text-blue-600 dark:text-blue-400 text-sm">{cert.issuer || t('issuerFallback')}</p>
+                            <p className="text-blue-600 text-sm">{cert.issuer || t('issuerFallback')}</p>
                             <p className="text-xs text-slate-500 mt-1">
                               {cert.issueDate && `${cert.issueDate}${cert.expirationDate ? ' - ' + cert.expirationDate : ''}`}
                             </p>
@@ -2185,13 +2185,13 @@ export default function ResumeBuilder() {
                                 href={cert.credentialUrl.startsWith('http') ? cert.credentialUrl : `https://${cert.credentialUrl}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-blue-600 dark:text-blue-400 text-xs hover:underline"
+                                className="text-blue-600 text-xs hover:underline"
                               >
                                 {t('credentialUrl')}
                               </a>
                             )}
                             {cert.description && (
-                              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
+                              <p className="text-xs text-slate-600 mt-1 leading-relaxed">
                                 {cert.description}
                               </p>
                             )}
@@ -2210,8 +2210,8 @@ export default function ResumeBuilder() {
                       <div className="space-y-2">
                         {resumeData.languages.filter(l => l.name).map((lang) => (
                           <div key={lang.id} className="flex justify-between items-center">
-                            <span className="text-sm text-slate-700 dark:text-slate-300">{lang.name}</span>
-                            <span className="text-xs px-2 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full">
+                            <span className="text-sm text-slate-700">{lang.name}</span>
+                            <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full">
                               {proficiencyLabel(lang.proficiency)}
                             </span>
                           </div>
@@ -2235,7 +2235,7 @@ export default function ResumeBuilder() {
                         ))}
                       </ul>
                     ) : (
-                      <p className="text-sm text-slate-500 dark:text-slate-400">Add your strengths in the editor</p>
+                      <p className="text-sm text-slate-500">Add your strengths in the editor</p>
                     )}
                   </section>
 
@@ -2265,9 +2265,9 @@ export default function ResumeBuilder() {
       {/* Draft List Panel */}
       {showDraftList && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-md max-h-[80vh] overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200">
-            <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-amber-50 dark:bg-amber-950">
-              <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md max-h-[80vh] overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-amber-50">
+              <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
                 <FolderOpen size={20} className="text-amber-600" />
                 {t('drafts')}
               </h2>
@@ -2280,13 +2280,13 @@ export default function ResumeBuilder() {
               </button>
             </div>
             
-            <div className="p-4 border-b border-slate-200 dark:border-slate-700 space-y-3">
+            <div className="p-4 border-b border-slate-200 space-y-3">
               <div className="flex gap-2">
                 <input
                   type="text"
                   value={draftTitle}
                   onChange={(e) => setDraftTitle(e.target.value)}
-                  className="flex-1 px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-all"
+                  className="flex-1 px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-all"
                   placeholder={t('draftTitle')}
                   onKeyDown={(e) => e.key === 'Enter' && createDraft()}
                 />
@@ -2300,7 +2300,7 @@ export default function ResumeBuilder() {
               </div>
               <button
                 onClick={createNewBlankDraft}
-                className="w-full flex items-center justify-center gap-2 border-2 border-dashed border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 px-4 py-3 rounded-lg hover:border-blue-500 hover:text-blue-600 dark:hover:border-blue-400 dark:hover:text-blue-400 transition-colors font-medium"
+                className="w-full flex items-center justify-center gap-2 border-2 border-dashed border-slate-300 text-slate-600 px-4 py-3 rounded-lg hover:border-blue-500 hover:text-blue-600 transition-colors font-medium"
               >
                 <File size={18} />
                 {t('newDraft')}
@@ -2310,9 +2310,9 @@ export default function ResumeBuilder() {
             <div className="flex-1 overflow-y-auto p-4">
               {drafts.length === 0 ? (
                 <div className="text-center py-8">
-                  <File size={48} className="mx-auto text-slate-300 dark:text-slate-600 mb-3" />
-                  <p className="text-slate-500 dark:text-slate-400 font-medium">{t('noDrafts')}</p>
-                  <p className="text-slate-400 dark:text-slate-500 text-sm">{t('noDraftsDesc')}</p>
+                  <File size={48} className="mx-auto text-slate-300 mb-3" />
+                  <p className="text-slate-500 font-medium">{t('noDrafts')}</p>
+                  <p className="text-slate-400 text-sm">{t('noDraftsDesc')}</p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -2322,8 +2322,8 @@ export default function ResumeBuilder() {
                       onClick={() => loadDraft(draft)}
                       className={`border rounded-lg p-3 transition-all cursor-pointer ${
                         currentDraftId === draft.id
-                          ? 'border-amber-500 bg-amber-50 dark:bg-amber-950'
-                          : 'border-slate-200 dark:border-slate-600 hover:border-amber-300 hover:bg-slate-50 dark:hover:bg-slate-700'
+                          ? 'border-amber-500 bg-amber-50'
+                          : 'border-slate-200 hover:border-amber-300 hover:bg-slate-50'
                       }`}
                     >
                       <div className="flex items-start justify-between">
@@ -2334,7 +2334,7 @@ export default function ResumeBuilder() {
                                 type="text"
                                 value={renameInput}
                                 onChange={(e) => setRenameInput(e.target.value)}
-                                className="flex-1 px-2 py-1 text-sm border border-blue-500 dark:border-blue-400 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                className="flex-1 px-2 py-1 text-sm border border-blue-500 bg-white text-slate-900 rounded focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                                 onKeyDown={(e) => {
                                   if (e.key === 'Enter') confirmRename();
                                   if (e.key === 'Escape') cancelRename();
@@ -2358,16 +2358,16 @@ export default function ResumeBuilder() {
                             </div>
                           ) : (
                             <>
-                              <h3 className="font-medium text-slate-800 dark:text-slate-200 flex items-center gap-2 truncate">
+                              <h3 className="font-medium text-slate-800 flex items-center gap-2 truncate">
                                 {currentDraftId === draft.id && (
                                   <span className="w-2 h-2 bg-amber-500 rounded-full shrink-0" />
                                 )}
                                 {draft.title}
                               </h3>
-                              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                              <p className="text-xs text-slate-500 mt-1">
                                 {t('createdAt')}: {formatDate(draft.createdAt)}
                               </p>
-                              <p className="text-xs text-slate-500 dark:text-slate-400">
+                              <p className="text-xs text-slate-500">
                                 {t('lastModified')}: {formatDate(draft.updatedAt)}
                               </p>
                               <div className="flex items-center gap-1 mt-1 text-xs text-amber-600">
