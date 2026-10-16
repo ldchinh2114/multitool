@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Coins, Languages, ArrowRight, Zap, Scale, FileText, Wand2 } from 'lucide-react';
+import { Coins, Languages, ArrowRight, Zap, Scale, FileText, Wand2, Scissors } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useLanguage } from '@/lib/language-context';
 
@@ -170,6 +170,17 @@ export function Dashboard() {
               href="/tools/remove-background"
               color="bg-gradient-to-br from-teal-500 to-cyan-600"
               gradient="from-teal-400 to-cyan-500"
+              size="medium"
+            />
+
+            {/* Icon Slicer - Medium card */}
+            <ToolCard
+              title={t('iconSlicer')}
+              description={t('iconSlicerDesc')}
+              icon={<Scissors className="h-6 w-6 text-white" />}
+              href="/tools/icon-slicer"
+              color="bg-gradient-to-br from-pink-500 to-rose-600"
+              gradient="from-pink-400 to-rose-500"
               size="medium"
             />
           </div>

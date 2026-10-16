@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/cn';
 import { ToolInfo } from '@/lib/types';
-import { LayoutGrid, Coins, Languages, Ruler, FileText, Wand2, Menu, X } from 'lucide-react';
+import { LayoutGrid, Coins, Languages, Ruler, FileText, Wand2, Scissors, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { useLanguage } from '@/lib/language-context';
 import { LanguageToggle } from './LanguageToggle';
@@ -17,6 +17,7 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   Ruler,
   FileText,
   Wand2,
+  Scissors,
 };
 
 export function Header() {
@@ -73,6 +74,14 @@ export function Header() {
       icon: 'Wand2',
       path: '/tools/remove-background',
       color: 'bg-teal-500',
+    },
+    {
+      id: 'icon-slicer',
+      name: t('iconSlicer'),
+      description: language === 'vi' ? 'Cắt ảnh nhiều icon thành từng tệp' : 'Cut an icon sheet into separate files',
+      icon: 'Scissors',
+      path: '/tools/icon-slicer',
+      color: 'bg-pink-500',
     },
   ];
 
