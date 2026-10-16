@@ -5,9 +5,10 @@ A web-based multi-tool application built with Next.js, React, and Tailwind CSS.
 ## Features
 
 - **Resume Builder** - Create and edit resumes with live preview and PDF export. Supports multiple drafts with 7-day expiry, draft renaming, and blank draft creation.
-- **Dictionary** - Word definitions, pronunciations, auto-suggestions, and EN/VI translator
+- **Translate** - EN/VI translation with word definitions, pronunciations, synonyms/antonyms, and suggestions (the former Dictionary tool was merged in here)
 - **Currency Converter** - Real-time exchange rates for major currencies
 - **Unit Converter** - Convert between length and weight units
+- **Remove Background** - AI-powered background removal that runs entirely in the browser; the image is never uploaded
 - **Multi-language** - Full English and Vietnamese UI
 
 ## Prerequisites
@@ -48,30 +49,33 @@ The app supports hot-reload, so changes to your code will automatically update i
 | `npm run test` | Run tests in watch mode (Vitest) |
 | `npm run test:run` | Run tests once |
 
+There is no typecheck script; run `npx tsc --noEmit` to type-check.
+
 ## Project Structure
 
 ```
 multitool/
 ├── public/            # Static assets
 ├── src/
-│   ├── app/           # Next.js App Router pages
-│   ├── components/    # React components
+│   ├── app/           # Next.js App Router pages (thin route wrappers)
+│   ├── components/    # Header, Dashboard, ErrorBoundary, etc.
 │   ├── lib/           # Utilities, types, and contexts
 │   └── tools/         # Tool implementations
-├── .gitignore
-├── package.json
+├── eslint.config.mjs  # ESLint flat config
+├── next.config.ts     # Next.js config (React Compiler, redirects)
 ├── vitest.config.ts   # Vitest configuration
 └── README.md
 ```
 
 ## Tech Stack
 
-- **Framework:** Next.js 16
+- **Framework:** Next.js 16 (App Router)
 - **UI:** React 19, Tailwind CSS 4
 - **Icons:** Lucide React
 - **Language:** TypeScript
 - **Testing:** Vitest, Testing Library
 - **PDF:** @react-pdf/renderer
+- **Background removal:** @imgly/background-removal (ONNX, runs client-side)
 
 ## Troubleshooting
 
@@ -85,8 +89,8 @@ npm run dev -- -p 3001
 **Build errors?**  
 Clear the cache and reinstall:
 
-```bash
-rm -rf .next node_modules
+```powershell
+Remove-Item -Recurse -Force .next, node_modules
 npm install
 npm run dev
 ```
