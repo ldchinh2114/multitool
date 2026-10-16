@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/cn';
 import { ToolInfo } from '@/lib/types';
-import { LayoutGrid, Coins, Languages, Ruler, FileText, Menu, X } from 'lucide-react';
+import { LayoutGrid, Coins, Languages, Ruler, FileText, Wand2, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { useLanguage } from '@/lib/language-context';
 import { LanguageToggle } from './LanguageToggle';
@@ -16,6 +16,7 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   Languages,
   Ruler,
   FileText,
+  Wand2,
 };
 
 export function Header() {
@@ -64,6 +65,14 @@ export function Header() {
       icon: 'FileText',
       path: '/tools/resume-builder',
       color: 'bg-indigo-500',
+    },
+    {
+      id: 'remove-background',
+      name: t('removeBackground'),
+      description: language === 'vi' ? 'Tách nền ảnh bằng AI' : 'AI-powered background removal',
+      icon: 'Wand2',
+      path: '/tools/remove-background',
+      color: 'bg-teal-500',
     },
   ];
 

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Coins, Languages, ArrowRight, Zap, Scale, FileText } from 'lucide-react';
+import { Coins, Languages, ArrowRight, Zap, Scale, FileText, Wand2 } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useLanguage } from '@/lib/language-context';
 
@@ -159,6 +159,17 @@ export function Dashboard() {
               href="/tools/resume-builder"
               color="bg-gradient-to-br from-blue-500 to-indigo-600"
               gradient="from-blue-400 to-indigo-500"
+              size="medium"
+            />
+
+            {/* Remove Background - Medium card */}
+            <ToolCard
+              title={t('removeBackground')}
+              description={t('removeBackgroundDesc')}
+              icon={<Wand2 className="h-6 w-6 text-white" />}
+              href="/tools/remove-background"
+              color="bg-gradient-to-br from-teal-500 to-cyan-600"
+              gradient="from-teal-400 to-cyan-500"
               size="medium"
             />
           </div>
