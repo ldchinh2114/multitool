@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useLayoutEffect, ReactNode } from 'react';
+import { createContext, useContext, useSyncExternalStore, useLayoutEffect, ReactNode } from 'react';
 
 export type Language = 'en' | 'vi';
 
@@ -17,7 +17,7 @@ const translations = {
     // Navigation
     dashboard: 'Dashboard',
     currency: 'Currency Converter',
-    dictionary: 'Dictionary',
+    translate: 'Translate',
     unit: 'Unit Converter',
     // Dashboard
     multiToolHub: 'Multi-Tool Hub',
@@ -34,7 +34,7 @@ const translations = {
     mobileFriendly: 'Mobile Friendly',
     mobileFriendlyDesc: 'Works perfectly on all devices and screen sizes.',
     currencyDesc: 'Convert between major currencies with real-time exchange rates. Support for USD, VND, EUR, JPY, GBP, CNY, KRW, HKD, and TWD.',
-    dictionaryDesc: 'Look up word definitions, pronunciations, and translate between English and Vietnamese. Perfect for learners.',
+    translateDesc: 'Translate between English and Vietnamese and instantly see every detail of each word: pronunciation, definitions, examples, synonyms, and more.',
     unitDesc: 'Convert between different units of length and weight. Quick and accurate conversions.',
     resumeBuilder: 'Resume Builder',
     resumeBuilderDesc: 'Create professional resumes with live preview and PDF export. Modern templates and easy customization.',
@@ -52,25 +52,21 @@ const translations = {
     quickReference: 'Quick Reference (1 USD)',
     loadingRates: 'Loading exchange rates...',
     errorLoadingRates: 'Error Loading Rates',
-    // Dictionary
+    // Translate
     searchWord: 'Search word...',
-    search: 'Search',
     definitions: 'Definitions',
     examples: 'Examples',
     phonetics: 'Phonetics',
     noDefinition: 'No definition found',
-    enterWord: 'Enter a word to search',
-    dictionaryTitle: 'English Dictionary',
-    dictionarySubtitle: 'Look up word definitions, pronunciations, and more',
     mainMeaning: 'Vietnamese Meaning',
     translateToVi: 'Translate to Vietnamese',
     translateToEn: 'Translate to English',
     originalEnglish: 'Show Original English',
     translationError: 'Could not translate at this time',
     translating: 'Translating...',
-    translatorMode: 'Translator',
-    dictionaryMode: 'Dictionary',
-    enterTextToTranslate: 'Enter text to translate...',
+    translateTitle: 'Translate',
+    translateSubtitle: 'Translate text between languages and reveal every detail of each word',
+    enterTextToTranslate: 'Enter a word or text to translate...',
     swapLanguages: 'Swap languages',
     clearText: 'Clear text',
     copyTranslation: 'Copy translation',
@@ -79,6 +75,12 @@ const translations = {
     targetLanguage: 'Target Language',
     english: 'English',
     vietnamese: 'Vietnamese',
+    wordDetails: 'Word details',
+    searchingDetails: 'Looking up word details...',
+    noWordInfo: 'No extra details available for this word',
+    otherTranslations: 'Other translations',
+    synonyms: 'Synonyms',
+    antonyms: 'Antonyms',
     // Unit Converter
     category: 'Category',
     length: 'Length',
@@ -216,7 +218,7 @@ const translations = {
     // Navigation
     dashboard: 'Trang chủ',
     currency: 'Chuyển đổi tiền tệ',
-    dictionary: 'Từ điển',
+    translate: 'Dịch',
     unit: 'Chuyển đổi đơn vị',
     // Dashboard
     multiToolHub: 'Trung tâm công cụ',
@@ -233,7 +235,7 @@ const translations = {
     mobileFriendly: 'Thân thiện với di động',
     mobileFriendlyDesc: 'Hoạt động hoàn hảo trên mọi thiết bị và kích thước màn hình.',
     currencyDesc: 'Chuyển đổi giữa các loại tiền tệ chính với tỷ giá hối đoái thời gian thực. Hỗ trợ USD, VND, EUR, JPY, GBP, CNY, KRW, HKD và TWD.',
-    dictionaryDesc: 'Tra cứu định nghĩa từ, cách phát âm và dịch giữa tiếng Anh và tiếng Việt. Hoàn hảo cho người học.',
+    translateDesc: 'Dịch giữa tiếng Anh và tiếng Việt và xem ngay mọi thông tin của từ: cách phát âm, định nghĩa, ví dụ, từ đồng nghĩa và nhiều hơn nữa.',
     unitDesc: 'Chuyển đổi giữa các đơn vị chiều dài và trọng lượng khác nhau. Chuyển đổi nhanh chóng và chính xác.',
     resumeBuilder: 'Tạo CV',
     resumeBuilderDesc: 'Tạo CV chuyên nghiệp với xem trước trực tiếp và xuất PDF. Mẫu hiện đại và dễ tùy chỉnh.',
@@ -251,25 +253,21 @@ const translations = {
     quickReference: 'Tham khảo nhanh (1 USD)',
     loadingRates: 'Đang tải tỷ giá...',
     errorLoadingRates: 'Lỗi khi tải tỷ giá',
-    // Dictionary
+    // Translate
     searchWord: 'Tìm từ...',
-    search: 'Tìm kiếm',
     definitions: 'Định nghĩa',
     examples: 'Ví dụ',
     phonetics: 'Phiên âm',
     noDefinition: 'Không tìm thấy định nghĩa',
-    enterWord: 'Nhập từ để tìm kiếm',
-    dictionaryTitle: 'Từ điển Anh-Anh',
-    dictionarySubtitle: 'Tra cứu định nghĩa từ, cách phát âm và nhiều hơn nữa',
     mainMeaning: 'Nghĩa tiếng Việt',
     translateToVi: 'Dịch sang tiếng Việt',
     translateToEn: 'Dịch sang tiếng Anh',
     originalEnglish: 'Xem tiếng Anh gốc',
     translationError: 'Không thể dịch vào lúc này',
     translating: 'Đang dịch...',
-    translatorMode: 'Trình dịch',
-    dictionaryMode: 'Từ điển',
-    enterTextToTranslate: 'Nhập nội dung cần dịch...',
+    translateTitle: 'Dịch',
+    translateSubtitle: 'Dịch văn bản giữa các ngôn ngữ và xem mọi thông tin chi tiết của từng từ',
+    enterTextToTranslate: 'Nhập từ hoặc đoạn văn cần dịch...',
     swapLanguages: 'Đổi ngôn ngữ',
     clearText: 'Xóa văn bản',
     copyTranslation: 'Sao chép bản dịch',
@@ -278,6 +276,12 @@ const translations = {
     targetLanguage: 'Ngôn ngữ đích',
     english: 'Tiếng Anh',
     vietnamese: 'Tiếng Việt',
+    wordDetails: 'Chi tiết từ',
+    searchingDetails: 'Đang tra cứu chi tiết từ...',
+    noWordInfo: 'Không có thông tin chi tiết nào cho từ này',
+    otherTranslations: 'Bản dịch khác',
+    synonyms: 'Từ đồng nghĩa',
+    antonyms: 'Từ trái nghĩa',
     // Unit Converter
     category: 'Danh mục',
     length: 'Chiều dài',
@@ -413,26 +417,45 @@ const translations = {
   },
 };
 
-function getInitialLanguage(): Language {
-  if (typeof window !== 'undefined') {
-    const saved = localStorage.getItem('language');
-    if (saved === 'en' || saved === 'vi') {
-      return saved;
-    }
-  }
-  return 'en';
+const LANGUAGE_STORAGE_KEY = 'language';
+const DEFAULT_LANGUAGE: Language = 'en';
+
+// Local subscriber list so same-tab changes re-render every consumer; the
+// 'storage' event covers changes made in other tabs.
+const languageListeners = new Set<() => void>();
+
+function subscribeToLanguage(onStoreChange: () => void) {
+  languageListeners.add(onStoreChange);
+  window.addEventListener('storage', onStoreChange);
+  return () => {
+    languageListeners.delete(onStoreChange);
+    window.removeEventListener('storage', onStoreChange);
+  };
+}
+
+function getLanguageSnapshot(): Language {
+  const saved = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+  return saved === 'en' || saved === 'vi' ? saved : DEFAULT_LANGUAGE;
+}
+
+// Used during hydration so the first client render matches the server-rendered
+// HTML; the real value is read afterwards, avoiding a hydration mismatch.
+function getServerLanguageSnapshot(): Language {
+  return DEFAULT_LANGUAGE;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguageState] = useState<Language>(getInitialLanguage);
-
-  // getInitialLanguage() handles localStorage read on mount
+  const language = useSyncExternalStore(
+    subscribeToLanguage,
+    getLanguageSnapshot,
+    getServerLanguageSnapshot
+  );
 
   const setLanguage = (lang: Language) => {
-    setLanguageState(lang);
-    localStorage.setItem('language', lang);
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, lang);
+    languageListeners.forEach((listener) => listener());
   };
 
   const t = (key: TranslationsKey): string => {

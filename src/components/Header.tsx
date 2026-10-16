@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/cn';
 import { ToolInfo } from '@/lib/types';
-import { LayoutGrid, Coins, BookOpen, Ruler, FileText, Menu, X } from 'lucide-react';
+import { LayoutGrid, Coins, Languages, Ruler, FileText, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { useLanguage } from '@/lib/language-context';
 import { ThemeToggle } from './ThemeToggle';
@@ -14,7 +14,7 @@ import { LanguageToggle } from './LanguageToggle';
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   LayoutGrid,
   Coins,
-  BookOpen,
+  Languages,
   Ruler,
   FileText,
 };
@@ -43,11 +43,11 @@ export function Header() {
       color: 'bg-green-500',
     },
     {
-      id: 'dictionary',
-      name: t('dictionary'),
-      description: language === 'vi' ? 'Từ điển Anh-Anh' : 'English-English Dictionary',
-      icon: 'BookOpen',
-      path: '/tools/dictionary',
+      id: 'translate',
+      name: t('translate'),
+      description: language === 'vi' ? 'Dịch và tra cứu mọi thông tin của từ' : 'Translate and explore every word detail',
+      icon: 'Languages',
+      path: '/tools/translate',
       color: 'bg-purple-500',
     },
     {

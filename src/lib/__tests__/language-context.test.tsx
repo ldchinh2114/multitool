@@ -58,7 +58,7 @@ describe('LanguageProvider', () => {
     const { result } = setupHook()
     expect(result.current.t('dashboard')).toBe('Dashboard')
     expect(result.current.t('currency')).toBe('Currency Converter')
-    expect(result.current.t('dictionaryTitle')).toBe('English Dictionary')
+    expect(result.current.t('translateTitle')).toBe('Translate')
   })
 
   it('translates known keys in Vietnamese', () => {
@@ -66,7 +66,7 @@ describe('LanguageProvider', () => {
     act(() => result.current.setLanguage('vi'))
     expect(result.current.t('dashboard')).toBe('Trang chủ')
     expect(result.current.t('currency')).toBe('Chuyển đổi tiền tệ')
-    expect(result.current.t('dictionaryTitle')).toBe('Từ điển Anh-Anh')
+    expect(result.current.t('translateTitle')).toBe('Dịch')
   })
 
   it('falls back to key name for missing translations', () => {

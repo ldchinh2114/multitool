@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Coins, BookOpen, ArrowRight, Zap, Scale, FileText } from 'lucide-react';
+import { Coins, Languages, ArrowRight, Zap, Scale, FileText } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useLanguage } from '@/lib/language-context';
 
@@ -129,12 +129,12 @@ export function Dashboard() {
               size="large"
             />
 
-            {/* Dictionary - Medium card */}
+            {/* Translate - Medium card */}
             <ToolCard
-              title={t('dictionary')}
-              description={t('dictionaryDesc')}
-              icon={<BookOpen className="h-6 w-6 text-white" />}
-              href="/tools/dictionary"
+              title={t('translate')}
+              description={t('translateDesc')}
+              icon={<Languages className="h-6 w-6 text-white" />}
+              href="/tools/translate"
               color="bg-gradient-to-br from-purple-500 to-pink-600"
               gradient="from-purple-400 to-pink-500"
               size="medium"

@@ -21,7 +21,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Multi-Tool Hub - All-in-One Online Tools",
-  description: "A collection of powerful tools: Currency Converter, English Dictionary, Unit Converter. Fast, free, and always available.",
+  description: "A collection of powerful tools: Currency Converter, Translator, Unit Converter. Fast, free, and always available.",
 };
 
 export default function RootLayout({

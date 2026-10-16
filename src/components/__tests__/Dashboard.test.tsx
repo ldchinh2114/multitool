@@ -47,7 +47,7 @@ describe('Dashboard', () => {
   it('renders tool cards', () => {
     renderWithProvider()
     expect(screen.getByText('Currency Converter')).toBeDefined()
-    expect(screen.getByText('Dictionary')).toBeDefined()
+    expect(screen.getByText('Translate')).toBeDefined()
     expect(screen.getByText('Unit Converter')).toBeDefined()
     expect(screen.getByText('Resume Builder')).toBeDefined()
   })

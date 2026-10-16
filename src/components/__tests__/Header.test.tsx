@@ -65,7 +65,7 @@ describe('Header', () => {
     renderWithProvider()
     expect(screen.getByText('Dashboard')).toBeDefined()
     expect(screen.getByText('Currency Converter')).toBeDefined()
-    expect(screen.getByText('Dictionary')).toBeDefined()
+    expect(screen.getByText('Translate')).toBeDefined()
     expect(screen.getByText('Unit Converter')).toBeDefined()
   })
 
