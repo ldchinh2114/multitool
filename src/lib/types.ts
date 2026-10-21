@@ -3,16 +3,6 @@
 // Các công cụ có sẵn trong hub
 export type ToolType = 'dashboard' | 'currency' | 'translate' | 'unit' | 'resume-builder' | 'remove-background' | 'icon-slicer';
 
-// Thông tin công cụ cho navigation
-export interface ToolInfo {
-  id: ToolType;
-  name: string;
-  description: string;
-  icon: string;
-  path: string;
-  color: string;
-}
-
 // Currency Converter types
 export interface CurrencyRate {
   [key: string]: number;

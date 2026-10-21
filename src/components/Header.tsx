@@ -2,146 +2,120 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Menu, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/cn';
-import { ToolInfo } from '@/lib/types';
-import { LayoutGrid, Coins, Languages, Ruler, FileText, Wand2, Scissors, Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { BRAND_NAME } from '@/lib/brand';
+import { TOOLS } from '@/lib/tools';
 import { useLanguage } from '@/lib/language-context';
 import { LanguageToggle } from './LanguageToggle';
 
-// Map icon names to components
-const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
-  LayoutGrid,
-  Coins,
-  Languages,
-  Ruler,
-  FileText,
-  Wand2,
-  Scissors,
-};
+const MOBILE_MENU_ID = 'mobile-nav';
 
 export function Header() {
   const { t, language } = useLanguage();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
 
-  // Định nghĩa danh sách công cụ trong component để dùng t()
-  const TOOLS: ToolInfo[] = [
-    {
-      id: 'dashboard',
-      name: t('dashboard'),
-      description: language === 'vi' ? 'Trang chủ Multi-Tool' : 'Multi-Tool Hub Home',
-      icon: 'LayoutGrid',
-      path: '/',
-      color: 'bg-blue-500',
-    },
-    {
-      id: 'currency',
-      name: t('currency'),
-      description: language === 'vi' ? 'Tỷ giá hối đoái thời gian thực' : 'Real-time exchange rates',
-      icon: 'Coins',
-      path: '/tools/currency',
-      color: 'bg-green-500',
-    },
-    {
-      id: 'translate',
-      name: t('translate'),
-      description: language === 'vi' ? 'Dịch và tra cứu mọi thông tin của từ' : 'Translate and explore every word detail',
-      icon: 'Languages',
-      path: '/tools/translate',
-      color: 'bg-purple-500',
-    },
-    {
-      id: 'unit',
-      name: t('unit'),
-      description: language === 'vi' ? 'Chuyển đổi chiều dài và cân nặng' : 'Length & Weight conversion',
-      icon: 'Ruler',
-      path: '/tools/unit',
-      color: 'bg-orange-500',
-    },
-    {
-      id: 'resume-builder',
-      name: t('resumeBuilder'),
-      description: language === 'vi' ? 'Tạo CV chuyên nghiệp' : 'Professional Resume Builder',
-      icon: 'FileText',
-      path: '/tools/resume-builder',
-      color: 'bg-indigo-500',
-    },
-    {
-      id: 'remove-background',
-      name: t('removeBackground'),
-      description: language === 'vi' ? 'Tách nền ảnh bằng AI' : 'AI-powered background removal',
-      icon: 'Wand2',
-      path: '/tools/remove-background',
-      color: 'bg-teal-500',
-    },
-    {
-      id: 'icon-slicer',
-      name: t('iconSlicer'),
-      description: language === 'vi' ? 'Cắt ảnh nhiều icon thành từng tệp' : 'Cut an icon sheet into separate files',
-      icon: 'Scissors',
-      path: '/tools/icon-slicer',
-      color: 'bg-pink-500',
-    },
-  ];
+  // Close the mobile menu on browser back/forward (link clicks close it too).
+  useEffect(() => {
+    const onPopState = () => setIsMobileMenuOpen(false);
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
 
-  const getIcon = (iconName: string) => {
-    const IconComponent = ICON_MAP[iconName] || LayoutGrid;
-    return <IconComponent className="h-5 w-5" />;
-  };
+  // Add a shadow once the page is scrolled, so the bar separates from content.
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // Escape closes the mobile menu.
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsMobileMenuOpen(false);
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [isMobileMenuOpen]);
+
+  // Move focus into the menu when it opens (mobile viewports only).
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+    if (window.matchMedia('(min-width: 768px)').matches) return;
+    mobileMenuRef.current?.focus();
+  }, [isMobileMenuOpen]);
+
+  /** A tool is active when the current path is it or a route below it. */
+  const isActive = (path: string) =>
+    pathname === path || (path !== '/' && pathname.startsWith(`${path}/`));
+
+  const homeLabel = language === 'vi' ? 'Trang chủ' : 'Home';
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/80 backdrop-blur-md print:hidden">
-      <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
+    <header
+      className={cn(
+        'sticky top-0 z-50 w-full border-b border-gray-200 bg-white/80 backdrop-blur-md print:hidden',
+        isScrolled && 'shadow-sm'
+      )}
+    >
+      <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg">
-            <LayoutGrid className="h-6 w-6 text-white" />
-          </div>
-          <span className="hidden text-xl font-bold tracking-tight sm:inline-block">
-            Multi-Tool Hub
+        <Link
+          href="/"
+          aria-label={`${BRAND_NAME} — ${homeLabel}`}
+          className="flex shrink-0 items-center rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50"
+        >
+          <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-xl font-extrabold tracking-tight text-transparent sm:text-2xl">
+            {BRAND_NAME}
           </span>
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden items-center gap-1 md:flex">
+        {/* Desktop Navigation: icons only on tablets, labels from xl up */}
+        <nav aria-label={language === 'vi' ? 'Điều hướng chính' : 'Main navigation'} className="hidden items-center gap-1 md:flex">
           {TOOLS.map((tool) => {
-            const isActive = pathname === tool.path;
+            const active = isActive(tool.path);
+            const label = t(tool.nameKey);
+            const Icon = tool.icon;
+
             return (
               <Link
                 key={tool.id}
                 href={tool.path}
+                title={label}
+                aria-label={label}
+                aria-current={active ? 'page' : undefined}
                 className={cn(
-                  'relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all',
-                  'hover:bg-gray-100',
-                  isActive
-                    ? 'text-gray-900'
-                    : 'text-gray-600'
+                  'flex h-10 w-10 items-center justify-center gap-2 rounded-lg text-sm font-medium transition-colors',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-1',
+                  'xl:w-auto xl:justify-start xl:px-3.5',
+                  active
+                    ? 'bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700'
+                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                 )}
               >
-                {isActive && (
-                  <div className="absolute inset-0 rounded-lg bg-gray-100" />
-                )}
-                <span className="relative z-10 flex items-center gap-2">
-                  {getIcon(tool.icon)}
-                  {tool.name}
-                </span>
-                {isActive && (
-                  <div className="absolute -bottom-px left-0 h-0.5 w-full bg-blue-500" />
-                )}
+                <Icon className="h-5 w-5 shrink-0" />
+                <span className="hidden xl:inline">{label}</span>
               </Link>
             );
           })}
         </nav>
 
-        {/* Right side: Mobile menu */}
-        <div className="flex items-center gap-2">
+        {/* Right side: language toggle + mobile menu button */}
+        <div className="flex shrink-0 items-center gap-2">
           <LanguageToggle />
-          {/* Mobile menu button */}
           <button
+            type="button"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="flex h-10 w-10 items-center justify-center rounded-lg md:hidden hover:bg-gray-100"
-            aria-label="Toggle menu"
+            aria-label={language === 'vi' ? 'Mở menu' : 'Toggle menu'}
+            aria-expanded={isMobileMenuOpen}
+            aria-controls={MOBILE_MENU_ID}
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 md:hidden"
           >
             {isMobileMenuOpen ? (
               <X className="h-5 w-5" />
@@ -154,35 +128,42 @@ export function Header() {
 
       {/* Mobile Navigation Menu */}
       {isMobileMenuOpen && (
-        <div className="border-t border-gray-200 bg-white px-4 py-4 md:hidden">
+        <div
+          id={MOBILE_MENU_ID}
+          ref={mobileMenuRef}
+          tabIndex={-1}
+          className="border-t border-gray-200 bg-white px-4 py-4 focus:outline-none md:hidden"
+        >
           <nav className="flex flex-col gap-2">
             {TOOLS.map((tool) => {
-              const isActive = pathname === tool.path;
+              const active = isActive(tool.path);
+              const Icon = tool.icon;
+
               return (
                 <Link
                   key={tool.id}
                   href={tool.path}
                   onClick={() => setIsMobileMenuOpen(false)}
+                  aria-current={active ? 'page' : undefined}
                   className={cn(
-                    'flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all',
-                    isActive
-                      ? 'bg-blue-50 text-blue-600'
-                      : 'text-gray-600 hover:bg-gray-100'
+                    'flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50',
+                    active
+                      ? 'bg-blue-50 text-blue-700'
+                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                   )}
                 >
                   <div
                     className={cn(
-                      'flex h-8 w-8 items-center justify-center rounded-md',
+                      'flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-white',
                       tool.color
                     )}
                   >
-                    {getIcon(tool.icon)}
+                    <Icon className="h-4 w-4" />
                   </div>
                   <div>
-                    <div className="font-medium">{tool.name}</div>
-                    <div className="text-xs text-gray-500">
-                      {tool.description}
-                    </div>
+                    <div className="font-medium">{t(tool.nameKey)}</div>
+                    <div className="text-xs text-gray-500">{t(tool.descriptionKey)}</div>
                   </div>
                 </Link>
               );

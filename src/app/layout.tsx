@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { LanguageProvider } from "@/lib/language-context";
+import { BRAND_NAME } from "@/lib/brand";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,7 +21,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Multi-Tool Hub - All-in-One Online Tools",
+  title: `${BRAND_NAME} - All-in-One Online Tools`,
   description: "A collection of powerful tools: Currency Converter, Translator, Unit Converter. Fast, free, and always available.",
 };
 

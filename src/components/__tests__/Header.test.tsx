@@ -56,7 +56,7 @@ describe('Header', () => {
 
   it('renders the logo with home link', () => {
     renderWithProvider()
-    const homeLink = screen.getByText('Multi-Tool Hub')
+    const homeLink = screen.getByText('Kitbag')
     expect(homeLink).toBeDefined()
     expect(homeLink.closest('a')?.getAttribute('href')).toBe('/')
   })
@@ -67,6 +67,21 @@ describe('Header', () => {
     expect(screen.getByText('Currency Converter')).toBeDefined()
     expect(screen.getByText('Translate')).toBeDefined()
     expect(screen.getByText('Unit Converter')).toBeDefined()
+  })
+
+  it('marks the current tool with aria-current', () => {
+    renderWithProvider()
+    const homeLink = screen.getByLabelText('Dashboard')
+    expect(homeLink.getAttribute('aria-current')).toBe('page')
+    const otherLink = screen.getByLabelText('Translate')
+    expect(otherLink.getAttribute('aria-current')).toBeNull()
+  })
+
+  it('exposes the mobile menu button state to assistive tech', () => {
+    renderWithProvider()
+    const button = screen.getByLabelText('Toggle menu')
+    expect(button.getAttribute('aria-expanded')).toBe('false')
+    expect(button.getAttribute('aria-controls')).toBe('mobile-nav')
   })
 
   it('renders LanguageToggle', () => {
@@ -84,7 +99,7 @@ describe('Header', () => {
     const user = userEvent.setup()
     renderWithProvider()
     await user.click(screen.getByLabelText('Toggle menu'))
-    expect(screen.getByText('Multi-Tool Hub Home')).toBeDefined()
+    expect(screen.getByText('Kitbag Home')).toBeDefined()
   })
 
   it('closes mobile menu on second hamburger click', async () => {
@@ -92,6 +107,15 @@ describe('Header', () => {
     renderWithProvider()
     await user.click(screen.getByLabelText('Toggle menu'))
     await user.click(screen.getByLabelText('Toggle menu'))
-    expect(screen.queryByText('Multi-Tool Hub Home')).toBeNull()
+    expect(screen.queryByText('Kitbag Home')).toBeNull()
+  })
+
+  it('closes mobile menu on Escape', async () => {
+    const user = userEvent.setup()
+    renderWithProvider()
+    await user.click(screen.getByLabelText('Toggle menu'))
+    expect(screen.getByText('Kitbag Home')).toBeDefined()
+    await user.keyboard('{Escape}')
+    expect(screen.queryByText('Kitbag Home')).toBeNull()
   })
 })

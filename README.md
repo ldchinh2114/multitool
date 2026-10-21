@@ -1,4 +1,4 @@
-# Multi-Tool Hub
+# Kitbag
 
 A web-based multi-tool application built with Next.js, React, and Tailwind CSS.
 

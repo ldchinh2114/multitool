@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useSyncExternalStore, useLayoutEffect, ReactNode } from 'react';
+import { BRAND_NAME } from '@/lib/brand';
 
 export type Language = 'en' | 'vi';
 
@@ -10,7 +11,7 @@ interface LanguageContextType {
   t: (key: TranslationsKey) => string;
 }
 
-type TranslationsKey = keyof typeof translations.en;
+export type TranslationsKey = keyof typeof translations.en;
 
 const translations = {
   en: {
@@ -20,8 +21,16 @@ const translations = {
     translate: 'Translate',
     unit: 'Unit Converter',
     removeBackground: 'Remove Background',
+    // Navigation - tool descriptions (used by the header menu)
+    toolDescDashboard: `${BRAND_NAME} Home`,
+    toolDescCurrency: 'Real-time exchange rates',
+    toolDescTranslate: 'Translate and explore every word detail',
+    toolDescUnit: 'Length & Weight conversion',
+    toolDescResumeBuilder: 'Professional Resume Builder',
+    toolDescRemoveBackground: 'AI-powered background removal',
+    toolDescIconSlicer: 'Cut an icon sheet into separate files',
     // Dashboard
-    multiToolHub: 'Multi-Tool Hub',
+    multiToolHub: BRAND_NAME,
     welcomeMessage: 'All-in-One Online Tools',
     searchTools: 'Search tools...',
     heroTitlePart1: 'Everything you need, ',
@@ -277,8 +286,16 @@ const translations = {
     translate: 'Dịch',
     unit: 'Chuyển đổi đơn vị',
     removeBackground: 'Tách nền ảnh',
+    // Navigation - tool descriptions (used by the header menu)
+    toolDescDashboard: `Trang chủ ${BRAND_NAME}`,
+    toolDescCurrency: 'Tỷ giá hối đoái thời gian thực',
+    toolDescTranslate: 'Dịch và tra cứu mọi thông tin của từ',
+    toolDescUnit: 'Chuyển đổi chiều dài và cân nặng',
+    toolDescResumeBuilder: 'Tạo CV chuyên nghiệp',
+    toolDescRemoveBackground: 'Tách nền ảnh bằng AI',
+    toolDescIconSlicer: 'Cắt ảnh nhiều icon thành từng tệp',
     // Dashboard
-    multiToolHub: 'Trung tâm công cụ',
+    multiToolHub: BRAND_NAME,
     welcomeMessage: 'Tất cả trong một công cụ trực tuyến',
     searchTools: 'Tìm kiếm công cụ...',
     heroTitlePart1: 'Mọi thứ bạn cần, ',
