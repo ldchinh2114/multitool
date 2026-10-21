@@ -22,12 +22,16 @@ import {
 import { cn } from '@/lib/cn';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { useLanguage } from '@/lib/language-context';
-import { DictionaryResponse } from '@/lib/types';
 import { debounce } from '@/lib/utils';
+import type { DictionaryResponse } from '@/lib/types';
+import {
+  getCachedWordDetails,
+  loadWordDetails,
+  setCachedWordDetails,
+  type FallbackMeaning,
+} from '@/lib/dictionary';
 
-const DICTIONARY_URL = 'https://api.dictionaryapi.dev/api/v2/entries/en/';
 const SUGGESTIONS_URL = 'https://api.datamuse.com/sug';
-const THESAURUS_URL = 'https://api.datamuse.com/words';
 
 // Only single English words have extra dictionary information available.
 const SINGLE_WORD_REGEX = /^[a-zA-Z][a-zA-Z'’-]*$/;
@@ -510,71 +514,6 @@ function RelatedWords({
  * Datamuse part-of-speech tags mapped to readable names, used for the
  * definitions fallback when the primary dictionary API has no entry.
  */
-const DATAMUSE_POS: Record<string, string> = {
-  n: 'noun',
-  v: 'verb',
-  adj: 'adjective',
-  adv: 'adverb',
-  u: 'unknown',
-};
-
-interface FallbackMeaning {
-  partOfSpeech: string;
-  definitions: string[];
-}
-
-/**
- * Group raw datamuse definitions ("partOfSpeech\tdefinition") by part of speech.
- */
-function parseDatamuseDefinitions(defs: string[]): FallbackMeaning[] {
-  const groups = new Map<string, string[]>();
-  for (const raw of defs) {
-    const [posTag, ...rest] = raw.split('\t');
-    const definition = rest.join('\t').trim();
-    if (!definition) continue;
-    const partOfSpeech = DATAMUSE_POS[posTag] ?? posTag;
-    const list = groups.get(partOfSpeech) ?? [];
-    list.push(definition);
-    groups.set(partOfSpeech, list);
-  }
-  return Array.from(groups, ([partOfSpeech, definitions]) => ({ partOfSpeech, definitions }));
-}
-
-/**
- * Session cache so revisiting a word (or jumping to a synonym) renders
- * instantly instead of refetching everything.
- */
-interface WordDetailsData {
-  entry: DictionaryResponse | null;
-  synonyms: string[];
-  antonyms: string[];
-  fallbackMeanings: FallbackMeaning[];
-}
-
-const wordDetailsCache = new Map<string, WordDetailsData>();
-
-async function fetchDictionaryEntry(word: string, signal: AbortSignal): Promise<DictionaryResponse | null> {
-  const response = await fetch(`${DICTIONARY_URL}${encodeURIComponent(word.toLowerCase())}`, { signal });
-  if (!response.ok) return null;
-  const entries: DictionaryResponse[] = await response.json();
-  return entries[0] ?? null;
-}
-
-async function fetchRelatedWords(word: string, rel: 'rel_syn' | 'rel_ant', signal: AbortSignal): Promise<string[]> {
-  const response = await fetch(`${THESAURUS_URL}?${rel}=${encodeURIComponent(word)}&max=12`, { signal });
-  if (!response.ok) return [];
-  const results: { word: string }[] = await response.json();
-  return results.map((result) => result.word);
-}
-
-async function fetchFallbackDefinitions(word: string, signal: AbortSignal): Promise<FallbackMeaning[]> {
-  const response = await fetch(`${THESAURUS_URL}?sp=${encodeURIComponent(word)}&md=dp&max=1`, { signal });
-  if (!response.ok) return [];
-  const results: { word: string; defs?: string[] }[] = await response.json();
-  const match = results.find((result) => result.word.toLowerCase() === word.toLowerCase());
-  return parseDatamuseDefinitions(match?.defs ?? []);
-}
-
 /**
  * Word Details - everything we can find about a single word:
  * phonetics, audio, parts of speech, definitions, examples, synonyms,
@@ -593,8 +532,9 @@ function WordDetails({
 }) {
   const { t } = useLanguage();
   const cacheKey = word.toLowerCase();
-  // Seed from the session cache so previously looked-up words appear instantly.
-  const cached = wordDetailsCache.get(cacheKey);
+  // Seed from the persistent cache so previously looked-up words appear
+  // instantly - without any network request at all.
+  const cached = getCachedWordDetails(cacheKey);
   const [entry, setEntry] = useState<DictionaryResponse | null>(cached?.entry ?? null);
   const [synonyms, setSynonyms] = useState<string[]>(cached?.synonyms ?? []);
   const [antonyms, setAntonyms] = useState<string[]>(cached?.antonyms ?? []);
@@ -602,32 +542,22 @@ function WordDetails({
   const [loading, setLoading] = useState(!cached);
 
   useEffect(() => {
-    if (wordDetailsCache.has(cacheKey)) return;
+    if (getCachedWordDetails(cacheKey)) return;
 
     let cancelled = false;
     const controller = new AbortController();
-    const collected: WordDetailsData = { entry: null, synonyms: [], antonyms: [], fallbackMeanings: [] };
 
     // Update each section as soon as its request resolves instead of waiting
     // for the slowest API, so the panel fills in progressively.
-    const tasks: Promise<void>[] = [
-      fetchDictionaryEntry(word, controller.signal)
-        .then((value) => { collected.entry = value; if (!cancelled) setEntry(value); })
-        .catch(() => {}),
-      fetchRelatedWords(word, 'rel_syn', controller.signal)
-        .then((value) => { collected.synonyms = value; if (!cancelled) setSynonyms(value); })
-        .catch(() => {}),
-      fetchRelatedWords(word, 'rel_ant', controller.signal)
-        .then((value) => { collected.antonyms = value; if (!cancelled) setAntonyms(value); })
-        .catch(() => {}),
-      fetchFallbackDefinitions(word, controller.signal)
-        .then((value) => { collected.fallbackMeanings = value; if (!cancelled) setFallbackMeanings(value); })
-        .catch(() => {}),
-    ];
-
-    Promise.allSettled(tasks).then(() => {
+    loadWordDetails(word, controller.signal, (patch) => {
       if (cancelled) return;
-      wordDetailsCache.set(cacheKey, collected);
+      if (patch.entry !== undefined) setEntry(patch.entry);
+      if (patch.synonyms !== undefined) setSynonyms(patch.synonyms);
+      if (patch.antonyms !== undefined) setAntonyms(patch.antonyms);
+      if (patch.fallbackMeanings !== undefined) setFallbackMeanings(patch.fallbackMeanings);
+    }).then((collected) => {
+      if (cancelled) return;
+      setCachedWordDetails(cacheKey, collected);
       setLoading(false);
     });
 

@@ -10,9 +10,21 @@ import {
   CurrencyCode,
 } from '@/lib/types';
 import { formatCurrency, formatTimestamp } from '@/lib/utils';
+import { readCache, writeCache } from '@/lib/api-cache';
 
-// API URL - Using free exchangerate-api.com
-const API_BASE_URL = 'https://api.exchangerate-api.com/v4/latest';
+// Rates API - open.er-api.com is the maintained successor of exchangerate-api
+// v4 and answers noticeably faster.
+const API_BASE_URL = 'https://open.er-api.com/v6/latest';
+
+// Rates barely move, so they are cached for an hour. A cached copy is shown
+// immediately (no spinner) and refreshed in the background.
+const RATES_CACHE_KEY = 'exchange-rates';
+const RATES_TTL_MS = 60 * 60 * 1000;
+
+interface CachedRates {
+  rates: Record<string, number>;
+  lastUpdated: string;
+}
 
 /**
  * Currency Converter - Công cụ chuyển đổi tiền tệ
@@ -29,10 +41,20 @@ function CurrencyConverterContent() {
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
 
-  // Fetch exchange rates khi component mount hoặc currency thay đổi
+  // Fetch exchange rates on mount: show the cached copy straight away, then
+  // refresh it in the background so the numbers never go stale.
   useEffect(() => {
+    let cancelled = false;
+    const cached = readCache<CachedRates>(RATES_CACHE_KEY, RATES_TTL_MS);
+
+    if (cached) {
+      setRates(cached.rates);
+      setLastUpdated(cached.lastUpdated);
+      setLoading(false);
+    }
+
     const fetchRates = async () => {
-      setLoading(true);
+      if (!cached) setLoading(true);
       setError(null);
       try {
         const response = await fetch(`${API_BASE_URL}/USD`);
@@ -40,16 +62,28 @@ function CurrencyConverterContent() {
           throw new Error('Failed to fetch exchange rates');
         }
         const data = await response.json();
+        if (cancelled) return;
+        const lastUpdated =
+          typeof data.time_last_update_utc === 'string'
+            ? data.time_last_update_utc
+            : new Date().toISOString();
         setRates(data.rates);
-        setLastUpdated(new Date().toISOString());
+        setLastUpdated(lastUpdated);
+        writeCache<CachedRates>(RATES_CACHE_KEY, { rates: data.rates, lastUpdated });
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
+        if (cancelled) return;
+        // Keep showing the cached rates when a refresh fails.
+        if (!cached) setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
     fetchRates();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // Tính toán kết quả chuyển đổi

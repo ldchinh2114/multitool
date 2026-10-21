@@ -17,6 +17,18 @@ import type { Config } from '@imgly/background-removal';
 
 type Phase = 'idle' | 'working' | 'done' | 'error';
 
+/**
+ * The segmentation model and the ONNX runtime are downloaded from IMG.LY's CDN
+ * on first use - roughly 95MB in total. The same settings are used for the
+ * background preload and for the actual run, so the run finds everything in the
+ * browser cache.
+ */
+const MODEL_CONFIG: Config = {
+  device: 'cpu',
+  model: 'isnet_fp16',
+  output: { format: 'image/png', quality: 1 },
+};
+
 interface ProgressState {
   key: string;
   current: number;
@@ -87,6 +99,28 @@ function RemoveBackgroundContent() {
     };
   }, []);
 
+  // Tải sẵn model (~95MB) ngay khi người dùng chọn ảnh, để việc tải chạy
+  // song song với thao tác của họ và lần xử lý sau gần như tức thì.
+  useEffect(() => {
+    if (!sourceFile) return;
+
+    let cancelled = false;
+    const warmUp = async () => {
+      try {
+        const { preload } = await import('@imgly/background-removal');
+        if (cancelled) return;
+        await preload(MODEL_CONFIG);
+      } catch {
+        // Tải sẵn là tối ưu, lỗi ở đây không ảnh hưởng tới lần chạy thật
+      }
+    };
+
+    warmUp();
+    return () => {
+      cancelled = true;
+    };
+  }, [sourceFile]);
+
   const resetResult = () => {
     revokeUrl(resultUrl);
     setResultUrl('');
@@ -139,9 +173,7 @@ function RemoveBackgroundContent() {
       const { removeBackground } = await import('@imgly/background-removal');
 
       const config: Config = {
-        device: 'cpu',
-        model: 'isnet_fp16',
-        output: { format: 'image/png', quality: 1 },
+        ...MODEL_CONFIG,
         progress: (key, current, total) => {
           setProgress({ key, current, total });
         },
