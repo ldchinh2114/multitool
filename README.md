@@ -9,6 +9,8 @@ A web-based multi-tool application built with Next.js, React, and Tailwind CSS.
 - **Currency Converter** - Real-time exchange rates for major currencies
 - **Unit Converter** - Convert between length and weight units
 - **Remove Background** - AI-powered background removal that runs entirely in the browser; the image is never uploaded
+- **Icon Slicer** - Cut a sheet of icons into separate numbered image files, entirely in the browser
+- **Memex** - A private notes vault that lives in your browser. Export it as a single file encrypted with Argon2id + XChaCha20-Poly1305, or delete every note
 - **Multi-language** - Full English and Vietnamese UI
 
 ## Prerequisites
@@ -76,6 +78,7 @@ multitool/
 - **Testing:** Vitest, Testing Library
 - **PDF:** @react-pdf/renderer
 - **Background removal:** @imgly/background-removal (ONNX, runs client-side)
+- **Encryption:** @noble/hashes + @noble/ciphers (Argon2id, XChaCha20-Poly1305)
 
 ## Troubleshooting
 

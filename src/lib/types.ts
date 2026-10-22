@@ -1,7 +1,7 @@
 // Định nghĩa các kiểu dữ liệu chung cho toàn bộ ứng dụng
 
 // Các công cụ có sẵn trong hub
-export type ToolType = 'dashboard' | 'currency' | 'translate' | 'unit' | 'resume-builder' | 'remove-background' | 'icon-slicer';
+export type ToolType = 'dashboard' | 'currency' | 'translate' | 'unit' | 'resume-builder' | 'remove-background' | 'icon-slicer' | 'memex';
 
 // Currency Converter types
 export interface CurrencyRate {

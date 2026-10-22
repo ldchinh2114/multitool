@@ -3,6 +3,7 @@ import {
   FileText,
   Languages,
   LayoutGrid,
+  NotebookPen,
   Ruler,
   Scissors,
   Wand2,
@@ -40,6 +41,7 @@ export const TOOL_ICONS: Record<ToolType, LucideIcon> = {
   'resume-builder': FileText,
   'remove-background': Wand2,
   'icon-slicer': Scissors,
+  memex: NotebookPen,
 };
 
 /** The tool set, in navigation order. */
@@ -99,5 +101,13 @@ export const TOOLS: ToolNavItem[] = [
     color: 'bg-pink-500',
     nameKey: 'iconSlicer',
     descriptionKey: 'toolDescIconSlicer',
+  },
+  {
+    id: 'memex',
+    path: '/tools/memex',
+    icon: TOOL_ICONS.memex,
+    color: 'bg-cyan-500',
+    nameKey: 'memex',
+    descriptionKey: 'toolDescMemex',
   },
 ];

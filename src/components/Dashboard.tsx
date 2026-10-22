@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Coins, Languages, ArrowRight, Zap, Scale, FileText, Wand2, Scissors } from 'lucide-react';
+import { Coins, Languages, ArrowRight, Zap, Scale, FileText, Wand2, Scissors, NotebookPen } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useLanguage } from '@/lib/language-context';
 
@@ -181,6 +181,17 @@ export function Dashboard() {
               href="/tools/icon-slicer"
               color="bg-gradient-to-br from-pink-500 to-rose-600"
               gradient="from-pink-400 to-rose-500"
+              size="medium"
+            />
+
+            {/* Memex - Medium card */}
+            <ToolCard
+              title={t('memex')}
+              description={t('memexDesc')}
+              icon={<NotebookPen className="h-6 w-6 text-white" />}
+              href="/tools/memex"
+              color="bg-gradient-to-br from-cyan-500 to-sky-600"
+              gradient="from-cyan-400 to-sky-500"
               size="medium"
             />
           </div>
